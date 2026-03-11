@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequestError } from "../error/BadRequestError";
+import { NotFoundError } from "../error/NotFoundError";
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -8,6 +9,12 @@ export const errorHandler = (
 ) => {
   if (err instanceof BadRequestError) {
     return res.status(400).json({
+      error: err.message,
+    });
+  }
+
+  if (err instanceof NotFoundError) {
+    return res.status(404).json({
       error: err.message,
     });
   }
