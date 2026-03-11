@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { BadRequestError } from "../error/BadRequestError";
 import { NotFoundError } from "../error/NotFoundError";
+import { UnAuthorizedError } from "../error/UnAuthorizedError";
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -15,6 +16,12 @@ export const errorHandler = (
 
   if (err instanceof NotFoundError) {
     return res.status(404).json({
+      error: err.message,
+    });
+  }
+
+  if (err instanceof UnAuthorizedError) {
+    return res.status(401).json({
       error: err.message,
     });
   }
