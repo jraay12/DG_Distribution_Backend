@@ -2,7 +2,9 @@ import express from "express";
 import { Request, Response } from "express";
 import { errorHandler } from "./utils/middleware/error.middleware";
 import userRoutes from "./modules/user/user.routes";
+import authRoutes from "./modules/auth/auth.routes";
 import { userController } from "./container";
+import { authController } from "./container";
 const app = express();
 
 app.use(express.json());
@@ -16,6 +18,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/users", userRoutes(userController));
+app.use("/api/auth", authRoutes(authController));
 
 app.use(errorHandler);
 
