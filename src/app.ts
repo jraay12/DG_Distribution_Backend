@@ -1,8 +1,9 @@
 import express from "express";
 import { Request, Response } from "express";
 import { errorHandler } from "./utils/middleware/error.middleware";
+import userRoutes from "./modules/user/user.routes";
+import { userController } from "./container";
 const app = express();
-
 
 app.use(express.json());
 
@@ -14,7 +15,8 @@ app.get("/health", (req: Request, res: Response) => {
   });
 });
 
+app.use("/api/users", userRoutes(userController));
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 export default app;
