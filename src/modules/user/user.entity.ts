@@ -60,14 +60,30 @@ export class User {
   }
 
   // --- Getters ---
-  get id()        { return this.props.id; }
-  get name()      { return this.props.name; }
-  get email()     { return this.props.email; }
-  get password()  { return this.props.password; }
-  get isActive()  { return this.props.isActive; }
-  get role()      { return this.props.role; }
-  get createdAt() { return this.props.createdAt!; }
-  get updatedAt() { return this.props.updatedAt!; }
+  get id() {
+    return this.props.id;
+  }
+  get name() {
+    return this.props.name;
+  }
+  get email() {
+    return this.props.email;
+  }
+  get password() {
+    return this.props.password;
+  }
+  get isActive() {
+    return this.props.isActive;
+  }
+  get role() {
+    return this.props.role;
+  }
+  get createdAt() {
+    return this.props.createdAt!;
+  }
+  get updatedAt() {
+    return this.props.updatedAt!;
+  }
 
   // --- Behaviors ---
   isAdmin(): boolean {
@@ -112,6 +128,10 @@ export class User {
     this.touch();
   }
 
+  setPassword(hashedPassword: string): void {
+    this.props.password = hashedPassword;
+  }
+
   changeRole(role: UserRole): void {
     const validRoles: UserRole[] = ["ADMIN", "USER"];
     if (!validRoles.includes(role)) {
@@ -128,6 +148,6 @@ export class User {
 
   // --- Private ---
   private touch(): void {
-    this.props.updatedAt = new Date(); 
+    this.props.updatedAt = new Date();
   }
 }
