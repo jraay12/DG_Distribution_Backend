@@ -1,0 +1,36 @@
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: dg_distribution_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: qwerty
+      MYSQL_DATABASE: dg_distribution
+    ports:
+      - "3306:3306"
+    volumes:
+      - dg_distribution_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pqwerty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: dg_distribution-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: "qwerty"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dg_distribution_data:
