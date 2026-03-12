@@ -5,8 +5,8 @@ const userRoutes = (userController: UserController): Router => {
   const routes = Router();
 
   routes.post("/create", userController.createUser);
-
-  return routes
+  routes.post("/change-password/:user_id", userController.updatePassword);
+  return routes;
 };
 
 export default userRoutes;
