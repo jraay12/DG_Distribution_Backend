@@ -5,10 +5,11 @@ import userRoutes from "./modules/user/user.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import { userController } from "./container";
 import { authController } from "./container";
+import cookieParser from "cookie-parser";
 const app = express();
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "UP",
