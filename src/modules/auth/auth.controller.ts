@@ -38,4 +38,28 @@ export class AuthController {
       next(error);
     }
   };
+
+  refresh = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.cookies?.refreshToken;
+
+      if (!token) {
+        return res.status(401).json({ message: "No refresh token provided" });
+      }
+
+      const { accessToken, refreshToken } =
+        await this.authService.refreshToken(token);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.status(200).json({ accessToken: accessToken });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
