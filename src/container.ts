@@ -13,7 +13,7 @@ const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
 // Other services
 const bcrypt = new Bcrypt();
-const jwt = new Jwt(access_token_secret, refresh_token_secret);
+export const jwt = new Jwt(access_token_secret, refresh_token_secret);
 
 // repository
 const userRepository = new UserRepository(prisma);
