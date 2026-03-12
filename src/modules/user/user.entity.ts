@@ -124,6 +124,8 @@ export class User {
   }
 
   updatePassword(hashedPassword: string): void {
+
+    if (hashedPassword.length < User.MIN_PASSWORD_LENGTH) throw new BadRequestError(`Password must be greater than ${User.MIN_PASSWORD_LENGTH} characters`)
     this.props.password = hashedPassword;
     this.touch();
   }
