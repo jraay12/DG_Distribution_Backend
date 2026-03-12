@@ -1,7 +1,7 @@
 import { Bcrypt } from "../../utils/bcrypt";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { UnAuthorizedError } from "../../utils/error/UnAuthorizedError";
-import { Jwt } from "../../utils/jwt";
+import { Jwt, Payload } from "../../utils/jwt";
 import { UserRepository } from "../user/user.repository";
 import { LoginDTO } from "./dto/LoginDTO";
 
@@ -37,5 +37,27 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  async refreshToken(
+    refreshToken: string,
+  ): Promise<{ refreshToken: string; accessToken: string }> {
+    const payload = await this.jwt.verifyRefreshToken<Payload>(refreshToken);
+
+    const user = await this.userRepo.findById(payload.user_id);
+
+    if (!user) throw new NotFoundError("User not found");
+
+    const accessToken = await this.jwt.signAccessToken({
+      role: payload.role,
+      user_id: payload.user_id,
+    });
+
+    const newRefreshToken = await this.jwt.signRefreshToken({
+      role: payload.role,
+      user_id: payload.user_id,
+    });
+
+    return { accessToken, refreshToken: newRefreshToken };
   }
 }
