@@ -5,7 +5,7 @@ const authRoutes = (authContoller: AuthController): Router => {
   const routes = Router();
 
   routes.post("/login", authContoller.login);
-
+  routes.post("/logout", authContoller.logout)
   return routes
 };
 
