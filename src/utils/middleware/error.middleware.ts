@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { BadRequestError } from "../error/BadRequestError";
 import { NotFoundError } from "../error/NotFoundError";
 import { UnAuthorizedError } from "../error/UnAuthorizedError";
+import { ConflictError } from "../error/ConflictError";
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -24,6 +25,12 @@ export const errorHandler = (
     return res.status(401).json({
       error: err.message,
     });
+  }
+
+  if (err instanceof ConflictError){
+    return res.status(409).json({
+      error: err.message
+    })
   }
 
   if ((err as any).code === "P2002") {
