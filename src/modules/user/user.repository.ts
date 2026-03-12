@@ -42,4 +42,15 @@ export class UserRepository {
 
     return User.reconstitute(user);
   }
+
+  async updatePassword(user_id: string, newPassword: string): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        id: user_id,
+      },
+      data: {
+        password: newPassword,
+      },
+    });
+  }
 }
