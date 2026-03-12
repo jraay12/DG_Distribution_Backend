@@ -21,7 +21,7 @@ export class UserController {
   updatePassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const input: ChangePasswordDTO = req.body;
-      const user_id = req.params.user_id as string;
+      const user_id = req.user?.user_id
       await this.userService.updatePassword(user_id, input);
       res.status(200).json({
         message: "successfully change the password"
