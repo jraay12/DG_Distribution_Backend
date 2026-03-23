@@ -3,7 +3,8 @@ import { Request, Response } from "express";
 import { errorHandler } from "./utils/middleware/error.middleware";
 import userRoutes from "./modules/user/user.routes";
 import authRoutes from "./modules/auth/auth.routes";
-import { userController, authController, jwt } from "./container";
+import brandRoutes from "./modules/brand/brand.routes";
+import { userController, authController, jwt, brandController } from "./container";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 const app = express();
@@ -19,6 +20,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.use("/api/users", userRoutes(userController, jwt));
+app.use("/api/brand", brandRoutes(brandController, jwt));
 app.use("/api/auth", authRoutes(authController));
 
 app.use(errorHandler);

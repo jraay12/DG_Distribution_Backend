@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { User } from "./user.entity";
-
+import { ExtendedPrismaClient } from "../../config/prisma";
 export class UserRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: ExtendedPrismaClient) {}
 
   async createUser(user: User): Promise<void> {
     await this.prisma.user.create({

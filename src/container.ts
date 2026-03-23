@@ -6,7 +6,9 @@ import { prisma } from "./config/prisma";
 import { Jwt } from "./utils/jwt";
 import { AuthService } from "./modules/auth/auth.service";
 import { AuthController } from "./modules/auth/auth.controller";
-
+import { BrandController } from "./modules/brand/brand.controller";
+import { BrandService } from "./modules/brand/brand.service";
+import { BrandRepository } from "./modules/brand/brand.repository";
 
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
@@ -17,11 +19,14 @@ export const jwt = new Jwt(access_token_secret, refresh_token_secret);
 
 // repository
 const userRepository = new UserRepository(prisma);
+const brandRepository = new BrandRepository(prisma)
 
 // service
 const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
+const brandService = new BrandService(brandRepository, userRepository)
 
 // controller
 export const userController = new UserController(userService);
 export const authController = new AuthController(authService)
+export const brandController = new BrandController(brandService)

@@ -3,6 +3,7 @@ import { BadRequestError } from "../error/BadRequestError";
 import { NotFoundError } from "../error/NotFoundError";
 import { UnAuthorizedError } from "../error/UnAuthorizedError";
 import { ConflictError } from "../error/ConflictError";
+import { ForbiddenError } from "../error/ForbiddenError";
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -29,6 +30,12 @@ export const errorHandler = (
 
   if (err instanceof ConflictError){
     return res.status(409).json({
+      error: err.message
+    })
+  }
+
+  if (err instanceof ForbiddenError){
+    return res.status(403).json({
       error: err.message
     })
   }

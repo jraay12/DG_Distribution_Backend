@@ -24,6 +24,14 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Brand {
+  id        String   @id @default(uuid())
+  brand_name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
 enum Role {
   USER
   ADMIN
