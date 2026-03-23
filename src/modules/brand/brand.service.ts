@@ -94,4 +94,12 @@ export class BrandService {
 
     return brand.toJson()
   }
+
+  async findById(brand_id: string): Promise<BrandResponseDTO>{
+    const brand = await this.brandRepo.findById(brand_id)
+
+    if (!brand) throw new NotFoundError("Brand not found")
+    
+    return brand.toJson()
+  }
 }
