@@ -30,4 +30,17 @@ export class BrandController {
       next(error)
     }
   }
+
+   restore = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {brand_id: string}
+      const user_id = req.user?.user_id
+      const result = await this.brandService.restore(inputParams.brand_id, user_id)
+      res.status(200).json({
+        message: `Successfully restore ${result.brand_name} brand`
+      })
+    } catch (error) {
+      next(error)
+    }
+   }
 }
