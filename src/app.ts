@@ -5,8 +5,9 @@ import userRoutes from "./modules/user/user.routes";
 import authRoutes from "./modules/auth/auth.routes";
 import { userController, authController, jwt } from "./container";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 const app = express();
-
+app.use(cors({ origin: "http://localhost:5174" , credentials: true, methods: ["GET", "POST", "DELETE", "PUT", "PATCH"]}));
 app.use(express.json());
 app.use(cookieParser());
 app.get("/health", (req: Request, res: Response) => {
