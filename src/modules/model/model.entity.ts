@@ -39,7 +39,11 @@ export class Model {
     });
   }
 
-  updateName(model_name: string): void {
+  static hydrate(props: ModelProps): Model {
+    return new Model(props);
+  }
+
+  update(model_name: string, brand_id: string): void {
     if (!model_name || model_name.trim().length === 0)
       throw new Error("Model Name is required");
 
@@ -50,7 +54,10 @@ export class Model {
         `Model Name must not exceed ${Model.MAX_MODELNAME_LENGTH} characters`,
       );
 
+    if (brand_id.trim().length === 0 ) throw new BadRequestError("Brand ID is required")
+
     this.props.model_name = model_name;
+    this.props.brand_id = brand_id
     this.props.updatedAt = new Date();
   }
 
