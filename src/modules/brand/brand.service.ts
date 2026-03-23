@@ -17,7 +17,7 @@ export class BrandService {
     const user = await this.userRepo.findById(user_id);
     if (!user) throw new NotFoundError("User not found");
 
-    if (!user.isAdmin) throw new ForbiddenError("Only admins can create brand");
+    if (!user.isAdmin()) throw new ForbiddenError("Only admins can create brand");
 
     const brand = Brand.create(data);
 
@@ -34,7 +34,7 @@ export class BrandService {
 
     if (!user) throw new NotFoundError("User not found");
 
-    if (!user.isAdmin) throw new ForbiddenError("Only admins can delete brand");
+    if (!user.isAdmin()) throw new ForbiddenError("Only admins can delete brand");
 
     const brand = await this.brandRepo.findById(data.brand_id);
 
@@ -51,7 +51,7 @@ export class BrandService {
 
     if (!user) throw new NotFoundError("Not found user");
 
-    if (!user.isAdmin)
+    if (!user.isAdmin())
       throw new ForbiddenError("Only admin can restore the deleted brand");
 
     const brand = await this.brandRepo.findById(brand_id);
@@ -82,7 +82,7 @@ export class BrandService {
     
     if(!user) throw new NotFoundError("User not found")
 
-    if(!user.isAdmin) throw new ForbiddenError("Only admin can update the brand name")
+    if(!user.isAdmin()) throw new ForbiddenError("Only admin can update the brand name")
 
     const brand = await this.brandRepo.findById(brand_id);
 
