@@ -9,6 +9,7 @@ const brandRoutes = (brandController: BrandController, jwtService: Jwt): Router 
   routes.delete("/:brand_id", AuthMiddleware(jwtService), brandController.delete)
   routes.patch("/:brand_id/restore", AuthMiddleware(jwtService), brandController.restore)
   routes.get("/", AuthMiddleware(jwtService), brandController.getAllBrand)
+  routes.patch("/:brand_id", AuthMiddleware(jwtService), brandController.updateName)
   return routes;
 };
 
