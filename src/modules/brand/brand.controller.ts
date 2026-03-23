@@ -43,4 +43,15 @@ export class BrandController {
       next(error)
     }
    }
+
+   getAllBrand = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.brandService.getAllBrand()
+      res.status(200).json({
+        result
+      })
+    } catch (error) {
+      next(error)
+    }
+   }
 }
