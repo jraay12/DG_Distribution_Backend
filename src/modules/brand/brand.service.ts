@@ -25,4 +25,21 @@ export class BrandService {
 
     return brand.toSafeObject();
   }
+
+  async delete (data: {brand_id: string}, user_id: string): Promise<BrandResponseDTO>{
+    const user = await this.userRepo.findById(user_id)
+
+    if (!user) throw new NotFoundError("User not found")
+
+    if(!user.isAdmin) throw new ForbiddenError("Only admins can delete brand")
+
+    const brand = await this.brandRepo.findById(data.brand_id)
+
+    if (!brand) throw new NotFoundError("Brand not found")
+
+    brand.softDelete()
+    await this.brandRepo.delete(data.brand_id)
+
+    return brand.toSafeObject()
+  }
 }

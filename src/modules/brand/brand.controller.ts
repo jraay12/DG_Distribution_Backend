@@ -17,4 +17,17 @@ export class BrandController {
       next(error)
     }
   }
+
+  delete = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {brand_id: string}
+      const user_id = req.user?.user_id
+      const result = await this.brandService.delete(inputParams, user_id)
+      res.status(200).json({
+        message: `Successfully deleted the ${result.brand_name} brand`
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }

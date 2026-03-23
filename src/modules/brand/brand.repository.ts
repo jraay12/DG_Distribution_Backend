@@ -1,4 +1,3 @@
-
 import { Brand } from "./brand.entity";
 import { ExtendedPrismaClient } from "../../config/prisma";
 export class BrandRepository {
@@ -23,5 +22,9 @@ export class BrandRepository {
     if (!brand) return null;
 
     return Brand.hydrate(brand);
+  }
+
+  async delete(brand_id: string): Promise<void> {
+    await this.prisma.brand.delete({ where: { id: brand_id } });
   }
 }
