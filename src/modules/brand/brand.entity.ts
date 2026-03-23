@@ -38,6 +38,16 @@ export class Brand {
     return new Brand(props)
   }
 
+  toJson() {
+    return {
+      id: this.id,
+      brand_name: this.props.brand_name,
+      createdAt: this.props.createdAt,
+      updatedAt: this.props.updatedAt,
+      deletedAt: this.props.deletedAt,
+    };
+  }
+
   softDelete(): void {
     if (this.props.deletedAt) throw new BadRequestError("Brand already delelete")
 
