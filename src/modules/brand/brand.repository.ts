@@ -38,4 +38,16 @@ export class BrandRepository {
       },
     });
   }
+
+  async getActiveBrands(): Promise<Brand[]> {
+    const brand = await this.prisma.brand.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return brand.map(Brand.hydrate);
+  }
 }
