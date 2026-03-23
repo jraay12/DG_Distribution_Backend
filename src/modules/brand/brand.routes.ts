@@ -7,6 +7,7 @@ const brandRoutes = (brandController: BrandController, jwtService: Jwt): Router 
 
   routes.post("/create", AuthMiddleware(jwtService), brandController.create)
   routes.delete("/:brand_id", AuthMiddleware(jwtService), brandController.delete)
+  routes.patch("/:brand_id/restore", AuthMiddleware(jwtService), brandController.restore)
   return routes;
 };
 
