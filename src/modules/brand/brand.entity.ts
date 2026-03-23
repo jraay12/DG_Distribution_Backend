@@ -90,5 +90,7 @@ export class Brand {
 
   get updateAt() {
     return this.props.updatedAt;
-  }
+  } 
+
+  get isDeleted() { return !!this.props.deletedAt; }
 }
