@@ -27,4 +27,15 @@ export class BrandRepository {
   async delete(brand_id: string): Promise<void> {
     await this.prisma.brand.delete({ where: { id: brand_id } });
   }
+
+  async restore(brand_id: string): Promise<void> {
+    await this.prisma.brand.update({
+      where: {
+        id: brand_id,
+      },
+      data: {
+        deletedAt: null,
+      },
+    });
+  }
 }
