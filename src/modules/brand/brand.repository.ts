@@ -50,4 +50,11 @@ export class BrandRepository {
     });
     return brand.map(Brand.hydrate);
   }
+
+  async update(brand_id: string, data: { brand_name: string }): Promise<void> {
+    await this.prisma.brand.update({
+      where: { id: brand_id },
+      data: { brand_name: data.brand_name },
+    });
+  }
 }
