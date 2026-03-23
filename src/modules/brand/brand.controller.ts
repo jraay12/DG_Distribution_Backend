@@ -54,4 +54,19 @@ export class BrandController {
       next(error)
     }
    }
+
+   updateName = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputBody = req.body as {brand_name: string}
+      const inputParams = req.params as {brand_id: string}
+      const user_id = req.user?.user_id
+      const result = await this.brandService.update(inputParams.brand_id, inputBody, user_id)
+      res.status(200).json({
+        message: "Successfully updated brand name",
+        result
+      })
+    } catch (error) {
+      next(error)
+    }
+   }
 }
