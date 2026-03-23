@@ -10,6 +10,7 @@ const brandRoutes = (brandController: BrandController, jwtService: Jwt): Router 
   routes.patch("/:brand_id/restore", AuthMiddleware(jwtService), brandController.restore)
   routes.get("/", AuthMiddleware(jwtService), brandController.getAllBrand)
   routes.patch("/:brand_id", AuthMiddleware(jwtService), brandController.updateName)
+  routes.get("/:brand_id", AuthMiddleware(jwtService), brandController.findById)
   return routes;
 };
 
