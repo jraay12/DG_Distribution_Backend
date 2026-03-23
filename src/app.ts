@@ -1,7 +1,14 @@
 import express from "express";
 import { Request, Response } from "express";
+import { errorHandler } from "./utils/middleware/error.middleware";
+import userRoutes from "./modules/user/user.routes";
+import authRoutes from "./modules/auth/auth.routes";
+import { userController, authController, jwt } from "./container";
+import cookieParser from "cookie-parser";
 const app = express();
 
+app.use(express.json());
+app.use(cookieParser());
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "UP",
@@ -10,6 +17,9 @@ app.get("/health", (req: Request, res: Response) => {
   });
 });
 
-app.use(express.json());
+app.use("/api/users", userRoutes(userController, jwt));
+app.use("/api/auth", authRoutes(authController));
+
+app.use(errorHandler);
 
 export default app;
