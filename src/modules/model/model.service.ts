@@ -1,0 +1,42 @@
+import { BadRequestError } from "../../utils/error/BadRequestError";
+import { ForbiddenError } from "../../utils/error/ForbiddenError";
+import { NotFoundError } from "../../utils/error/NotFoundError";
+import { BrandRepository } from "../brand/brand.repository";
+import { UserRepository } from "../user/user.repository";
+import { CreateModelDTO } from "./dto/CreateModelDTO";
+import { ModelResponseDTO } from "./dto/ModelResponseDTO";
+import { Model } from "./model.entity";
+import { ModelRepository } from "./model.repository";
+
+export class ModelService {
+  constructor(
+    private modelRepo: ModelRepository,
+    private userRepo: UserRepository,
+    private brandRepo: BrandRepository,
+  ) {}
+
+  async create(
+    data: CreateModelDTO,
+    user_id: string,
+  ): Promise<ModelResponseDTO> {
+    const user = await this.userRepo.findById(user_id);
+
+    if (!user) throw new NotFoundError("User not found");
+
+    if (!user.isAdmin())
+      throw new ForbiddenError(
+        "You do not have permission to perform this action",
+      );
+
+    const brand = await this.brandRepo.findById(data.brand_id);
+
+    if (!brand) throw new NotFoundError("Brand not found");
+
+    if(brand.isDeleted) throw new BadRequestError("Brand is deleted")
+
+    const model = Model.create(data);
+    await this.modelRepo.create(model);
+
+    return model.toJson();
+  }
+}
