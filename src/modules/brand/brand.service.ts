@@ -65,8 +65,33 @@ export class BrandService {
     return brand;
   }
 
-  async getAllBrand(page: number = 1, limit: number = 10): Promise<BrandResponseDTO[]> {
+  async getAllBrand(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<BrandResponseDTO[]> {
     const brand = await this.brandRepo.getActiveBrands();
-    return brand.map(e => e.toJson());
+    return brand.map((e) => e.toJson());
+  }
+
+  async update(
+    brand_id: string,
+    data: { brand_name: string }, user_id: string
+  ): Promise<BrandResponseDTO> {
+
+    const user = await this.userRepo.findById(user_id)
+    
+    if(!user) throw new NotFoundError("User not found")
+
+    if(!user.isAdmin) throw new ForbiddenError("Only admin can update the brand name")
+
+    const brand = await this.brandRepo.findById(brand_id);
+
+    if (!brand) throw new NotFoundError("Brand not found");
+
+    brand.updateName(data.brand_name);
+
+    this.brandRepo.update(brand_id, data);
+
+    return brand.toJson()
   }
 }
