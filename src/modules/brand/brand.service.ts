@@ -42,4 +42,22 @@ export class BrandService {
 
     return brand.toSafeObject()
   }
+
+  async restore(brand_id: string, user_id: string): Promise<BrandResponseDTO> {
+    const user = await this.userRepo.findById(user_id)
+
+    if(!user) throw new NotFoundError("Not found user")
+
+    if (!user.isAdmin) throw new ForbiddenError("Only admin can restore the deleted brand")
+
+    const brand = await this.brandRepo.findById(brand_id)
+
+    if (!brand) throw new NotFoundError("Brand not found")
+
+    brand.restore()
+
+    await this.brandRepo.restore(brand_id)
+    
+    return brand
+  }
 }
