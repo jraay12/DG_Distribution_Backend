@@ -54,6 +54,17 @@ export class Brand {
     this.props.deletedAt = new Date()
   }
 
+  updateName(brand_name: string): void {
+    if (!brand_name || brand_name.trim().length === 0) throw new BadRequestError("Brand Name is required")
+
+    if(this.props.deletedAt) throw new BadRequestError("Cannot update deleted brand")
+
+    if (brand_name.trim().length > Brand.MAX_BRANDNAME_LENGTH) throw new BadRequestError(`Brand Name must not exceed ${Brand.MAX_BRANDNAME_LENGTH} characters`)
+
+    this.props.brand_name = brand_name
+    this.props.updatedAt = new Date()
+  }
+
   restore(): void {
     if (!this.props.deletedAt) throw new BadRequestError("Brand is not deleted")
 
