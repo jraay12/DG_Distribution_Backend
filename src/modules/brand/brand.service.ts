@@ -17,8 +17,8 @@ export class BrandService {
     const user = await this.userRepo.findById(user_id);
     if (!user) throw new NotFoundError("User not found");
 
-    if(!user.isAdmin) throw new ForbiddenError("Only admins can create brand")
-      
+    if (!user.isAdmin) throw new ForbiddenError("Only admins can create brand");
+
     const brand = Brand.create(data);
 
     await this.brandRepo.create(brand);
@@ -26,38 +26,47 @@ export class BrandService {
     return brand.toSafeObject();
   }
 
-  async delete (data: {brand_id: string}, user_id: string): Promise<BrandResponseDTO>{
-    const user = await this.userRepo.findById(user_id)
+  async delete(
+    data: { brand_id: string },
+    user_id: string,
+  ): Promise<BrandResponseDTO> {
+    const user = await this.userRepo.findById(user_id);
 
-    if (!user) throw new NotFoundError("User not found")
+    if (!user) throw new NotFoundError("User not found");
 
-    if(!user.isAdmin) throw new ForbiddenError("Only admins can delete brand")
+    if (!user.isAdmin) throw new ForbiddenError("Only admins can delete brand");
 
-    const brand = await this.brandRepo.findById(data.brand_id)
+    const brand = await this.brandRepo.findById(data.brand_id);
 
-    if (!brand) throw new NotFoundError("Brand not found")
+    if (!brand) throw new NotFoundError("Brand not found");
 
-    brand.softDelete()
-    await this.brandRepo.delete(data.brand_id)
+    brand.softDelete();
+    await this.brandRepo.delete(data.brand_id);
 
-    return brand.toSafeObject()
+    return brand.toSafeObject();
   }
 
   async restore(brand_id: string, user_id: string): Promise<BrandResponseDTO> {
-    const user = await this.userRepo.findById(user_id)
+    const user = await this.userRepo.findById(user_id);
 
-    if(!user) throw new NotFoundError("Not found user")
+    if (!user) throw new NotFoundError("Not found user");
 
-    if (!user.isAdmin) throw new ForbiddenError("Only admin can restore the deleted brand")
+    if (!user.isAdmin)
+      throw new ForbiddenError("Only admin can restore the deleted brand");
 
-    const brand = await this.brandRepo.findById(brand_id)
+    const brand = await this.brandRepo.findById(brand_id);
 
-    if (!brand) throw new NotFoundError("Brand not found")
+    if (!brand) throw new NotFoundError("Brand not found");
 
-    brand.restore()
+    brand.restore();
 
-    await this.brandRepo.restore(brand_id)
-    
-    return brand
+    await this.brandRepo.restore(brand_id);
+
+    return brand;
+  }
+
+  async getAllBrand(page: number = 1, limit: number = 10): Promise<BrandResponseDTO[]> {
+    const brand = await this.brandRepo.getActiveBrands();
+    return brand.map(e => e.toJson());
   }
 }
