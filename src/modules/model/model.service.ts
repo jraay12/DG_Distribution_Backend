@@ -81,4 +81,15 @@ export class ModelService {
 
     return model.toJson()
   }
+
+  async restore(model_id: string): Promise<ModelResponseDTO> {
+     const model = await this.modelRepo.findById(model_id)
+
+    if(!model) throw new NotFoundError("Model not found")
+
+    model.restore()
+    await this.modelRepo.restore(model_id)
+
+    return model.toJson()
+  }
 }
