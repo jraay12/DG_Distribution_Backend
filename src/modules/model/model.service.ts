@@ -107,4 +107,9 @@ export class ModelService {
 
     return model
   }
+
+  async getAll(): Promise<ModelWithBrandResponseDTO[]> {
+    const models = await this.modelRepo.getAll()
+    return models
+  }
 }
