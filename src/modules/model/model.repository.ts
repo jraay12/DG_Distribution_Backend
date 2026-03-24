@@ -79,4 +79,26 @@ export class ModelRepository {
       data: { deletedAt: null },
     });
   }
+
+   async findByIdWithBrand(model_id: string): Promise<ModelWithBrandResponseDTO | null> {
+    const model = await this.prisma.model.findUnique({
+      where: { id: model_id },
+      include: {
+        brand: {
+          select: { brand_name: true }
+        }
+      }
+    });
+
+    if (!model) return null;
+
+    return {
+      id: model.id,
+      brand_name: model.brand.brand_name,
+      model_name: model.model_name,
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+      deletedAt: model.deletedAt,
+    };
+  }
 }
