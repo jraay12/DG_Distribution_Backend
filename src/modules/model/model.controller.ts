@@ -34,4 +34,15 @@ export class ModelController {
       next(error)
     }
   }
+
+  getActiveModel = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.modelService.getActiveModel()
+      res.status(200).json({
+        data: result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
