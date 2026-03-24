@@ -64,4 +64,10 @@ export class ModelService {
 
     return model.toJson()
   } 
+
+  async getActiveModel() : Promise<ModelResponseDTO[]> {
+    const model = await this.modelRepo.getActiveModels()
+
+    return model.map(e => e.toJson())
+  }
 }
