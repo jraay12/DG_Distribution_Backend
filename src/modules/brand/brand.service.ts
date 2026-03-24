@@ -17,7 +17,8 @@ export class BrandService {
     const user = await this.userRepo.findById(user_id);
     if (!user) throw new NotFoundError("User not found");
 
-    if (!user.isAdmin()) throw new ForbiddenError("Only admins can create brand");
+    if (!user.isAdmin())
+      throw new ForbiddenError("Only admins can create brand");
 
     const brand = Brand.create(data);
 
@@ -34,7 +35,8 @@ export class BrandService {
 
     if (!user) throw new NotFoundError("User not found");
 
-    if (!user.isAdmin()) throw new ForbiddenError("Only admins can delete brand");
+    if (!user.isAdmin())
+      throw new ForbiddenError("Only admins can delete brand");
 
     const brand = await this.brandRepo.findById(data.brand_id);
 
@@ -65,24 +67,22 @@ export class BrandService {
     return brand;
   }
 
-  async getAllBrand(
-    page: number = 1,
-    limit: number = 10,
-  ): Promise<BrandResponseDTO[]> {
-    const brand = await this.brandRepo.getActiveBrands();
+  async getBrand(includeDeleted: boolean): Promise<BrandResponseDTO[]> {
+    const brand = await this.brandRepo.getBrand(includeDeleted);
     return brand.map((e) => e.toJson());
   }
 
   async update(
     brand_id: string,
-    data: { brand_name: string }, user_id: string
+    data: { brand_name: string },
+    user_id: string,
   ): Promise<BrandResponseDTO> {
+    const user = await this.userRepo.findById(user_id);
 
-    const user = await this.userRepo.findById(user_id)
-    
-    if(!user) throw new NotFoundError("User not found")
+    if (!user) throw new NotFoundError("User not found");
 
-    if(!user.isAdmin()) throw new ForbiddenError("Only admin can update the brand name")
+    if (!user.isAdmin())
+      throw new ForbiddenError("Only admin can update the brand name");
 
     const brand = await this.brandRepo.findById(brand_id);
 
@@ -92,14 +92,14 @@ export class BrandService {
 
     this.brandRepo.update(brand_id, data);
 
-    return brand.toJson()
+    return brand.toJson();
   }
 
-  async findById(brand_id: string): Promise<BrandResponseDTO>{
-    const brand = await this.brandRepo.findById(brand_id)
+  async findById(brand_id: string): Promise<BrandResponseDTO> {
+    const brand = await this.brandRepo.findById(brand_id);
 
-    if (!brand) throw new NotFoundError("Brand not found")
-    
-    return brand.toJson()
+    if (!brand) throw new NotFoundError("Brand not found");
+
+    return brand.toJson();
   }
 }
