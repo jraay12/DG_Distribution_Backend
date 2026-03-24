@@ -39,21 +39,29 @@ export class ModelRepository {
     return Model.hydrate(model);
   }
 
-  async getActiveModels(): Promise<Model[]>{
+  async getActiveModels(): Promise<Model[]> {
     const models = await this.prisma.model.findMany({
       where: {
-        deletedAt: null
-      }, orderBy: {
-        createdAt: "desc"
-      }
-    })
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-    return models.map(Model.hydrate)
+    return models.map(Model.hydrate);
   }
 
   async softDelete(model_id: string): Promise<void> {
     await this.prisma.model.delete({
-      where: {id: model_id}
-    })
+      where: { id: model_id },
+    });
+  }
+
+  async restore(model_id: string): Promise<void> {
+    await this.prisma.model.update({
+      where: { id: model_id },
+      data: { deletedAt: null },
+    });
   }
 }
