@@ -39,10 +39,10 @@ export class BrandRepository {
     });
   }
 
-  async getActiveBrands(): Promise<Brand[]> {
+  async getBrand(includeDeleted: boolean): Promise<Brand[]> {
     const brand = await this.prisma.brand.findMany({
       where: {
-        deletedAt: null,
+        deletedAt: includeDeleted ? undefined : null,
       },
       orderBy: {
         createdAt: "desc",
