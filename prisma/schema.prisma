@@ -22,6 +22,8 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  product Product[]
 }
 
 model Brand {
@@ -41,9 +43,33 @@ model Model {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+  product Product[]
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  model_id String
+  model    Model    @relation(fields: [model_id], references: [id])
+  product_name String
+  price Decimal @db.Decimal(10, 2)
+  category Category
+  created_by String
+  user    User    @relation(fields: [created_by], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+enum Category {
+  Electronics
+  Apparel
+  Books
+  Toys
+  Furniture
+  Misc
 }
