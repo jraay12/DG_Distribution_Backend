@@ -29,4 +29,16 @@ export class ProductController {
       next(error)
     }
   }
+
+  restore = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {product_id: string}
+      const result = await this.productService.restore(inputParams.product_id)
+      res.status(200).json({
+        message: `Successfully restore ${result.product_name}`
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
