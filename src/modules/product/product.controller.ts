@@ -17,4 +17,16 @@ export class ProductController {
       next(error)
     }
   }
+
+  softDelete = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {product_id: string}
+      const result = await this.productService.softDelete(inputParams.product_id)
+      res.status(200).json({
+        message: `Successfully delete ${result.product_name}`
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
