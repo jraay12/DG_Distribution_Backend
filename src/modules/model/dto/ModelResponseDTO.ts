@@ -6,3 +6,7 @@ export interface ModelResponseDTO {
   updatedAt?: Date;
   deletedAt?: Date | null;
 }
+
+export type ModelWithBrandResponseDTO = Omit<ModelResponseDTO, "brand_id"> & {
+  brand_name: string
+}
