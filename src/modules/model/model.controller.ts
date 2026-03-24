@@ -57,4 +57,16 @@ export class ModelController {
       next(error)
     }
   }
+
+  restore = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {model_id: string}
+      const result = await this.modelService.restore(inputParams.model_id)
+      res.status(200).json({
+        message: `Successfully restore ${result.model_name} model`
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
