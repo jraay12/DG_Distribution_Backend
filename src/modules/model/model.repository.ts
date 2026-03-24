@@ -50,4 +50,10 @@ export class ModelRepository {
 
     return models.map(Model.hydrate)
   }
+
+  async softDelete(model_id: string): Promise<void> {
+    await this.prisma.model.delete({
+      where: {id: model_id}
+    })
+  }
 }
