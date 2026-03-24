@@ -1,3 +1,4 @@
+import { ForbiddenError } from "../error/ForbiddenError";
 import { UnAuthorizedError } from "../error/UnAuthorizedError";
 import { Jwt, Payload } from "../jwt";
 import { Request, Response, NextFunction } from "express";
@@ -10,7 +11,7 @@ declare global {
   }
 }
 
-export const AuthMiddleware = (jwtService: Jwt) => {
+export const AuthMiddleware = (jwtService: Jwt, allowedRoles: string[] = []) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token = req.headers.authorization?.split(" ")[1];
@@ -18,6 +19,10 @@ export const AuthMiddleware = (jwtService: Jwt) => {
       if (!token) throw new UnAuthorizedError("No token provided");
 
       const userPayload = await jwtService.verifyAccessToken<Payload>(token);
+
+       if (allowedRoles.length && !allowedRoles.includes(userPayload.role)) {
+        throw new ForbiddenError("You do not have permission to perform this action");
+      }
 
       req.user = {
         user_id: userPayload.user_id,
