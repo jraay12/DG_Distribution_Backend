@@ -47,9 +47,10 @@ export class BrandController {
     }
   };
 
-  getAllBrand = async (req: Request, res: Response, next: NextFunction) => {
+  getBrand = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.brandService.getAllBrand();
+      const includeDeleted = req.query.includeDeleted === 'true';
+      const result = await this.brandService.getBrand(includeDeleted);
       res.status(200).json({
         result,
       });
