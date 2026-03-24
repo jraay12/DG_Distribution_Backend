@@ -40,10 +40,10 @@ export class ModelRepository {
     return Model.hydrate(model);
   }
 
-  async getActiveModels(): Promise<ModelWithBrandResponseDTO[]> {
+  async getModels(includeDeleted: boolean): Promise<ModelWithBrandResponseDTO[]> {
     const models = await this.prisma.model.findMany({
       where: {
-        deletedAt: null,
+        deletedAt: includeDeleted ? undefined : null,
       },
       orderBy: {
         createdAt: "desc",
@@ -102,29 +102,5 @@ export class ModelRepository {
       updatedAt: model.updatedAt,
       deletedAt: model.deletedAt,
     };
-  }
-
-  async getAll(): Promise<ModelWithBrandResponseDTO[]> {
-    const models = await this.prisma.model.findMany({
-      include: {
-        brand: {
-          select: {
-            brand_name: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    return models.map((model) => ({
-      id: model.id,
-      brand_name: model.brand.brand_name,
-      model_name: model.model_name,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
-      deletedAt: model.deletedAt,
-    }));
   }
 }
