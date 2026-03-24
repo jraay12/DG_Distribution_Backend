@@ -1,4 +1,5 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { ModelWithBrandResponseDTO } from "./dto/ModelResponseDTO";
 import { Model } from "./model.entity";
 
 export class ModelRepository {
@@ -39,7 +40,7 @@ export class ModelRepository {
     return Model.hydrate(model);
   }
 
-  async getActiveModels(): Promise<Model[]> {
+  async getActiveModels(): Promise<ModelWithBrandResponseDTO[]> {
     const models = await this.prisma.model.findMany({
       where: {
         deletedAt: null,
@@ -47,9 +48,23 @@ export class ModelRepository {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        brand: {
+          select: {
+            brand_name: true
+          }
+        }
+      }
     });
 
-    return models.map(Model.hydrate);
+    return models.map(e => ({
+      id: e.id,
+      brand_name: e.brand.brand_name,
+      model_name: e.model_name,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      deletedAt: e.deletedAt
+    }))
   }
 
   async softDelete(model_id: string): Promise<void> {
