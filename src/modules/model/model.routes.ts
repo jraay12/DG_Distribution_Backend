@@ -9,6 +9,8 @@ const modelRoutes = (modelController: ModelController, jwtService: Jwt): Router 
   routes.patch("/:model_id", AuthMiddleware(jwtService, ["ADMIN"]), modelController.update)
   routes.get("/", AuthMiddleware(jwtService), modelController.getActiveModel)
   routes.delete("/:model_id", AuthMiddleware(jwtService, ["ADMIN"]), modelController.softDelete)
+  routes.patch("/:model_id/restore", AuthMiddleware(jwtService, ["ADMIN"]), modelController.restore)
+
   return routes;
 };
 
