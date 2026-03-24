@@ -20,4 +20,16 @@ export class ProductService {
 
     return product.toJson()
   }
+
+  async softDelete(product_id: string): Promise<ProductResponseDTO> {
+    const product = await this.productRepo.findById(product_id)
+
+    if (!product ) throw new NotFoundError("Product not found")
+
+    product.delete()
+
+    await this.productRepo.softDelete(product_id)
+
+    return product.toJson()
+  }
 }
