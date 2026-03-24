@@ -45,4 +45,16 @@ export class ModelController {
       next(error)
     }
   }
+
+  softDelete = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {model_id: string}
+      const result = await this.modelService.softDelete(inputParams.model_id)
+      res.status(200).json({
+        message: `Successfully delete ${result.model_name} model`
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
