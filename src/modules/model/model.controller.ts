@@ -69,4 +69,16 @@ export class ModelController {
       next(error)
     }
   }
+
+  findByIdWithBrand = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {model_id: string}
+      const result = await this.modelService.findByIdWithBrand(inputParams.model_id)
+      res.status(200).json({
+        data: result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
