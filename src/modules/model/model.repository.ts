@@ -1,8 +1,8 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { Model } from "./model.entity";
 
-export class ModelRepository{
-  constructor(private prisma: ExtendedPrismaClient){}
+export class ModelRepository {
+  constructor(private prisma: ExtendedPrismaClient) {}
 
   async create(model: Model): Promise<void> {
     await this.prisma.model.create({
@@ -12,8 +12,30 @@ export class ModelRepository{
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
         deletedAt: model.deletedAt,
-        brand_id: model.brandId
-      }
-    })
+        brand_id: model.brandId,
+      },
+    });
+  }
+
+  async update(model: Model): Promise<void> {
+    await this.prisma.model.update({
+      where: {
+        id: model.id,
+      },
+      data: {
+        brand_id: model.brandId,
+        model_name: model.modelName,
+      },
+    });
+  }
+
+  async findById(model_id: string): Promise<Model | null> {
+    const model = await this.prisma.model.findUnique({
+      where: { id: model_id },
+    });
+
+    if (!model) return null;
+
+    return Model.hydrate(model);
   }
 }
