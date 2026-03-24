@@ -99,4 +99,12 @@ export class ModelService {
 
     return model.toJson()
   }
+
+  async findByIdWithBrand(model_id: string): Promise<ModelWithBrandResponseDTO> {
+    const model = await this.modelRepo.findByIdWithBrand(model_id)
+
+    if (!model) throw new NotFoundError("Model not found")
+
+    return model
+  }
 }
