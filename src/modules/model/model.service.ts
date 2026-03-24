@@ -4,7 +4,7 @@ import { NotFoundError } from "../../utils/error/NotFoundError";
 import { BrandRepository } from "../brand/brand.repository";
 import { UserRepository } from "../user/user.repository";
 import { CreateModelDTO } from "./dto/CreateModelDTO";
-import { ModelResponseDTO } from "./dto/ModelResponseDTO";
+import { ModelResponseDTO, ModelWithBrandResponseDTO } from "./dto/ModelResponseDTO";
 import { UpdateModelDTO } from "./dto/UpdateModelDTO";
 import { Model } from "./model.entity";
 import { ModelRepository } from "./model.repository";
@@ -65,10 +65,17 @@ export class ModelService {
     return model.toJson()
   } 
 
-  async getActiveModel() : Promise<ModelResponseDTO[]> {
+  async getActiveModel() : Promise<ModelWithBrandResponseDTO[]> {
     const model = await this.modelRepo.getActiveModels()
 
-    return model.map(e => e.toJson())
+    return model.map(e => ({
+      id: e.id,
+      brand_name: e.brand_name,
+      model_name: e.model_name,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      deletedAt: e.deletedAt
+    }))
   }
 
   async softDelete(model_id: string): Promise<ModelResponseDTO> {
