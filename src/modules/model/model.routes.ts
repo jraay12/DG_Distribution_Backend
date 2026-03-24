@@ -7,6 +7,7 @@ const modelRoutes = (modelController: ModelController, jwtService: Jwt): Router 
 
   routes.post("/", AuthMiddleware(jwtService, ["ADMIN"]), modelController.create)
   routes.patch("/:model_id", AuthMiddleware(jwtService, ["ADMIN"]), modelController.update)
+  routes.get("/", AuthMiddleware(jwtService), modelController.getActiveModel)
   return routes;
 };
 
