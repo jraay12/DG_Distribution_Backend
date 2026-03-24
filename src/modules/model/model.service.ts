@@ -65,17 +65,9 @@ export class ModelService {
     return model.toJson()
   } 
 
-  async getActiveModel() : Promise<ModelWithBrandResponseDTO[]> {
-    const model = await this.modelRepo.getActiveModels()
-
-    return model.map(e => ({
-      id: e.id,
-      brand_name: e.brand_name,
-      model_name: e.model_name,
-      createdAt: e.createdAt,
-      updatedAt: e.updatedAt,
-      deletedAt: e.deletedAt
-    }))
+  async getModels(includeDeleted: boolean) : Promise<ModelWithBrandResponseDTO[]> {
+    const model = await this.modelRepo.getModels(includeDeleted)
+   return model
   }
 
   async softDelete(model_id: string): Promise<ModelResponseDTO> {
@@ -108,8 +100,4 @@ export class ModelService {
     return model
   }
 
-  async getAll(): Promise<ModelWithBrandResponseDTO[]> {
-    const models = await this.modelRepo.getAll()
-    return models
-  }
 }
