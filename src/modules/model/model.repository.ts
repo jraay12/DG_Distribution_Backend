@@ -38,4 +38,16 @@ export class ModelRepository {
 
     return Model.hydrate(model);
   }
+
+  async getActiveModels(): Promise<Model[]>{
+    const models = await this.prisma.model.findMany({
+      where: {
+        deletedAt: null
+      }, orderBy: {
+        createdAt: "desc"
+      }
+    })
+
+    return models.map(Model.hydrate)
+  }
 }
