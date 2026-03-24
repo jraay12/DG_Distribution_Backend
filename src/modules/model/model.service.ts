@@ -70,4 +70,15 @@ export class ModelService {
 
     return model.map(e => e.toJson())
   }
+
+  async softDelete(model_id: string): Promise<ModelResponseDTO> {
+    const model = await this.modelRepo.findById(model_id)
+
+    if(!model) throw new NotFoundError("Model not found")
+
+    model.delete()
+    await this.modelRepo.softDelete(model_id)
+
+    return model.toJson()
+  }
 }
