@@ -51,20 +51,20 @@ export class ModelRepository {
       include: {
         brand: {
           select: {
-            brand_name: true
-          }
-        }
-      }
+            brand_name: true,
+          },
+        },
+      },
     });
 
-    return models.map(e => ({
+    return models.map((e) => ({
       id: e.id,
       brand_name: e.brand.brand_name,
       model_name: e.model_name,
       createdAt: e.createdAt,
       updatedAt: e.updatedAt,
-      deletedAt: e.deletedAt
-    }))
+      deletedAt: e.deletedAt,
+    }));
   }
 
   async softDelete(model_id: string): Promise<void> {
@@ -80,14 +80,16 @@ export class ModelRepository {
     });
   }
 
-   async findByIdWithBrand(model_id: string): Promise<ModelWithBrandResponseDTO | null> {
+  async findByIdWithBrand(
+    model_id: string,
+  ): Promise<ModelWithBrandResponseDTO | null> {
     const model = await this.prisma.model.findUnique({
       where: { id: model_id },
       include: {
         brand: {
-          select: { brand_name: true }
-        }
-      }
+          select: { brand_name: true },
+        },
+      },
     });
 
     if (!model) return null;
@@ -100,5 +102,29 @@ export class ModelRepository {
       updatedAt: model.updatedAt,
       deletedAt: model.deletedAt,
     };
+  }
+
+  async getAll(): Promise<ModelWithBrandResponseDTO[]> {
+    const models = await this.prisma.model.findMany({
+      include: {
+        brand: {
+          select: {
+            brand_name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return models.map((model) => ({
+      id: model.id,
+      brand_name: model.brand.brand_name,
+      model_name: model.model_name,
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
+      deletedAt: model.deletedAt,
+    }));
   }
 }
