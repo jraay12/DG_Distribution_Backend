@@ -29,22 +29,30 @@ export class ProductRepository {
     });
   }
 
-  async findById(product_id: string): Promise<Product | null > {
+  async findById(product_id: string): Promise<Product | null> {
     const product = await this.prisma.product.findUnique({
       where: {
-        id: product_id
-      }
-    })
+        id: product_id,
+      },
+    });
 
-    if(!product) return null
+    if (!product) return null;
 
     const productProps = {
-    ...product,
-    price: product.price.toNumber(),
-    category: product.category as ProductCategory
-  };
+      ...product,
+      price: product.price.toNumber(),
+      category: product.category as ProductCategory,
+    };
 
-    return Product.hydrate(productProps)
+    return Product.hydrate(productProps);
+  }
 
+  async restore(product_id: string): Promise<void> {
+    await this.prisma.product.update({
+      where: { id: product_id },
+      data: {
+        deletedAt: null,
+      },
+    });
   }
 }
