@@ -69,6 +69,9 @@ export class ProductRepository {
       orderBy: {
         createdAt: "desc",
       },
+      where: {
+        deletedAt: null
+      },
       include: {
         model: {
           select: {
