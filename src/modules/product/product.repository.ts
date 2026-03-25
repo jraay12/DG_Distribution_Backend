@@ -1,4 +1,5 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { ProductWithModelResponseDTO } from "./dto/ProductWithModelResponse";
 import { Product } from "./product.entity";
 import { ProductCategory } from "./product.enum";
 
@@ -54,5 +55,48 @@ export class ProductRepository {
         deletedAt: null,
       },
     });
+  }
+
+  async getProduct(
+    page: number,
+    limit: number,
+  ): Promise<ProductWithModelResponseDTO[]> {
+    const skip = (page - 1) * limit;
+
+    const product = await this.prisma.product.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        model: {
+          select: {
+            model_name: true
+          }
+        },
+        user: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+
+    return product.map((e) => ({
+      id: e.id,
+      product_name: e.product_name,
+      model_name: e.model.model_name,
+      model_id: e.model_id,
+      category: e.category as ProductCategory,
+      price: e.price.toNumber(),
+      created_by: e.user.name
+      
+    }));
+  }
+
+  async productCount(): Promise<number>{
+    const total = await this.prisma.product.count()
+    return total
   }
 }
