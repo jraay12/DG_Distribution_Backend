@@ -52,7 +52,9 @@ export class ProductController {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const result = await this.productService.getProduct(page, limit);
+      const category = req.query.category as string | undefined;
+
+      const result = await this.productService.getProduct(page, limit, category);
       res.status(200).json({
         data: result.data,
         meta: result.meta,

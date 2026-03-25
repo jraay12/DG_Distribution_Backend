@@ -60,8 +60,14 @@ export class ProductRepository {
   async getProduct(
     page: number,
     limit: number,
+    category?: string,
   ): Promise<ProductWithModelResponseDTO[]> {
     const skip = (page - 1) * limit;
+
+    const whereClause: any = { deletedAt: null };
+    if (category) {
+      whereClause.category = category;
+    }
 
     const product = await this.prisma.product.findMany({
       skip,
@@ -69,21 +75,19 @@ export class ProductRepository {
       orderBy: {
         createdAt: "desc",
       },
-      where: {
-        deletedAt: null
-      },
+      where: whereClause,
       include: {
         model: {
           select: {
-            model_name: true
-          }
+            model_name: true,
+          },
         },
         user: {
           select: {
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     return product.map((e) => ({
@@ -93,13 +97,19 @@ export class ProductRepository {
       model_id: e.model_id,
       category: e.category as ProductCategory,
       price: e.price.toNumber(),
-      created_by: e.user.name
-      
+      created_by: e.user.name,
     }));
   }
 
-  async productCount(): Promise<number>{
-    const total = await this.prisma.product.count()
-    return total
+  async productCount(category?: string): Promise<number> {
+    const whereClause: any = {
+      deletedAt: null,
+    };
+
+    if (category) {
+      whereClause.category = category;
+    }
+    const total = await this.prisma.product.count({ where: whereClause });
+    return total;
   }
 }
