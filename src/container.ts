@@ -15,7 +15,8 @@ import { ModelRepository } from "./modules/model/model.repository";
 import { ProductController } from "./modules/product/product.controller";
 import { ProductRepository } from "./modules/product/product.repository";
 import { ProductService } from "./modules/product/product.service";
-
+import { StatsController } from "./modules/stats/stats.controller";
+import { StatsService } from "./modules/stats/stats.service";
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
@@ -35,6 +36,7 @@ const authService = new AuthService(userRepository, jwt, bcrypt);
 const brandService = new BrandService(brandRepository, userRepository)
 const modelService = new ModelService(modelRepository, userRepository, brandRepository)
 const productService = new ProductService(productRepository, modelRepository)
+const statsService = new StatsService(productRepository)
 
 // controller
 export const userController = new UserController(userService);
@@ -42,3 +44,4 @@ export const authController = new AuthController(authService)
 export const brandController = new BrandController(brandService)
 export const modelController = new ModelController(modelService)
 export const productController = new ProductController(productService)
+export const statsController = new StatsController(statsService)
