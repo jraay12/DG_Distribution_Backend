@@ -9,7 +9,7 @@ const productRoutes = (productController: ProductController, jwtService: Jwt): R
   routes.post("/", AuthMiddleware(jwtService, ["ADMIN"]), productController.save)
   routes.delete('/:product_id', AuthMiddleware(jwtService, ["ADMIN"]), productController.softDelete)
   routes.patch('/:product_id/restore', AuthMiddleware(jwtService, ["ADMIN"]), productController.restore)
-
+  routes.get("/", AuthMiddleware(jwtService), productController.getProduct)
   return routes;
 };
 
