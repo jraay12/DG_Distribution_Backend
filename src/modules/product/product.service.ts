@@ -3,6 +3,7 @@ import { NotFoundError } from "../../utils/error/NotFoundError";
 import { ModelRepository } from "../model/model.repository";
 import { CreateProductDTO } from "./dto/CreateProductDTO";
 import { ProductResponseDTO } from "./dto/ProductResponseDTO";
+import { PaginatedProductResponseDTO } from "./dto/ProductWithModelResponse";
 import { Product } from "./product.entity";
 import { ProductRepository } from "./product.repository";
 
@@ -44,5 +45,28 @@ export class ProductService {
 
     return product.toJson()
 
+  }
+
+  async getProduct(page: number = 1, limit: number = 10): Promise<PaginatedProductResponseDTO> {
+
+    const [data, total] = await Promise.all([this.productRepo.getProduct(page, limit), this.productRepo.productCount()])
+    
+    const totalPage = Math.ceil(total / limit)
+
+    const hasNextPage = page < totalPage
+
+    const hasPrevPage = page > 1
+    
+    return {
+      data: data,
+      meta: {
+        limit,
+        page, 
+        total,
+        totalPage,
+        hasNextPage,
+        hasPrevPage
+      }
+    }
   }
 }
