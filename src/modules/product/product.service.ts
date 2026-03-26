@@ -6,9 +6,10 @@ import { ProductResponseDTO } from "./dto/ProductResponseDTO";
 import { PaginatedProductResponseDTO } from "./dto/ProductWithModelResponse";
 import { Product } from "./product.entity";
 import { ProductRepository } from "./product.repository";
-
+import { emitProductStats } from "../../utils/socket/socket.publisher";
+import { ExtendedPrismaClient } from "../../config/prisma";
 export class ProductService {
-  constructor(private productRepo: ProductRepository, private modelRepo: ModelRepository){}
+  constructor(private productRepo: ProductRepository, private modelRepo: ModelRepository, private prisma: ExtendedPrismaClient){}
 
   async save(data: CreateProductDTO): Promise<ProductResponseDTO> {
     const model = await this.modelRepo.findById(data.model_id)
@@ -17,7 +18,14 @@ export class ProductService {
 
     const product = Product.create(data)
 
-    await this.productRepo.save(product)
+    let productCount: number;
+
+    await this.prisma.$transaction( async (tx) => {
+      await this.productRepo.save(product, tx as typeof this.prisma)
+      productCount = await this.productRepo.productCount(undefined, tx as typeof this.prisma);
+    })
+    
+    emitProductStats(productCount!)
 
     return product.toJson()
   }
