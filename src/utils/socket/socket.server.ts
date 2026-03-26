@@ -15,14 +15,14 @@ export const socketInit = (server: HttpServer) => {
     },
  })
 
- io.use((socket, next) => {
+ io.use(async (socket, next) => {
   const token = socket.handshake.auth.token || socket.handshake.query.token || socket.handshake.headers.authorization
 
 
   if (!token) return next(new UnAuthorizedError('Authentication error'));
 
   try {
-    const user = jwt.verifyAccessToken(token)
+    const user = await jwt.verifyAccessToken(token)
     socket.data.user = user;
     next();
   } catch (error) {
