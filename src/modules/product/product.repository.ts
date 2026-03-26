@@ -6,8 +6,7 @@ import { ProductCategory } from "./product.enum";
 export class ProductRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
-  async save(product: Product, tx?: typeof this.prisma ): Promise<void> {
-
+  async save(product: Product, tx?: typeof this.prisma): Promise<void> {
     const client = (tx ?? this.prisma) as ExtendedPrismaClient;
     await client.product.create({
       data: {
@@ -103,9 +102,11 @@ export class ProductRepository {
     }));
   }
 
-  async productCount(category?: string, tx? : typeof this.prisma): Promise<number> {
-
-    const client = (tx ?? this.prisma) as ExtendedPrismaClient
+  async productCount(
+    category?: string,
+    tx?: typeof this.prisma,
+  ): Promise<number> {
+    const client = (tx ?? this.prisma) as ExtendedPrismaClient;
     const whereClause: any = {
       deletedAt: null,
     };
@@ -115,5 +116,21 @@ export class ProductRepository {
     }
     const total = await client.product.count({ where: whereClause });
     return total;
+  }
+
+  async update(product: Product, tx?: typeof this.prisma): Promise<void> {
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+
+    await client.product.update({
+      where: {
+        id: product.id,
+      },
+      data: {
+        category: product.category,
+        price: product.price,
+        product_name: product.productName,
+        model_id: product.modelId,
+      }
+    });
   }
 }
