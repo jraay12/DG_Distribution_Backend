@@ -10,10 +10,18 @@ import statsRoutes from "./modules/stats/stats.routes";
 import { userController, authController, jwt, brandController, modelController, productController, statsController } from "./container";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { Server } from "socket.io";
+import { createServer } from "node:http";
+import { socketInit } from "./utils/socket/socket.server";
+
 const app = express();
+const server = createServer(app)
+socketInit(server)
 app.use(cors({ origin: "http://localhost:5174" , credentials: true, methods: ["GET", "POST", "DELETE", "PUT", "PATCH"]}));
+
 app.use(express.json());
 app.use(cookieParser());
+
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "UP",
@@ -31,4 +39,4 @@ app.use("/api/auth", authRoutes(authController));
 
 app.use(errorHandler);
 
-export default app;
+export default server;
