@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ProductService } from "./product.service";
 import { CreateProductDTO } from "./dto/CreateProductDTO";
+import { UpdateProductDTO } from "./dto/UpdateProductDTO";
 
 export class ProductController {
   constructor(private productService: ProductService) {}
@@ -63,4 +64,18 @@ export class ProductController {
       next(error);
     }
   };
+
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as {product_id: string}
+      const inputBody: UpdateProductDTO = req.body as UpdateProductDTO
+      const result = await this.productService.update(inputBody, inputParams.product_id)
+      res.status(200).json({
+        message: "Successfully updated",
+        data: result
+      })
+    } catch (error) {
+      next(error);
+    }
+  }
 }
