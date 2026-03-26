@@ -10,7 +10,6 @@ import statsRoutes from "./modules/stats/stats.routes";
 import { userController, authController, jwt, brandController, modelController, productController, statsController } from "./container";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { Server } from "socket.io";
 import { createServer } from "node:http";
 import { socketInit } from "./utils/socket/socket.server";
 
