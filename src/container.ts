@@ -35,7 +35,7 @@ const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
 const brandService = new BrandService(brandRepository, userRepository)
 const modelService = new ModelService(modelRepository, userRepository, brandRepository)
-const productService = new ProductService(productRepository, modelRepository)
+const productService = new ProductService(productRepository, modelRepository, prisma)
 const statsService = new StatsService(productRepository)
 
 // controller
