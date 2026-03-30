@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   product Product[]
+  stockmovement StockMovement[]
 }
 
 model Brand {
@@ -60,6 +61,36 @@ model Product {
   deletedAt DateTime?
 
   @@index([category, deletedAt])
+  inventory Inventory[]
+  stockmovement StockMovement[]
+}
+
+model Inventory {
+  id        String   @id @default(uuid())
+  product_id String
+  product    Product    @relation(fields: [product_id], references: [id])
+  quantity Int
+  reorder_level Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([product_id])
+}
+
+model StockMovement {
+  id        String   @id @default(uuid())
+  product_id String
+  product    Product    @relation(fields: [product_id], references: [id])
+  type Type
+  quantity Int
+  createdAt DateTime @default(now())
+  created_by String
+  user    User    @relation(fields: [created_by], references: [id])
+
+  @@index([product_id])
+  @@index([created_by])
+  @@index([createdAt])
+  @@index([product_id, createdAt])
 }
 
 enum Role {
@@ -74,4 +105,10 @@ enum Category {
   Toys
   Furniture
   Misc
+}
+
+enum Type {
+  IN
+  OUT
+  ADJUSTMENT
 }
