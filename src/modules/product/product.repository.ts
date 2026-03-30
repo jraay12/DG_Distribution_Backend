@@ -19,7 +19,14 @@ export class ProductRepository {
         createdAt: product.createdAt,
         updatedAt: product.updatedAt,
         deletedAt: product.deletedAt,
+        inventory: {
+          create: {
+            quantity: 0,
+            reorder_level: null
+          }
+        }
       },
+      
     });
   }
 
