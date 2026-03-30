@@ -6,7 +6,7 @@ export interface InventoryProps {
   quantity: number;
   reorder_level?: number | null;
   updatedAt?: Date;
-  createdAt?: Date | null;
+  createdAt?: Date;
 }
 
 export class Inventory {
