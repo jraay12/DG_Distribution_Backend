@@ -38,4 +38,19 @@ export class InventoryService {
 
     return inventory.toJson()
   }
+
+  async updateReorderLevel(data: {product_id: string, reorder_level: number}): Promise<InventoryResponseDTO>{
+    const product = await this.productRepo.findById(data.product_id)
+    if(!product) throw new NotFoundError("Product not found")
+    if(product.isDeleted) throw new BadRequestError("Cannot add reorder level to deleted product")
+
+    const inventory = await this.inventoryRepo.findById(data.product_id)
+    if (!inventory) throw new NotFoundError("Inventory for this product not found")
+
+    inventory.addReorderLevel({reorder_level: data.reorder_level})
+
+    await this.inventoryRepo.update(inventory)
+
+    return inventory.toJson()
+  }
 }
