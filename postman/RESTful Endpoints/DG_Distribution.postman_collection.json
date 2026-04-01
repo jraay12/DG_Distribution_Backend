@@ -17,7 +17,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4NmQ2MTU0LTE4YTMtNDUwYS05N2JlLTc2OTk0ZmUzMTc5ZiIsImlhdCI6MTc3Mjk4MTM4OSwiZXhwIjoxNzcyOTgyMjg5fQ.Ih3SpEYyAnoiCzczruad9AymI6lu6BXgtRrv-CftBmc",
+                  "value": "{{token}}",
                   "type": "string"
                 }
               ]
@@ -89,6 +89,136 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Activate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"admin123\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/users/:user_id/activate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                ":user_id",
+                "activate"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"admin123\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/users/:user_id/deactivate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                ":user_id",
+                "deactivate"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "b5592809-f0a5-4c35-865d-a8a1efdc96c1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"johnraycaete@gmail.com\",\r\n    \"name\":\"admin123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/users/:user_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                ":user_id"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -112,7 +242,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"johnraycaete@gmail.com\",\r\n    \"password\":\"qwerty123\"\r\n}",
+              "raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"admin123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -803,7 +933,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Apparel\",\r\n  \"model_id\": \"14e97f76-b497-4d72-8b43-b194a68fc721\",\r\n  \"product_name\": \"TESLA LOGO\"\r\n}",
+              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Apparel\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"14e97f76-b497-4d72-8b43-b194a68fc721\",\r\n  \"product_name\": \"NEW PRODUCT CREATED\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -859,7 +989,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "74e9cada-5c55-4eb5-bf71-3c26aa15ebf0"
+                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
                 }
               ]
             }
@@ -901,7 +1031,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "74e9cada-5c55-4eb5-bf71-3c26aa15ebf0"
+                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
                 }
               ]
             }
@@ -1047,6 +1177,154 @@
                 "api",
                 "stats",
                 ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Add Stock",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"quantity\": 50\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/inventory/:product_id/stock/add",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "inventory",
+                ":product_id",
+                "stock",
+                "add"
+              ],
+              "variable": [
+                {
+                  "key": "product_id",
+                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deduct Stock",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"quantity\": 50\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/inventory/:product_id/stock/deduct",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "inventory",
+                ":product_id",
+                "stock",
+                "deduct"
+              ],
+              "variable": [
+                {
+                  "key": "product_id",
+                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Reorder Level",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"reorder_level\": 0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/inventory/:product_id/reorder-level",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "inventory",
+                ":product_id",
+                "reorder-level"
+              ],
+              "variable": [
+                {
+                  "key": "product_id",
+                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                }
               ]
             }
           },
