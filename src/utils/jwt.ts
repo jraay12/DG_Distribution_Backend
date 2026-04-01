@@ -4,6 +4,7 @@ import { UnAuthorizedError } from "./error/UnAuthorizedError";
 export interface Payload {
   user_id: string;
   role: UserRole;
+  isActivate: boolean
 }
 
 export class Jwt {

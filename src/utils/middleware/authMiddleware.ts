@@ -24,9 +24,12 @@ export const AuthMiddleware = (jwtService: Jwt, allowedRoles: string[] = []) => 
         throw new ForbiddenError("You do not have permission to perform this action");
       }
 
+      if (!userPayload.isActivate) throw new ForbiddenError("Your account is not activated");
+
       req.user = {
         user_id: userPayload.user_id,
-        role: userPayload.role
+        role: userPayload.role,
+        isActivate: userPayload.isActivate
       };
 
       next();

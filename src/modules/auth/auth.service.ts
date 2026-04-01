@@ -31,11 +31,13 @@ export class AuthService {
     const accessToken = await this.jwt.signAccessToken({
       role: user.role,
       user_id: user.id,
+      isActivate: user.isUserActive
     });
 
     const refreshToken = await this.jwt.signRefreshToken({
       role: user.role,
       user_id: user.id,
+      isActivate: user.isUserActive
     });
 
     return { accessToken, refreshToken };
@@ -53,11 +55,13 @@ export class AuthService {
     const accessToken = await this.jwt.signAccessToken({
       role: payload.role,
       user_id: payload.user_id,
+      isActivate: user.isUserActive
     });
 
     const newRefreshToken = await this.jwt.signRefreshToken({
       role: payload.role,
       user_id: payload.user_id,
+      isActivate: user.isUserActive
     });
 
     return { accessToken, refreshToken: newRefreshToken };
