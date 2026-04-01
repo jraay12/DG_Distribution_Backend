@@ -41,6 +41,17 @@ export class Inventory {
     this.props.updatedAt = new Date();
   }
 
+  addReorderLevel(data: {reorder_level: number}) {
+    if (data.reorder_level !== null && data.reorder_level < 0) {
+      throw new BadRequestError("Reorder level cannot be negative");
+    }
+
+    this.props.reorder_level = data.reorder_level
+    
+    this.props.updatedAt = new Date();
+
+  }
+
   static hydrate(props: InventoryProps): Inventory {
     return new Inventory(props);
   }
