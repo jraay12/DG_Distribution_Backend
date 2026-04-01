@@ -34,4 +34,20 @@ export class InventoryController {
       next(error);
     }
   };
+
+  updateReorderLevel = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { product_id } = req.params as { product_id: string };
+      const { reorder_level } = req.body as {
+        reorder_level: number;
+      };
+      const result = await this.inventoryService.updateReorderLevel({
+        product_id,
+        reorder_level,
+      });
+      res.status(200).json({ result });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
