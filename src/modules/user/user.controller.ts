@@ -30,4 +30,44 @@ export class UserController {
       next(error);
     }
   };
+
+  activateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string}
+      const result = await this.userService.activateUser({user_id})
+      res.status(200).json({
+        message: "Successfully activate user",
+        data:result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  deactivateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string}
+      const result = await this.userService.deactivateUser({user_id})
+      res.status(200).json({
+        message: "Successfully deactivate user",
+        data:result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string}
+      const {email, name} = req.body as {name: string, email: string}
+      const result = await this.userService.updateUser({email, name, user_id})
+      res.status(200).json({
+        message: "Successfully update",
+        data: result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }

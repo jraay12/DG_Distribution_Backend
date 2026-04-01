@@ -75,6 +75,10 @@ export class User {
   get isActive() {
     return this.props.isActive;
   }
+
+  get isUserActive(): boolean {
+    return !!this.props.isActive
+  }
   get role() {
     return this.props.role;
   }

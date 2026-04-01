@@ -19,6 +19,8 @@ export class AuthService {
 
     if (!user) throw new UnAuthorizedError("Invalid credentials");
 
+    if(!user.isUserActive) throw new UnAuthorizedError("This user is deactivated please contact administrator")
+
     const matchPassword = await this.bcrypt.compare(
       data.password,
       user.password,

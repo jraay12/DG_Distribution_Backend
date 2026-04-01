@@ -44,4 +44,42 @@ export class UserService {
     const hashedPassword = await this.bcrypt.hash(data.newPassword);
     await this.userRepo.updatePassword(user_id, hashedPassword);
   }
+
+  async activateUser(data: {user_id: string}): Promise<UserReponseDTO>{
+    const user = await this.userRepo.findById(data.user_id)
+    if(!user) throw new NotFoundError("User not found")
+
+    user.activate()
+
+    await this.userRepo.update(user)
+
+    return user.toSafeObject()
+  }
+
+   async deactivateUser(data: {user_id: string}): Promise<UserReponseDTO>{
+    const user = await this.userRepo.findById(data.user_id)
+    if(!user) throw new NotFoundError("User not found")
+
+    user.deactivate()
+
+    await this.userRepo.update(user)
+
+    return user.toSafeObject()
+  }
+
+  async updateUser(data: {name: string, email: string, user_id: string}): Promise<UserReponseDTO> {
+    const user = await this.userRepo.findById(data.user_id)
+    if(!user) throw new NotFoundError("User not found")
+
+    const findByEmail = await this.userRepo.findByEmail(data.email)
+    if(findByEmail) throw new ConflictError("Email already exist")
+      
+    user.updateEmail(data.email)
+    user.updateName(data.name)
+
+    await this.userRepo.update(user)
+
+    return user.toSafeObject()
+  }
+
 }

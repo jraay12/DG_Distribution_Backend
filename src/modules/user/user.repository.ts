@@ -52,4 +52,16 @@ export class UserRepository {
       },
     });
   }
+
+  async update(user: User): Promise<void> {
+    await this.prisma.user.update({
+      where: {id: user.id}, 
+      data: {
+        email: user.email,
+        isActive: user.isActive,
+        name: user.name,
+        role: user.role,
+      }
+    })
+  }
 }
