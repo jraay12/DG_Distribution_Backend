@@ -9,7 +9,6 @@ export class InventoryService {
   constructor(private inventoryRepo: InventoryRepository, private productRepo: ProductRepository){}
 
   async addStock(data: AddStockInventoryDTO): Promise<InventoryResponseDTO>{
-    console.log(data)
     const product = await this.productRepo.findById(data.product_id)
     if (!product) throw new NotFoundError("Product not found")
 
