@@ -61,13 +61,13 @@ model Product {
   deletedAt DateTime?
 
   @@index([category, deletedAt])
-  inventory Inventory[]
+  inventory Inventory?
   stockmovement StockMovement[]
 }
 
 model Inventory {
   id        String   @id @default(uuid())
-  product_id String
+  product_id String @unique
   product    Product    @relation(fields: [product_id], references: [id])
   quantity Int
   reorder_level Int?
