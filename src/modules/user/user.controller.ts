@@ -30,4 +30,17 @@ export class UserController {
       next(error);
     }
   };
+
+  activateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string}
+      const result = await this.userService.activateUser({user_id})
+      res.status(200).json({
+        message: "Successfully activate user",
+        data:result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
 }
