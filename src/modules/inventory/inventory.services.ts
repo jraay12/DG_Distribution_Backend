@@ -34,7 +34,7 @@ export class InventoryService {
     return inventory.toJson()
   }
 
-  async deductStock(data: {product_id: string, quantity: number}): Promise<InventoryResponseDTO>{
+  async deductStock(data: {product_id: string, quantity: number}, user_id: string): Promise<InventoryResponseDTO>{
     const product = await this.productRepo.findById(data.product_id)
     if(!product) throw new NotFoundError("Product not found")
     if(product.isDeleted) throw new BadRequestError("Cannot deduct stock to the product that is deleted")
@@ -43,8 +43,14 @@ export class InventoryService {
     if (!inventory) throw new NotFoundError("Inventory for this product not found")
 
     inventory.deductStock({quantity: data.quantity})
+    const stockMovement = StockMovement.create({type: Type.ADJUSTMENT , product_id: data.product_id, quantity: data.quantity, created_by: user_id})
 
-    await this.inventoryRepo.update(inventory)
+
+    await this.prisma.$transaction(async (tx) => {
+      await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
+      await this.stockMovementRepo.save(stockMovement, tx as typeof this.prisma)
+    })
+    
 
     return inventory.toJson()
   }
