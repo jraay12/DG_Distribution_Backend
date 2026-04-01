@@ -5,7 +5,7 @@ import { Inventory } from "./inventory.entity";
 export class InventoryRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
-  async addStock(inventory: Inventory): Promise<void> {
+  async update(inventory: Inventory): Promise<void> {
     await this.prisma.inventory.update({
       where: { id: inventory.id },
       data: {
