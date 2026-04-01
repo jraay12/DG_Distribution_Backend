@@ -7,9 +7,10 @@ export class InventoryRepository {
 
   async update(inventory: Inventory): Promise<void> {
     await this.prisma.inventory.update({
-      where: { id: inventory.id },
+      where: { product_id: inventory.productId },
       data: {
         quantity: inventory.quantity,
+        reorder_level: inventory.reorderLevel ?? null
       },
     });
   }
