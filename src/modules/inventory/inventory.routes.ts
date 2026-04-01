@@ -6,8 +6,8 @@ import { Jwt } from "../../utils/jwt"
 const inventoryRoutes = (inventoryController: InventoryController, jwtService: Jwt): Router => {
   const routes = Router()
 
-  routes.patch("/:product_id", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.addStock)
-
+  routes.patch("/:product_id/stock/add", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.addStock)
+  routes.patch("/:product_id/stock/deduct", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.deductStock)
   return routes
 
 }
