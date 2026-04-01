@@ -8,6 +8,7 @@ const inventoryRoutes = (inventoryController: InventoryController, jwtService: J
 
   routes.patch("/:product_id/stock/add", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.addStock)
   routes.patch("/:product_id/stock/deduct", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.deductStock)
+  routes.patch("/:product_id/reorder-level", AuthMiddleware(jwtService, ["ADMIN"]), inventoryController.updateReorderLevel)
   return routes
 
 }
