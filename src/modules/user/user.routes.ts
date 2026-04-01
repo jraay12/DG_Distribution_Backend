@@ -8,6 +8,8 @@ const userRoutes = (userController: UserController, jwtService: Jwt): Router => 
   routes.post("/create", userController.createUser);
   routes.post("/change-password",  AuthMiddleware(jwtService), userController.updatePassword);
   routes.patch("/:user_id/activate",  AuthMiddleware(jwtService), userController.activateUser);
+  routes.patch("/:user_id/deactivate",  AuthMiddleware(jwtService), userController.deactivateUser);
+
   return routes;
 };
 
