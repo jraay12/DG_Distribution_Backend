@@ -20,21 +20,24 @@ export class Inventory {
     };
   }
 
-  static create(props: Omit<InventoryProps, "id" | "createdAt" | "updatedAt">) {
-    if (props.quantity <= 0)
+  addStock(data: { quantity: number; reorder_level?: number | null }) {
+    if (data.quantity <= 0)
       throw new BadRequestError("Quantity must be greater than zero");
 
-    return new Inventory({
-      ...props,
-      id: crypto.randomUUID(),
-    });
+    this.props.quantity += data.quantity;
+
+    if (data.reorder_level !== undefined) {
+      this.props.reorder_level = data.reorder_level;
+    }
+
+    this.props.updatedAt = new Date();
   }
 
   static hydrate(props: InventoryProps): Inventory {
-    return new Inventory(props)
+    return new Inventory(props);
   }
 
-  toJson(){
+  toJson() {
     return {
       id: this.id,
       product_id: this.props.product_id,
@@ -42,8 +45,7 @@ export class Inventory {
       quantity: this.props.quantity,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
-      
-    }
+    };
   }
 
   // Getters
