@@ -20,7 +20,22 @@ export class InventoryService {
 
     inventory.addStock({quantity: data.quantity})
 
-    await this.inventoryRepo.addStock(inventory)
+    await this.inventoryRepo.update(inventory)
+
+    return inventory.toJson()
+  }
+
+  async deductStock(data: {product_id: string, quantity: number}): Promise<InventoryResponseDTO>{
+    const product = await this.productRepo.findById(data.product_id)
+    if(!product) throw new NotFoundError("Product not found")
+    if(product.isDeleted) throw new BadRequestError("Cannot deduct stock to the product that is deleted")
+
+    const inventory = await this.inventoryRepo.findById(data.product_id)
+    if (!inventory) throw new NotFoundError("Inventory for this product not found")
+
+    inventory.deductStock({quantity: data.quantity})
+
+    await this.inventoryRepo.update(inventory)
 
     return inventory.toJson()
   }
