@@ -8,6 +8,7 @@ import { Product } from "./product.entity";
 import { ProductRepository } from "./product.repository";
 import { emitProductStats } from "../../utils/socket/socket.publisher";
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { UpdateProductDTO } from "./dto/UpdateProductDTO";
 export class ProductService {
   constructor(private productRepo: ProductRepository, private modelRepo: ModelRepository, private prisma: ExtendedPrismaClient){}
 
@@ -76,5 +77,20 @@ export class ProductService {
         hasPrevPage
       }
     }
+  }
+
+  async update(data: UpdateProductDTO, product_id: string): Promise<ProductResponseDTO> {
+    const product = await this.productRepo.findById(product_id)
+    if (!product) throw new NotFoundError("Product not found")
+
+    const model = await this.modelRepo.findById(data.model_id)
+    if(!model) throw new NotFoundError("Model not found")
+
+    product.update(data.product_name, data.price, data.category, data.model_id)
+
+    await this.productRepo.update(product)
+
+    return product.toJson()
+
   }
 }

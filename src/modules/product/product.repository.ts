@@ -6,8 +6,7 @@ import { ProductCategory } from "./product.enum";
 export class ProductRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
-  async save(product: Product, tx?: typeof this.prisma ): Promise<void> {
-
+  async save(product: Product, tx?: typeof this.prisma): Promise<void> {
     const client = (tx ?? this.prisma) as ExtendedPrismaClient;
     await client.product.create({
       data: {
@@ -20,7 +19,14 @@ export class ProductRepository {
         createdAt: product.createdAt,
         updatedAt: product.updatedAt,
         deletedAt: product.deletedAt,
+        inventory: {
+          create: {
+            quantity: 0,
+            reorder_level: null
+          }
+        }
       },
+      
     });
   }
 
@@ -89,6 +95,12 @@ export class ProductRepository {
             name: true,
           },
         },
+        inventory: {
+          select: {
+            quantity: true,
+            reorder_level: true
+          }
+        }
       },
     });
 
@@ -100,12 +112,16 @@ export class ProductRepository {
       category: e.category as ProductCategory,
       price: e.price.toNumber(),
       created_by: e.user.name,
+      stock: e.inventory?.quantity!,
+      reorder_level: e.inventory?.reorder_level
     }));
   }
 
-  async productCount(category?: string, tx? : typeof this.prisma): Promise<number> {
-
-    const client = (tx ?? this.prisma) as ExtendedPrismaClient
+  async productCount(
+    category?: string,
+    tx?: typeof this.prisma,
+  ): Promise<number> {
+    const client = (tx ?? this.prisma) as ExtendedPrismaClient;
     const whereClause: any = {
       deletedAt: null,
     };
@@ -115,5 +131,21 @@ export class ProductRepository {
     }
     const total = await client.product.count({ where: whereClause });
     return total;
+  }
+
+  async update(product: Product, tx?: typeof this.prisma): Promise<void> {
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+
+    await client.product.update({
+      where: {
+        id: product.id,
+      },
+      data: {
+        category: product.category,
+        price: product.price,
+        product_name: product.productName,
+        model_id: product.modelId,
+      }
+    });
   }
 }

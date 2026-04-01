@@ -8,6 +8,8 @@ export interface ProductWithModelResponseDTO {
   category: ProductCategory
   price: number
   created_by: string
+  stock: number
+  reorder_level?: number | null
 }
 
 export interface PaginatedProductResponseDTO {

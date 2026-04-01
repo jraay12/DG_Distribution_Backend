@@ -17,6 +17,9 @@ import { ProductRepository } from "./modules/product/product.repository";
 import { ProductService } from "./modules/product/product.service";
 import { StatsController } from "./modules/stats/stats.controller";
 import { StatsService } from "./modules/stats/stats.service";
+import { InventoryController } from "./modules/inventory/inventory.controller";
+import { InventoryRepository } from "./modules/inventory/inventory.repository";
+import { InventoryService } from "./modules/inventory/inventory.services";
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
@@ -29,6 +32,7 @@ const userRepository = new UserRepository(prisma);
 const brandRepository = new BrandRepository(prisma)
 const modelRepository = new ModelRepository(prisma)
 const productRepository = new ProductRepository(prisma)
+const inventoryRepository = new InventoryRepository(prisma)
 
 // service
 const userService = new UserService(userRepository, bcrypt);
@@ -37,6 +41,7 @@ const brandService = new BrandService(brandRepository, userRepository)
 const modelService = new ModelService(modelRepository, userRepository, brandRepository)
 const productService = new ProductService(productRepository, modelRepository, prisma)
 const statsService = new StatsService(productRepository)
+const inventoryService = new InventoryService(inventoryRepository, productRepository)
 
 // controller
 export const userController = new UserController(userService);
@@ -45,3 +50,4 @@ export const brandController = new BrandController(brandService)
 export const modelController = new ModelController(modelService)
 export const productController = new ProductController(productService)
 export const statsController = new StatsController(statsService)
+export const inventoryController = new InventoryController(inventoryService)
