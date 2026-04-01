@@ -95,6 +95,12 @@ export class ProductRepository {
             name: true,
           },
         },
+        inventory: {
+          select: {
+            quantity: true,
+            reorder_level: true
+          }
+        }
       },
     });
 
@@ -106,6 +112,8 @@ export class ProductRepository {
       category: e.category as ProductCategory,
       price: e.price.toNumber(),
       created_by: e.user.name,
+      stock: e.inventory?.quantity!,
+      reorder_level: e.inventory?.reorder_level
     }));
   }
 
