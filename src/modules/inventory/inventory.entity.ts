@@ -20,15 +20,23 @@ export class Inventory {
     };
   }
 
-  addStock(data: { quantity: number; reorder_level?: number | null }) {
+  addStock(data: { quantity: number}) {
     if (data.quantity <= 0)
       throw new BadRequestError("Quantity must be greater than zero");
 
     this.props.quantity += data.quantity;
 
-    if (data.reorder_level !== undefined) {
-      this.props.reorder_level = data.reorder_level;
+    this.props.updatedAt = new Date();
+  }
+
+  deductStock(data: {quantity: number}) {
+    if (data.quantity <= 0) throw new BadRequestError("Quantity must be greater than zero")
+
+    if (this.props.quantity < data.quantity) {
+      throw new BadRequestError("Insufficient stock");
     }
+
+    this.props.quantity -= data.quantity
 
     this.props.updatedAt = new Date();
   }
