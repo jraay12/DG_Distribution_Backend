@@ -8,6 +8,7 @@ const customerRoutes = (
 ): Router => {
   const routes = Router();
   routes.post("/", AuthMiddleware(jwtService), customerController.create);
+  routes.patch("/:customer_id", AuthMiddleware(jwtService), customerController.update)
   return routes;
 };
 
