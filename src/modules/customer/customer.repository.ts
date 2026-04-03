@@ -53,4 +53,15 @@ export class CustomerRepository {
       }
     })
   }
+
+  async restore(customer_id: string): Promise<void> {
+    await this.prisma.customer.update({
+      where: {
+        id: customer_id
+      },
+      data: {
+        deletedAt: null
+      }
+    })
+  }
 }
