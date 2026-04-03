@@ -35,4 +35,14 @@ export class CustomerService {
 
     return customer.toJSON()
   }
+
+  async delete(customer_id: string): Promise<void> {
+    const customer = await this.customerRepo.findById(customer_id)
+
+    if(!customer) throw new NotFoundError("Customer not found")
+
+    customer.delete()
+
+    await this.customerRepo.delete(customer_id)
+  }
 }
