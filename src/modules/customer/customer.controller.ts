@@ -1,6 +1,7 @@
 import { CustomerService } from "./customer.service";
 import { Request, Response, NextFunction } from "express";
 import { CreateCustomerDTO } from "./dto/CreateCustomerDTO";
+import { UpdateCustomerDTO } from "./dto/UpdateCustomerDTO";
 export class CustomerController {
   constructor(private customerService: CustomerService){}
 
@@ -10,6 +11,20 @@ export class CustomerController {
       const result = await this.customerService.create(inputBody)
       res.status(201).json({
         message: "Successfully create customer",
+        data: result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  update = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as { customer_id: string}
+      const inputBody: UpdateCustomerDTO = req.body as UpdateCustomerDTO
+      const result = await this.customerService.update(inputBody, inputParams.customer_id)
+      res.status(200).json({
+        message: "Successfully update",
         data: result
       })
     } catch (error) {
