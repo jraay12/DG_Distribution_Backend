@@ -32,4 +32,16 @@ export class CustomerController {
     }
   }
 
+  findById = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {customer_id} = req.params as {customer_id: string}
+      const result = await this.customerService.findById(customer_id)
+      res.status(200).json({
+        data: result
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
