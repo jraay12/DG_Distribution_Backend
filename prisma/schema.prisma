@@ -93,6 +93,17 @@ model StockMovement {
   @@index([product_id, createdAt])
 }
 
+model Customer {
+  id        String   @id @default(uuid())
+  store_name String
+  owner_name String
+  address String
+  contact_number String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
 enum Role {
   USER
   ADMIN
