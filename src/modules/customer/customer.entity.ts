@@ -55,6 +55,13 @@ export class Customer {
     return new Customer(props)
   }
 
+  delete() {
+    if (this.props.deletedAt) throw new BadRequestError("Customer already deleted")
+
+    this.props.deletedAt = new Date()
+    this.props.updatedAt = new Date()
+  }
+
   get id(): string {
     return this.props.id;
   }
