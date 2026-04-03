@@ -56,4 +56,16 @@ export class CustomerController {
     }
   }
 
+  restore = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {customer_id} = req.params as {customer_id: string}
+      await this.customerService.restore(customer_id)
+      res.status(200).json({
+        message: "Successfully restore customer"
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
