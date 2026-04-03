@@ -27,4 +27,12 @@ export class CustomerService {
 
     return customer.toJSON()
   }
+
+  async findById(customer_id: string): Promise<CustomerResponseDTO> {
+    const customer = await this.customerRepo.findById(customer_id)
+
+    if (!customer) throw new NotFoundError("Customer not found")
+
+    return customer.toJSON()
+  }
 }
