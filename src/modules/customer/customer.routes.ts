@@ -9,6 +9,7 @@ const customerRoutes = (
   const routes = Router();
   routes.post("/", AuthMiddleware(jwtService), customerController.create);
   routes.patch("/:customer_id", AuthMiddleware(jwtService), customerController.update)
+  routes.get("/:customer_id", AuthMiddleware(jwtService), customerController.findById)
   return routes;
 };
 
