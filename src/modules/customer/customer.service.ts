@@ -45,4 +45,14 @@ export class CustomerService {
 
     await this.customerRepo.delete(customer_id)
   }
+
+  async restore(customer_id: string): Promise<void> {
+    const customer = await this.customerRepo.findById(customer_id)
+
+    if(!customer) throw new NotFoundError("Customer not found")
+
+    customer.restore()
+
+    await this.customerRepo.restore(customer_id)
+  }
 }
