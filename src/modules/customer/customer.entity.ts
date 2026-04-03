@@ -62,6 +62,13 @@ export class Customer {
     this.props.updatedAt = new Date()
   }
 
+  restore() {
+    if (!this.props.deletedAt) throw new BadRequestError("Cannot restore customer not deleted")
+
+    this.props.deletedAt = null
+    this.props.updatedAt = new Date()
+  }
+
   get id(): string {
     return this.props.id;
   }
