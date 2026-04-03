@@ -35,6 +35,21 @@ export class Customer {
 
     return new Customer({ ...props, id: crypto.randomUUID() });
   }
+
+  updateCustomer(props: Omit<CustomerProps, "id" | "createdAt" | "updatedAt" | "deletedAt">){
+    if (!props.store_name) throw new BadRequestError("Store name is required");
+    if (!props.owner_name) throw new BadRequestError("Owner name is required");
+    if (!props.contact_number)
+      throw new BadRequestError("Contact number is required");
+    if (!props.address)
+      throw new BadRequestError("Address is required");
+
+    this.props.store_name = props.store_name
+    this.props.owner_name = props.owner_name
+    this.props.address = props.address
+    this.props.contact_number = props.contact_number
+    this.props.updatedAt = new Date()
+  }
   
   static hydrate(props: CustomerProps):Customer {
     return new Customer(props)
