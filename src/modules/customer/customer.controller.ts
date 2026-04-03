@@ -44,4 +44,16 @@ export class CustomerController {
     }
   }
 
+  delete = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {customer_id} = req.params as {customer_id: string}
+      await this.customerService.delete(customer_id)
+      res.status(200).json({
+        message: "Successfully delete customer"
+      })
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
