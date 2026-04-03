@@ -2,7 +2,7 @@ import { ExtendedPrismaClient } from "../../config/prisma";
 import { Customer } from "./customer.entity";
 
 export class CustomerRepository {
-  constructor(private prisma: ExtendedPrismaClient){}
+  constructor(private prisma: ExtendedPrismaClient) {}
 
   async save(customer: Customer): Promise<void> {
     await this.prisma.customer.create({
@@ -14,8 +14,35 @@ export class CustomerRepository {
         store_name: customer.storeName,
         createdAt: customer.createdAt,
         deletedAt: customer.deletedAt,
+        updatedAt: customer.updatedAt,
+      },
+    });
+  }
+
+  async findById(customer_id: string): Promise<Customer | null> {
+    const customer = await this.prisma.customer.findUnique({
+      where: {
+        id: customer_id,
+      },
+    });
+
+    if (!customer) return null;
+
+    return Customer.hydrate(customer);
+  }
+
+  async update(customer: Customer): Promise<void> {
+    await this.prisma.customer.update({
+      where: {
+        id: customer.id,
+      },
+      data: {
+        address: customer.address,
+        contact_number: customer.contactNumber,
+        owner_name: customer.ownerName,
+        store_name: customer.storeName,
         updatedAt: customer.updatedAt
-      }
-    })
+      },
+    });
   }
 }
