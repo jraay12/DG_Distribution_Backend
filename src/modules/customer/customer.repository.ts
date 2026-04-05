@@ -64,4 +64,20 @@ export class CustomerRepository {
       }
     })
   }
+
+  async getCustomers(status: "all" | "active" | "deleted" = "active"): Promise<Customer[]> {
+
+    const whereClause: any = {}
+
+    if(status){
+      whereClause.deletedAt = status === 'active' ? null : status === "deleted" ? {not: null} : undefined
+    }
+    
+
+    const customers = await this.prisma.customer.findMany({
+      where: whereClause
+    })
+
+    return customers.map(customer => Customer.hydrate(customer))
+  }
 }
