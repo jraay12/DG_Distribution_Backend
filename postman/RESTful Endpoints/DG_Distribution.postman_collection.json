@@ -638,7 +638,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"brand_id\": \"33f13d69-ec85-4c04-b1a1-b55019de7e3d\",\r\n    \"model_name\": \"Model 123\"\r\n}",
+              "raw": "{\r\n    \"brand_id\": \"d470f8f7-3a5f-4d0b-8978-1677fe004b1d\",\r\n    \"model_name\": \"Model 123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -933,7 +933,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Apparel\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"14e97f76-b497-4d72-8b43-b194a68fc721\",\r\n  \"product_name\": \"NEW PRODUCT CREATED\"\r\n}",
+              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Apparel\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"fec48d6e-91c1-4d24-9a37-45101bc1ae9d\",\r\n  \"product_name\": \"NEW PRODUCT CREATED\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1228,7 +1228,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                  "value": "e89c504f-c0fc-42b4-9819-efdc7b8c2ab8"
                 }
               ]
             }
@@ -1276,7 +1276,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                  "value": "e89c504f-c0fc-42b4-9819-efdc7b8c2ab8"
                 }
               ]
             }
@@ -1324,6 +1324,331 @@
                 {
                   "key": "product_id",
                   "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_name\": \"Ray's Store\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/customer",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_name\": \"Ray's Store Update\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/customer/:customer_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By ID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_name\": \"Ray's Store Update\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/customer/:customer_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Customer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_name\": \"Ray's Store Update\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/customer/:customer_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Restore soft deleted customer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_name\": \"Ray's Store Update\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/customer/:customer_id/restore",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer",
+                ":customer_id",
+                "restore"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Customers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer?status=active",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Deleted Customers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer?status=deleted",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "deleted"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Customers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer?status=all",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "all"
                 }
               ]
             }
