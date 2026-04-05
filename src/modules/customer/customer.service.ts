@@ -55,4 +55,9 @@ export class CustomerService {
 
     await this.customerRepo.restore(customer_id)
   }
+
+  async getCustomers(status: "all" | "active" | "deleted" = "active"): Promise<CustomerResponseDTO[]> {
+    const customers = await this.customerRepo.getCustomers(status)
+    return customers.map(customer => customer.toJSON())
+  }
 }
