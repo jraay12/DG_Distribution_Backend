@@ -12,6 +12,8 @@ const customerRoutes = (
   routes.get("/:customer_id", AuthMiddleware(jwtService), customerController.findById)
   routes.delete("/:customer_id", AuthMiddleware(jwtService), customerController.delete)
   routes.patch("/:customer_id/restore", AuthMiddleware(jwtService), customerController.restore)
+  routes.get("/", AuthMiddleware(jwtService), customerController.getCustomers)
+
 
   return routes;
 };
