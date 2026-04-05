@@ -2,6 +2,7 @@ import { CustomerService } from "./customer.service";
 import { Request, Response, NextFunction } from "express";
 import { CreateCustomerDTO } from "./dto/CreateCustomerDTO";
 import { UpdateCustomerDTO } from "./dto/UpdateCustomerDTO";
+import { BadRequestError } from "../../utils/error/BadRequestError";
 export class CustomerController {
   constructor(private customerService: CustomerService){}
 
@@ -65,6 +66,29 @@ export class CustomerController {
       })
     } catch (error) {
       next(error)
+    }
+  }
+
+  getCustomers = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {status} = req.query as {status?: string}
+      let normalizedStatus: "active" | "deleted" | "all" = "active"
+
+      if(status){
+        const value = status.toLowerCase()
+
+        if (value === "active" || value === "deleted" || value === "all") {
+          normalizedStatus = value
+        } else {
+          throw new BadRequestError("Invalid status value")
+        }
+      }
+      const result = await this.customerService.getCustomers(normalizedStatus)
+      res.status(200).json({
+        data: result
+      })
+    } catch (error) {
+      next(error)      
     }
   }
 
