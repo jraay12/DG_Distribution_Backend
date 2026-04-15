@@ -1,5 +1,6 @@
 import { User } from "./user.entity";
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { UserReponseDTO } from "./dto/UserResponseDTO";
 export class UserRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
@@ -55,13 +56,50 @@ export class UserRepository {
 
   async update(user: User): Promise<void> {
     await this.prisma.user.update({
-      where: {id: user.id}, 
+      where: { id: user.id },
       data: {
         email: user.email,
         isActive: user.isActive,
         name: user.name,
         role: user.role,
-      }
-    })
+      },
+    });
+  }
+
+  async getUsers(
+    page: number,
+    limit: number,
+  ): Promise<UserReponseDTO[]> {
+    const skip = (page - 1) * limit;
+
+    const whereClause: any = { isActive: true };
+ 
+    const users = await this.prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: whereClause
+    });
+
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    }));
+  }
+
+  async userCount(tx?: typeof this.prisma): Promise<number> {
+    const client = (tx ?? this.prisma) as ExtendedPrismaClient;
+    const whereClause: any = {
+      isActive: true,
+    };
+    const total = await client.user.count({ where: whereClause });
+    return total;
   }
 }

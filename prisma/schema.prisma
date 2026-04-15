@@ -25,6 +25,7 @@ model User {
 
   product Product[]
   stockmovement StockMovement[]
+  deliveryreport DeliveryReport[]
 }
 
 model Brand {
@@ -102,6 +103,43 @@ model Customer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+
+  deliveryreport DeliveryReport[]
+}
+
+model DeliveryReport {
+  id        String   @id @default(uuid())
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id String
+  customer    Customer    @relation(fields: [customer_id], references: [id])
+  customer_id String
+  date DateTime
+  remarks String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  gpsLog GpsLog[]
+  imageEvidence ImageEvidence[]
+}
+
+model GpsLog {
+  id        String   @id @default(uuid())
+  deliveryReport    DeliveryReport    @relation(fields: [delivery_id], references: [id])
+  delivery_id String
+  latitude Float
+  longitude Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ImageEvidence {
+  id        String   @id @default(uuid())
+  deliveryReport    DeliveryReport    @relation(fields: [delivery_id], references: [id])
+  delivery_id String
+  image_path String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

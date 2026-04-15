@@ -10,6 +10,8 @@ const userRoutes = (userController: UserController, jwtService: Jwt): Router => 
   routes.patch("/:user_id/activate",  AuthMiddleware(jwtService, ["ADMIN"]), userController.activateUser);
   routes.patch("/:user_id/deactivate",  AuthMiddleware(jwtService, ["ADMIN"]), userController.deactivateUser);
   routes.patch("/:user_id",  AuthMiddleware(jwtService), userController.update);
+  routes.get("/", AuthMiddleware(jwtService, ["ADMIN"]), userController.getUsers)
+
   return routes;
 };
 
