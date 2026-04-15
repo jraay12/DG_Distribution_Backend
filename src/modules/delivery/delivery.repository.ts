@@ -49,4 +49,14 @@ export class DeliveryRepository {
 
     return DeliveryReport.hydrate(delivery)
   }
+
+  async getEvidences(delivery_id: string): Promise<ImageEvidence[]> {
+    const evidences = await this.prisma.imageEvidence.findMany({
+      where: {
+        delivery_id
+      }
+    })
+
+    return evidences.map(evidence => ImageEvidence.hydrate(evidence))
+  }
 }

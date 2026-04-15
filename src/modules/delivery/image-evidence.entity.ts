@@ -25,6 +25,15 @@ export class ImageEvidence {
     return new ImageEvidence({...props, id: crypto.randomUUID()})
   }
 
+  static hydrate(props: ImageEvidenceProps): ImageEvidence {
+      return new ImageEvidence(props);
+    }
+
+  toJson(): ImageEvidenceProps {
+    return { ...this.props };
+  }
+  
+
   // Getters
   get id(): string {
     return this.props.id
