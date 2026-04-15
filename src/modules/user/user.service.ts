@@ -1,5 +1,5 @@
 import { CreateUserDTO } from "./dto/CreateUserDTO";
-import { UserReponseDTO } from "./dto/UserResponseDTO";
+import { PaginatedUserResponseDTO, UserReponseDTO } from "./dto/UserResponseDTO";
 import { UserRepository } from "./user.repository";
 import { User } from "./user.entity";
 import { Bcrypt } from "../../utils/bcrypt";
@@ -45,41 +45,66 @@ export class UserService {
     await this.userRepo.updatePassword(user_id, hashedPassword);
   }
 
-  async activateUser(data: {user_id: string}): Promise<UserReponseDTO>{
-    const user = await this.userRepo.findById(data.user_id)
-    if(!user) throw new NotFoundError("User not found")
+  async activateUser(data: { user_id: string }): Promise<UserReponseDTO> {
+    const user = await this.userRepo.findById(data.user_id);
+    if (!user) throw new NotFoundError("User not found");
 
-    user.activate()
+    user.activate();
 
-    await this.userRepo.update(user)
+    await this.userRepo.update(user);
 
-    return user.toSafeObject()
+    return user.toSafeObject();
   }
 
-   async deactivateUser(data: {user_id: string}): Promise<UserReponseDTO>{
-    const user = await this.userRepo.findById(data.user_id)
-    if(!user) throw new NotFoundError("User not found")
+  async deactivateUser(data: { user_id: string }): Promise<UserReponseDTO> {
+    const user = await this.userRepo.findById(data.user_id);
+    if (!user) throw new NotFoundError("User not found");
 
-    user.deactivate()
+    user.deactivate();
 
-    await this.userRepo.update(user)
+    await this.userRepo.update(user);
 
-    return user.toSafeObject()
+    return user.toSafeObject();
   }
 
-  async updateUser(data: {name: string, email: string, user_id: string}): Promise<UserReponseDTO> {
-    const user = await this.userRepo.findById(data.user_id)
-    if(!user) throw new NotFoundError("User not found")
+  async updateUser(data: {
+    name: string;
+    email: string;
+    user_id: string;
+  }): Promise<UserReponseDTO> {
+    const user = await this.userRepo.findById(data.user_id);
+    if (!user) throw new NotFoundError("User not found");
 
-    const findByEmail = await this.userRepo.findByEmail(data.email)
-    if(findByEmail) throw new ConflictError("Email already exist")
-      
-    user.updateEmail(data.email)
-    user.updateName(data.name)
+    const findByEmail = await this.userRepo.findByEmail(data.email);
+    if (findByEmail) throw new ConflictError("Email already exist");
 
-    await this.userRepo.update(user)
+    user.updateEmail(data.email);
+    user.updateName(data.name);
 
-    return user.toSafeObject()
+    await this.userRepo.update(user);
+
+    return user.toSafeObject();
   }
 
+  async getUsers(page: number = 1, limit: number = 10): Promise<PaginatedUserResponseDTO> {
+    const [data, total] = await Promise.all([
+      this.userRepo.getUsers(page, limit),
+      this.userRepo.userCount(),
+    ]);
+    const totalPage = Math.ceil(total / limit);
+    const hasNextPage = page < totalPage;
+    const hasPrevPage = page > 1;
+
+    return {
+      data: data,
+      meta: {
+        limit,
+        page, 
+        total,
+        totalPage,
+        hasNextPage,
+        hasPrevPage
+      }
+    }
+  }
 }

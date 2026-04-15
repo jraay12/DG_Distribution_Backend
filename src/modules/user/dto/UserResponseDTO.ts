@@ -9,3 +9,15 @@ export interface UserReponseDTO {
   createdAt?: Date
   updatedAt?: Date
 }
+
+export interface PaginatedUserResponseDTO {
+  data: UserReponseDTO[],
+  meta: {
+    page: number
+    limit: number
+    totalPage: number
+    total: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+  }
+}
