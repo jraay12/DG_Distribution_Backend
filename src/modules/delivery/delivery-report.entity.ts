@@ -6,7 +6,7 @@ export interface DeliveryReportProps {
   user_id: string;
   customer_id: string;
   date: Date;
-  remarks: string;
+  remarks?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;
@@ -34,11 +34,6 @@ export class DeliveryReport {
     if (!props.customer_id)
       throw new BadRequestError("Customer ID is required");
     if (!props.date) throw new BadRequestError("Date is required");
-
-    // validate the date
-    if (!(props.date instanceof Date) || isNaN(props.date.getTime())) {
-      throw new BadRequestError("Invalid date");
-    }
 
     return new DeliveryReport({
       ...props,
@@ -71,7 +66,7 @@ export class DeliveryReport {
   }
 
   get remarks(): string {
-    return this.props.remarks;
+    return this.props.remarks!;
   }
 
   get createdAt(): Date {

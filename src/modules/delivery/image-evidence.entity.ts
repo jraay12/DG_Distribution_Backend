@@ -21,7 +21,6 @@ export class ImageEvidence {
 
   static save(props: Omit<ImageEvidenceProps, "id" | "createdAt" | "updatedAt">) {
     if(!props.delivery_id) throw new BadRequestError("Delivery ID is required")
-    if(!props.image_path) throw new BadRequestError("Image path is required")
 
     return new ImageEvidence({...props, id: crypto.randomUUID()})
   }

@@ -24,6 +24,9 @@ import { StockMovementRepository } from "./modules/Stock Movement/stock-movement
 import { CustomerController } from "./modules/customer/customer.controller";
 import { CustomerRepository } from "./modules/customer/customer.repository";
 import { CustomerService } from './modules/customer/customer.service';
+import { DeliveryController } from "./modules/delivery/delivery-report.controller";
+import { DeliveryRepository } from "./modules/delivery/delivery.repository";
+import { DeliveryService } from "./modules/delivery/delivery-report.service";
 
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
@@ -40,6 +43,7 @@ const productRepository = new ProductRepository(prisma)
 const inventoryRepository = new InventoryRepository(prisma)
 const stockMovementRepository = new StockMovementRepository(prisma)
 const customerRepository = new CustomerRepository(prisma)
+const deliveryRepository = new DeliveryRepository(prisma)
 
 // service
 const userService = new UserService(userRepository, bcrypt);
@@ -50,6 +54,7 @@ const productService = new ProductService(productRepository, modelRepository, pr
 const statsService = new StatsService(productRepository)
 const inventoryService = new InventoryService(inventoryRepository, productRepository, stockMovementRepository, prisma)
 const customerService = new CustomerService(customerRepository)
+const deliveryService = new DeliveryService(deliveryRepository)
 
 // controller
 export const userController = new UserController(userService);
@@ -60,3 +65,4 @@ export const productController = new ProductController(productService)
 export const statsController = new StatsController(statsService)
 export const inventoryController = new InventoryController(inventoryService)
 export const customerController = new CustomerController(customerService)
+export const deliveryController = new DeliveryController(deliveryService)

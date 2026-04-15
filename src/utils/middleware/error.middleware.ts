@@ -4,6 +4,7 @@ import { NotFoundError } from "../error/NotFoundError";
 import { UnAuthorizedError } from "../error/UnAuthorizedError";
 import { ConflictError } from "../error/ConflictError";
 import { ForbiddenError } from "../error/ForbiddenError";
+import multer from "multer";
 export const errorHandler = (
   err: Error,
   req: Request,
@@ -45,6 +46,14 @@ export const errorHandler = (
       .status(409)
       .json({ success: false, message: "Unique constraint failed" });
     return;
+  }
+
+  if(err instanceof multer.MulterError){
+    if(err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        error: "File too large. Maximum size allowed is 5MB."
+      });
+    }
   }
 
   console.log(err);
