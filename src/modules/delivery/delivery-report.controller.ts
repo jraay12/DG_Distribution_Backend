@@ -4,30 +4,55 @@ import { CreateDeliveryReportDTO } from "./dto/CreateDeliveryReportDTO";
 import fs from "fs";
 
 export class DeliveryController {
-  constructor(private deliveryService: DeliveryService){}
+  constructor(private deliveryService: DeliveryService) {}
 
-   create = async(req: Request, res: Response, next: NextFunction) => {
-
-    let filePath: string ;
+  create = async (req: Request, res: Response, next: NextFunction) => {
+    let filePath: string;
     try {
-      const inputBody: CreateDeliveryReportDTO = req.body as CreateDeliveryReportDTO
+      const inputBody: CreateDeliveryReportDTO =
+        req.body as CreateDeliveryReportDTO;
 
-      if (!req.file) res.status(400).json({
-        error: "No file uploaded"
-      })
-       filePath = (req.file as any).path
-       
-     await this.deliveryService.save({...inputBody, image_path: filePath})
+      if (!req.file)
+        res.status(400).json({
+          error: "No file uploaded",
+        });
+      filePath = (req.file as any).path;
+
+      await this.deliveryService.save({ ...inputBody, image_path: filePath });
       res.status(201).json({
-        message: "Successfully create delivery report"
-      })
+        message: "Successfully create delivery report",
+      });
     } catch (error) {
-
       if (filePath! && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
 
-      next(error)
+      next(error);
     }
-   }
+  };
+
+  createNewEvidence = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    let filePath: string;
+
+    try {
+      const { delivery_id } = req.params as { delivery_id: string };
+      if (!req.file)
+        res.status(400).json({
+          error: "No file uploaded",
+        });
+      filePath = (req.file as any).path;
+      await this.deliveryService.saveNewEvidence({id: delivery_id, image_path: filePath})
+      res.status(201).json({message: "Successfully added new evidence "})
+    } catch (error) {
+      if (filePath! && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      next(error);
+    }
+  };
 }

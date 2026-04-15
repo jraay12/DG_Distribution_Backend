@@ -28,4 +28,25 @@ export class DeliveryRepository {
       }
     })
   }
+
+  async saveEvidence(imageEvidence: ImageEvidence): Promise<void> {
+    await this.prisma.imageEvidence.create({
+      data: {
+        delivery_id: imageEvidence.deliveryId,
+        image_path: imageEvidence.imagePath 
+      }
+    })
+  }
+
+  async findDeliveryById(id: string): Promise<DeliveryReport | null> {
+    const delivery = await this.prisma.deliveryReport.findUnique({
+      where: {
+        id
+      }
+    })
+
+    if (!delivery) return null
+
+    return DeliveryReport.hydrate(delivery)
+  }
 }

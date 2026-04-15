@@ -1,9 +1,10 @@
+import { BadRequestError } from "../../utils/error/BadRequestError";
 import { DeliveryReport } from "./delivery-report.entity";
 import { DeliveryRepository } from "./delivery.repository";
 import { CreateDeliveryReportDTO } from "./dto/CreateDeliveryReportDTO";
+import { SaveNewEvidence } from "./dto/SaveNewEvidenceDTO";
 import { GpsLogs } from "./gps-log.entity";
 import { ImageEvidence } from "./image-evidence.entity";
-import { getPresignedUrl } from "../../utils/awsS3";
 
 export class DeliveryService {
   constructor(private deliveryRepository: DeliveryRepository) {}
@@ -30,5 +31,18 @@ export class DeliveryService {
 
     await this.deliveryRepository.save(delivery, gps, evidence);
 
+  }
+
+  async saveNewEvidence(dto: SaveNewEvidence): Promise<void> {
+    const delivery = await this.deliveryRepository.findDeliveryById(dto.id)
+
+    if(!delivery) throw new BadRequestError("Delivery not found")
+
+    const evidence = ImageEvidence.save({
+      delivery_id: delivery.id,
+      image_path: dto.image_path,
+    });
+
+    await this.deliveryRepository.saveEvidence(evidence)
   }
 }

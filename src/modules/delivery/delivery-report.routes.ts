@@ -11,6 +11,7 @@ const deliveryRoutes = (
 ): Router => {
   const routes = Router();
   routes.post("/", AuthMiddleware(jwtService), upload.single('evidence'),deliveryController.create);
+  routes.post("/:delivery_id/evidence", AuthMiddleware(jwtService), upload.single('evidence'),deliveryController.createNewEvidence);
  
 
 
