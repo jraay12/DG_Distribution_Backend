@@ -29,4 +29,14 @@ export class PromoCodeService {
 
     await this.promoCodeRepo.update(existing_promo, id)
   }
+
+  async enabled(id: string): Promise<void> {
+    const existing_promo = await this.promoCodeRepo.findById(id)
+
+    if(!existing_promo) throw new NotFoundError("Promo code not found")
+
+    existing_promo.enablePromoCode()
+
+    await this.promoCodeRepo.update(existing_promo, id)
+  }
 }

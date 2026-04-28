@@ -72,7 +72,7 @@ export class PromoCode {
    enablePromoCode(): void {
     if (this.props.isActive)
       throw new BadRequestError(
-        "Cannot enabled this promo code since it's already enabled",
+        "Cannot activate this promo code since it's already activated",
       );
 
     this.props.isActive = true;

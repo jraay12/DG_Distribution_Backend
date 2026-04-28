@@ -30,4 +30,16 @@ export class PromoCodeController {
       next(error);
     }
   };
+
+  enabled = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as { id: string };
+      await this.promoCodeService.enabled(inputParams.id);
+      res.status(200).json({
+        message: "Successfully activate promo code",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
