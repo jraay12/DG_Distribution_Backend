@@ -142,6 +142,24 @@ model ImageEvidence {
   updatedAt DateTime @updatedAt
 }
 
+model PromoCode {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  discountType    DiscountType
+  discountValue   Float    
+  maxUsage        Int?     
+  usedCount       Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
 enum Role {
   USER
   ADMIN

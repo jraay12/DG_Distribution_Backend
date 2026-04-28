@@ -27,7 +27,9 @@ import { CustomerService } from './modules/customer/customer.service';
 import { DeliveryController } from "./modules/delivery/delivery-report.controller";
 import { DeliveryRepository } from "./modules/delivery/delivery.repository";
 import { DeliveryService } from "./modules/delivery/delivery-report.service";
-
+import { PromoCodeController } from "./modules/promo/promo.controller";
+import { PromoCodeService } from "./modules/promo/promo.service";
+import { PromoCodeRepository } from "./modules/promo/promo.repository";
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
@@ -44,6 +46,7 @@ const inventoryRepository = new InventoryRepository(prisma)
 const stockMovementRepository = new StockMovementRepository(prisma)
 const customerRepository = new CustomerRepository(prisma)
 const deliveryRepository = new DeliveryRepository(prisma)
+const promoCodeRepository = new PromoCodeRepository(prisma)
 
 // service
 const userService = new UserService(userRepository, bcrypt);
@@ -55,6 +58,7 @@ const statsService = new StatsService(productRepository)
 const inventoryService = new InventoryService(inventoryRepository, productRepository, stockMovementRepository, prisma)
 const customerService = new CustomerService(customerRepository)
 const deliveryService = new DeliveryService(deliveryRepository)
+const promoCodeService = new PromoCodeService(promoCodeRepository)
 
 // controller
 export const userController = new UserController(userService);
@@ -66,3 +70,4 @@ export const statsController = new StatsController(statsService)
 export const inventoryController = new InventoryController(inventoryService)
 export const customerController = new CustomerController(customerService)
 export const deliveryController = new DeliveryController(deliveryService)
+export const promoCodeController = new PromoCodeController(promoCodeService)
