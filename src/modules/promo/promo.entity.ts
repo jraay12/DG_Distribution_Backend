@@ -59,6 +59,26 @@ export class PromoCode {
     return new PromoCode(props);
   }
 
+  disablePromoCode(): void {
+    if (!this.props.isActive)
+      throw new BadRequestError(
+        "Cannot disable this promo code since it's already disabled",
+      );
+
+    this.props.isActive = false;
+    this.props.updatedAt = new Date();
+  }
+
+   enablePromoCode(): void {
+    if (this.props.isActive)
+      throw new BadRequestError(
+        "Cannot enabled this promo code since it's already enabled",
+      );
+
+    this.props.isActive = true;
+    this.props.updatedAt = new Date();
+  }
+
   toJson() {
     return {
       id: this.props.id,

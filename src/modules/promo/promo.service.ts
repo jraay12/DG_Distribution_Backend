@@ -4,6 +4,7 @@ import { PromoCodeResponseDto } from "./dto/PromoCodeResponseDTO";
 import { PromoCodeRepository } from "./promo.repository";
 import { PromoCode } from "./promo.entity";
 import { ConflictError } from "../../utils/error/ConflictError";
+import { NotFoundError } from "../../utils/error/NotFoundError";
 export class PromoCodeService {
   constructor(private promoCodeRepo: PromoCodeRepository){}
 
@@ -17,5 +18,15 @@ export class PromoCodeService {
    await this.promoCodeRepo.create(promo)
 
    return promo.toJson()
+  }
+
+  async disable(id: string): Promise<void> {
+    const existing_promo = await this.promoCodeRepo.findById(id)
+
+    if(!existing_promo) throw new NotFoundError("Promo code not found")
+
+    existing_promo.disablePromoCode()
+
+    await this.promoCodeRepo.update(existing_promo, id)
   }
 }

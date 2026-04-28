@@ -18,4 +18,16 @@ export class PromoCodeController {
       next(error);
     }
   };
+
+  disabled = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inputParams = req.params as { id: string };
+      await this.promoCodeService.disable(inputParams.id);
+      res.status(200).json({
+        message: "Successfully disabled promo code",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

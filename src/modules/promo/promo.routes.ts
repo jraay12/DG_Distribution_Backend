@@ -7,6 +7,7 @@ const promoCodeRoutes = (promoCodeController: PromoCodeController, jwtService: J
   const routes = Router();
 
   routes.post("/", AuthMiddleware(jwtService, ["ADMIN"]), promoCodeController.create)
+  routes.patch("/:id/disabled", AuthMiddleware(jwtService, ["ADMIN"]), promoCodeController.disabled)
 
   return routes;
 };

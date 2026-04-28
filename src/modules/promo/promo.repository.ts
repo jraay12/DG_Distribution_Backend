@@ -22,12 +22,33 @@ export class PromoCodeRepository {
   async findByPromoCode(promo_code: string): Promise<PromoCode | null> {
     const promoCode = await this.prisma.promoCode.findUnique({
       where: {
-        code: promo_code
-      }
-    })
+        code: promo_code,
+      },
+    });
 
-    if (!promoCode) return null
+    if (!promoCode) return null;
 
-    return PromoCode.hydrate(promoCode)
+    return PromoCode.hydrate(promoCode);
+  }
+
+  async update(promoCode: PromoCode, id: string): Promise<void> {
+    await this.prisma.promoCode.update({
+      where: {
+        id,
+      },
+      data: promoCode.toJson(),
+    });
+  }
+
+  async findById(id: string): Promise<PromoCode | null> {
+    const promoCode = await this.prisma.promoCode.findUnique({
+      where: {
+        id
+      },
+    });
+
+    if (!promoCode) return null;
+
+    return PromoCode.hydrate(promoCode);
   }
 }
