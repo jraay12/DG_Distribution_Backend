@@ -51,4 +51,9 @@ export class PromoCodeRepository {
 
     return PromoCode.hydrate(promoCode);
   }
+
+  async getPromos(): Promise<PromoCode[]> {
+    const users =  await this.prisma.promoCode.findMany({})
+    return users.map(user => PromoCode.hydrate(user))
+  }
 }

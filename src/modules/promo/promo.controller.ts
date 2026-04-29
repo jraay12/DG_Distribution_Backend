@@ -42,4 +42,16 @@ export class PromoCodeController {
       next(error);
     }
   };
+
+  getPromos = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.promoCodeService.getPromos();
+      res.status(200).json({
+        message: "Successfully retrieve promo",
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

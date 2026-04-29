@@ -39,4 +39,10 @@ export class PromoCodeService {
 
     await this.promoCodeRepo.update(existing_promo, id)
   }
+
+  async getPromos(): Promise<PromoCodeResponseDto[]> {
+    const promos =  await this.promoCodeRepo.getPromos()
+
+    return promos.map(promo => promo.toJson())
+  }
 }
