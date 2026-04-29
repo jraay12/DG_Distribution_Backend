@@ -29,6 +29,11 @@ const promoCodeRoutes = (
     AuthMiddleware(jwtService, ["ADMIN"]),
     promoCodeController.getPromos,
   );
+  routes.get(
+    "/:id",
+    AuthMiddleware(jwtService, ["ADMIN"]),
+    promoCodeController.getPromo,
+  );
 
   return routes;
 };

@@ -54,4 +54,18 @@ export class PromoCodeController {
       next(error);
     }
   };
+
+  getPromo = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const inputParams = req.params as { id: string };
+      const result = await this.promoCodeService.getPromoById(inputParams.id);
+      res.status(200).json({
+        message: "Successfully retrieve promo",
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

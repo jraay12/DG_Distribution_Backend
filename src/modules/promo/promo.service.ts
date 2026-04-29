@@ -45,4 +45,12 @@ export class PromoCodeService {
 
     return promos.map(promo => promo.toJson())
   }
+
+  async getPromoById(id: string): Promise<PromoCodeResponseDto> {
+    const promo = await this.promoCodeRepo.findById(id)
+
+    if(!promo) throw new NotFoundError("Promo not found")
+
+    return promo.toJson()
+  }
 }
