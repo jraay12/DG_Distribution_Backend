@@ -21,11 +21,12 @@ model User {
   isActive  Boolean  @default(true)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt 
 
   product Product[]
   stockmovement StockMovement[]
   storeVisit StoreVisit[]
+  storeVisitHistory StoreVisitHistory[]
 }
 
 model Brand {
@@ -105,6 +106,7 @@ model Customer {
   deletedAt DateTime?
   
   storeVisit StoreVisit[]
+  storeVisitHistory StoreVisitHistory[]
 }
 
 model DeliveryReport {
@@ -167,6 +169,15 @@ model StoreVisit {
 
   deliveryReports DeliveryReport[]
 
+}
+
+model StoreVisitHistory {
+  id              String   @id @default(uuid())
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id String
+  customer    Customer    @relation(fields: [customer_id], references: [id])
+  customer_id String
+  createdAt       DateTime  @default(now())
 }
 
 enum DiscountType {

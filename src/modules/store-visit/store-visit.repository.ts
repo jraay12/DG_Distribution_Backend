@@ -16,8 +16,10 @@ export class StoreVisitRepository {
     return StoreVisit.hydrate(store_visit);
   }
 
-  async saveMany(data: StoreVisit[]): Promise<void> {
-    await this.prisma.storeVisit.createMany({
+  async saveMany(data: StoreVisit[], tx?: typeof this.prisma): Promise<void> {
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+
+    await client.storeVisit.createMany({
       data: data.map((visit) => {
         const storeVisit = visit.toJSON();
 
@@ -52,5 +54,18 @@ export class StoreVisitRepository {
     });
 
     return record.map((a) => StoreVisit.hydrate(a))
+  }
+
+  async saveHistory(dto: {user_id: string, customer_id: string[]}, tx?: typeof this.prisma) : Promise<void>{
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+
+    await client?.storeVisitHistory.createMany({
+      data: dto.customer_id.map((customer_id) => {
+        return {
+          customer_id,
+          user_id: dto.user_id
+        }
+      })
+    })
   }
 }

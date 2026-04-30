@@ -8,15 +8,16 @@ import { NotFoundError } from "../../utils/error/NotFoundError";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
+import { ExtendedPrismaClient } from "../../config/prisma";
 export class StoreVisitService {
   constructor(
     private storeVisitRepository: StoreVisitRepository,
     private customerRepository: CustomerRepository,
     private userRepository: UserRepository,
+    private prisma: ExtendedPrismaClient,
   ) {}
 
   async save(dto: CreateStoreVisitDto): Promise<StoreVisitResponseDto[]> {
-
     const user = await this.userRepository.findById(dto.user_id);
     if (!user) throw new NotFoundError("User not found");
 
@@ -57,7 +58,13 @@ export class StoreVisitService {
       }),
     );
 
-    await this.storeVisitRepository.saveMany(storeVisits);
+    await this.prisma.$transaction(async (tx) => {
+      await this.storeVisitRepository.saveMany(storeVisits, tx as typeof this.prisma,);
+      await this.storeVisitRepository.saveHistory({
+        user_id: dto.user_id,
+        customer_id: validCustomerIds,
+      }, tx as typeof this.prisma,);
+    });
 
     return storeVisits.map((visit) => visit.toJSON());
   }
