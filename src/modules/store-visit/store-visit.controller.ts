@@ -1,4 +1,4 @@
-import { CreateStoreVisitDto } from './dto/CreateDTO';
+import { CreateStoreVisitDto } from "./dto/CreateDTO";
 import { StoreVisitService } from "./store-visit.service";
 import { Request, Response, NextFunction } from "express";
 
@@ -11,6 +11,24 @@ export class StoreVisitController {
       const result = await this.storeVisitService.save(input);
       res.status(200).json({
         message: "Successfully assign agent to store",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPreviousStoreVisit = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const inputParams = req.params as { user_id: string };
+      const result = await this.storeVisitService.getPreviousStoreVisit(
+        inputParams.user_id,
+      );
+      res.status(200).json({
         data: result,
       });
     } catch (error) {

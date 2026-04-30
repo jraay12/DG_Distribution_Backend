@@ -9,6 +9,7 @@ import { BadRequestError } from "../../utils/error/BadRequestError";
 import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { ResponseStoreVisitHistoryWithCustomerDTO } from "./dto/ResponseStoreHistory";
 export class StoreVisitService {
   constructor(
     private storeVisitRepository: StoreVisitRepository,
@@ -67,7 +68,7 @@ export class StoreVisitService {
           tx as typeof this.prisma,
         );
 
-        console.log(store_visit_exist)
+      console.log(store_visit_exist);
 
       if (!store_visit_exist) {
         await this.storeVisitRepository.deleteStoreVisitHistory(
@@ -90,5 +91,17 @@ export class StoreVisitService {
     });
 
     return storeVisits.map((visit) => visit.toJSON());
+  }
+
+  async getPreviousStoreVisit(
+    user_id: string,
+  ): Promise<ResponseStoreVisitHistoryWithCustomerDTO[]> {
+    const existing_user = await this.userRepository.findById(user_id);
+
+    if (!existing_user) {
+      throw new NotFoundError("User not found");
+    }
+
+    return await this.storeVisitRepository.getStoreVisitHistory(user_id);
   }
 }

@@ -14,6 +14,11 @@ const storeVisitRoutes = (
     AuthMiddleware(jwtService, ["ADMIN"]),
     storeVisitController.create,
   );
+  routes.get(
+    "/:user_id/previous_visit",
+    AuthMiddleware(jwtService, ["ADMIN", "USER"]),
+    storeVisitController.getPreviousStoreVisit,
+  );
   
   return routes;
 };
