@@ -59,11 +59,34 @@ export class StoreVisitService {
     );
 
     await this.prisma.$transaction(async (tx) => {
-      await this.storeVisitRepository.saveMany(storeVisits, tx as typeof this.prisma,);
-      await this.storeVisitRepository.saveHistory({
-        user_id: dto.user_id,
-        customer_id: validCustomerIds,
-      }, tx as typeof this.prisma,);
+      const store_visit_exist =
+        await this.storeVisitRepository.findStoreVisitHistoryToday(
+          dto.user_id,
+          start,
+          end,
+          tx as typeof this.prisma,
+        );
+
+        console.log(store_visit_exist)
+
+      if (!store_visit_exist) {
+        await this.storeVisitRepository.deleteStoreVisitHistory(
+          dto.user_id,
+          tx as typeof this.prisma,
+        );
+      }
+
+      await this.storeVisitRepository.saveMany(
+        storeVisits,
+        tx as typeof this.prisma,
+      );
+      await this.storeVisitRepository.saveHistory(
+        {
+          user_id: dto.user_id,
+          customer_id: validCustomerIds,
+        },
+        tx as typeof this.prisma,
+      );
     });
 
     return storeVisits.map((visit) => visit.toJSON());
