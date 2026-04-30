@@ -30,6 +30,9 @@ import { DeliveryService } from "./modules/delivery/delivery-report.service";
 import { PromoCodeController } from "./modules/promo/promo.controller";
 import { PromoCodeService } from "./modules/promo/promo.service";
 import { PromoCodeRepository } from "./modules/promo/promo.repository";
+import { StoreVisitRepository } from "./modules/store-visit/store-visit.repository";
+import { StoreVisitController } from "./modules/store-visit/store-visit.controller";
+import { StoreVisitService } from "./modules/store-visit/store-visit.service";
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
@@ -47,7 +50,7 @@ const stockMovementRepository = new StockMovementRepository(prisma)
 const customerRepository = new CustomerRepository(prisma)
 const deliveryRepository = new DeliveryRepository(prisma)
 const promoCodeRepository = new PromoCodeRepository(prisma)
-
+const storeVisitRepository = new StoreVisitRepository(prisma)
 // service
 const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
@@ -57,9 +60,9 @@ const productService = new ProductService(productRepository, modelRepository, pr
 const statsService = new StatsService(productRepository)
 const inventoryService = new InventoryService(inventoryRepository, productRepository, stockMovementRepository, prisma)
 const customerService = new CustomerService(customerRepository)
-const deliveryService = new DeliveryService(deliveryRepository)
+const deliveryService = new DeliveryService(deliveryRepository, storeVisitRepository)
 const promoCodeService = new PromoCodeService(promoCodeRepository)
-
+const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository)
 // controller
 export const userController = new UserController(userService);
 export const authController = new AuthController(authService)
@@ -71,3 +74,4 @@ export const inventoryController = new InventoryController(inventoryService)
 export const customerController = new CustomerController(customerService)
 export const deliveryController = new DeliveryController(deliveryService)
 export const promoCodeController = new PromoCodeController(promoCodeService)
+export const storeVisitController = new StoreVisitController(storeVisitService)

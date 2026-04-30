@@ -41,7 +41,7 @@ export class CustomerRepository {
         contact_number: customer.contactNumber,
         owner_name: customer.ownerName,
         store_name: customer.storeName,
-        updatedAt: customer.updatedAt
+        updatedAt: customer.updatedAt,
       },
     });
   }
@@ -49,35 +49,50 @@ export class CustomerRepository {
   async delete(customer_id: string): Promise<void> {
     await this.prisma.customer.delete({
       where: {
-        id: customer_id
-      }
-    })
+        id: customer_id,
+      },
+    });
   }
 
   async restore(customer_id: string): Promise<void> {
     await this.prisma.customer.update({
       where: {
-        id: customer_id
+        id: customer_id,
       },
       data: {
-        deletedAt: null
-      }
-    })
+        deletedAt: null,
+      },
+    });
   }
 
-  async getCustomers(status: "all" | "active" | "deleted" = "active"): Promise<Customer[]> {
+  async getCustomers(
+    status: "all" | "active" | "deleted" = "active",
+  ): Promise<Customer[]> {
+    const whereClause: any = {};
 
-    const whereClause: any = {}
-
-    if(status){
-      whereClause.deletedAt = status === 'active' ? null : status === "deleted" ? {not: null} : undefined
+    if (status) {
+      whereClause.deletedAt =
+        status === "active"
+          ? null
+          : status === "deleted"
+            ? { not: null }
+            : undefined;
     }
-    
 
     const customers = await this.prisma.customer.findMany({
-      where: whereClause
-    })
+      where: whereClause,
+    });
 
-    return customers.map(customer => Customer.hydrate(customer))
+    return customers.map((customer) => Customer.hydrate(customer));
+  }
+
+  async findManyByIds(ids: string[]) {
+    return this.prisma.customer.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
   }
 }

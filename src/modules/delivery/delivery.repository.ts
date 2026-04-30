@@ -12,8 +12,7 @@ export class DeliveryRepository {
         id: delivery.id,
         date: delivery.date,
         remarks: delivery.remarks,
-        customer_id: delivery.customerId,
-        user_id: delivery.userId,
+        store_visit_id: delivery.storeVisitId,
         gpsLog: {
           create: {
             latitude: gpsLogs.latitude,

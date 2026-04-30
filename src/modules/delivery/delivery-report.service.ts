@@ -1,4 +1,6 @@
 import { BadRequestError } from "../../utils/error/BadRequestError";
+import { NotFoundError } from "../../utils/error/NotFoundError";
+import { StoreVisitRepository } from "../store-visit/store-visit.repository";
 import { DeliveryReport } from "./delivery-report.entity";
 import { DeliveryRepository } from "./delivery.repository";
 import { CreateDeliveryReportDTO } from "./dto/CreateDeliveryReportDTO";
@@ -8,16 +10,18 @@ import { GpsLogs } from "./gps-log.entity";
 import { ImageEvidence } from "./image-evidence.entity";
 
 export class DeliveryService {
-  constructor(private deliveryRepository: DeliveryRepository) {}
+  constructor(private deliveryRepository: DeliveryRepository, private storeVisitRepository: StoreVisitRepository) {}
 
   async save(dto: CreateDeliveryReportDTO): Promise<void> {
+    const store_visit = await this.storeVisitRepository.findById(dto.store_visit_id)
+    if(!store_visit) throw new NotFoundError("Store Visit ID not found")
+      
     const latitudeToFloat = parseFloat(dto.latitude as any)
     const longitudeToFloat = parseFloat(dto.longitude as any)
     const delivery = DeliveryReport.save({
-      customer_id: dto.customer_id,
+      store_visit_id: dto.store_visit_id,
       date: dto.date,
       remarks: dto.remarks,
-      user_id: dto.user_id,
     });
     const gps = GpsLogs.save({
       delivery_id: delivery.id,
