@@ -18,7 +18,13 @@ const storeVisitRoutes = (
   routes.get(
     "/:user_id/previous-route",
     AuthMiddleware(jwtService, ["ADMIN"]),
-    storeVisitController.previousRoutesAssign,
+    storeVisitController.previousRoutesAssigned,
+  );
+
+  routes.post(
+    "/:user_id/previous-assign",
+    AuthMiddleware(jwtService, ["ADMIN"]),
+    storeVisitController.assignPreviousRoutes,
   );
 
 

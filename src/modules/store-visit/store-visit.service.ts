@@ -87,12 +87,18 @@ export class StoreVisitService {
     return storeVisits.map((v) => v.toJSON());
   }
 
-  async getPreviousAssignRoute(user_id: string): Promise<PreviousRouteAssignResponseDTO[]>  {
-    const user_exist = await this.userRepository.findById(user_id)
-    if(!user_exist) throw new NotFoundError("User does not exists")
+  async getPreviousAssignRoute(
+    user_id: string,
+  ): Promise<PreviousRouteAssignResponseDTO[]> {
+    const user_exist = await this.userRepository.findById(user_id);
+    if (!user_exist) throw new NotFoundError("User does not exists");
 
-    const latest_date = await this.storeVisitRepository.latestAssignDate(user_id)
-    const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(user_id, latest_date?.visitDate!)
+    const latest_date =
+      await this.storeVisitRepository.latestAssignDate(user_id);
+    const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(
+      user_id,
+      latest_date?.visitDate!,
+    );
 
     return previousRoutes.map((previousRoute) => ({
       id: previousRoute.id,
@@ -100,7 +106,40 @@ export class StoreVisitService {
       owner_name: previousRoute.customer.owner_name,
       store_name: previousRoute.customer.store_name,
       user_id: previousRoute.user_id,
-      visit_date: previousRoute.visit_date
-    }))
+      visit_date: previousRoute.visit_date,
+    }));
+  }
+
+  async usePreviousAssignedRoutes(
+    user_id: string,
+    visit_date: Date,
+  ): Promise<StoreVisitResponseDto[]> {
+    const user_exist = await this.userRepository.findById(user_id);
+    if (!user_exist) throw new NotFoundError("User does not exists");
+
+    const latest_date =
+      await this.storeVisitRepository.latestAssignDate(user_id);
+    const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(
+      user_id,
+      latest_date?.visitDate!,
+    );
+
+    const storeVisits = previousRoutes.map((previousRoute) =>
+      StoreVisit.create({
+        user_id: user_id,
+        customer_id: previousRoute.customer_id,
+        visit_date: visit_date,
+      }),
+    );
+
+    try {
+      await this.storeVisitRepository.saveMany(storeVisits);
+    } catch (error) {
+      throw new ConflictError(
+        "User already has a route assigned for the same store on the selected date",
+      );
+    }
+
+    return storeVisits.map((storeVisit) => storeVisit.toJSON());
   }
 }
