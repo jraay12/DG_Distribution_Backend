@@ -6,12 +6,12 @@ import { CustomerRepository } from "../customer/customer.repository";
 import { UserRepository } from "../user/user.repository";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { BadRequestError } from "../../utils/error/BadRequestError";
-import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { ForbiddenError } from "../../utils/error/ForbiddenError";
 import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignResponseDTO";
 import { GetAssignedResponseDTO } from "./dto/GetAssignedResponseDTO";
+import { toPHT } from "../../utils/utcToPht";
 
 export class StoreVisitService {
   constructor(
@@ -157,8 +157,8 @@ export class StoreVisitService {
       store_name: store_visit.customer.store_name,
       user_id: store_visit.user_id,
       visit_date: store_visit.visit_date,
-      time_in: store_visit.time_in,
-      time_out: store_visit.time_out
+      time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
+      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null
       
     }))
   }

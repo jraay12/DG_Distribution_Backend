@@ -5,6 +5,6 @@ export interface GetAssignedResponseDTO {
   owner_name: string
   user_id: string
   visit_date: Date
-  time_in?: Date | null
-  time_out?: Date | null
+  time_in?: string | null
+  time_out?: string | null
 }
