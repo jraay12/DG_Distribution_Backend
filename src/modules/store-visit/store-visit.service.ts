@@ -142,4 +142,20 @@ export class StoreVisitService {
 
     return storeVisits.map((storeVisit) => storeVisit.toJSON());
   }
+
+  async getAssignedRoutes(user_id: string, visit_date?: Date): Promise<PreviousRouteAssignResponseDTO[]> {
+    const user_exist = await this.userRepository.findById(user_id);
+    if (!user_exist) throw new NotFoundError("User does not exists");
+
+    const store_visits = await this.storeVisitRepository.getAssignedRoutes(user_id, visit_date)
+
+    return store_visits.map((store_visit) => ({
+      id: store_visit.id,
+      customer_id: store_visit.customer_id,
+      owner_name: store_visit.customer.owner_name,
+      store_name: store_visit.customer.store_name,
+      user_id: store_visit.user_id,
+      visit_date: store_visit.visit_date
+    }))
+  }
 }

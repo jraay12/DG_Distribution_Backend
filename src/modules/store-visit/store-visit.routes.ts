@@ -27,6 +27,12 @@ const storeVisitRoutes = (
     storeVisitController.assignPreviousRoutes,
   );
 
+  routes.get(
+    "/:user_id",
+    AuthMiddleware(jwtService, ["ADMIN", "USER"]),
+    storeVisitController.getAssignedRoutes,
+  );
+
 
   
   return routes;

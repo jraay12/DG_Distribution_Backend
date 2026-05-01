@@ -44,4 +44,20 @@ export class StoreVisitController {
       next(error);
     }
   };
+
+  getAssignedRoutes = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string};
+      const { visit_date } = req.query as { visit_date?: string };
+      const result = await this.storeVisitService.getAssignedRoutes(user_id, visit_date ? new Date(visit_date): undefined);
+      res.status(200).json({
+      message: visit_date
+        ? `Successfully retrieved assigned routes for ${visit_date}`
+        : `Successfully retrieved assigned routes by user`,
+      data: result,
+    });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
