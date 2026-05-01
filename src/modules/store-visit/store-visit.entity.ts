@@ -113,11 +113,13 @@ export class StoreVisit {
   }
 
   markTimeIn(){
+    if(this.props.time_in !== null) throw new BadRequestError("Already marked the time in")
     this.props.time_in = new Date()
     this.touch()
   }
 
   markTimeOut(){
+    if(this.props.time_out !== null) throw new BadRequestError("Already marked the time out")
     this.props.time_out = new Date()
     this.touch()
   }
