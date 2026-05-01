@@ -35,4 +35,39 @@ export class StoreVisitRepository {
       
     });
   }
+
+  async getPreviousRoutes(user_id: string, latest_date: Date) {
+    return await this.prisma.storeVisit.findMany({
+      where: {
+        user_id,
+        visit_date: latest_date
+      },
+      orderBy: {
+        visit_date: "desc"
+      },
+      include: {
+        customer: {
+          select: {
+            store_name: true,
+            owner_name: true
+          }
+        }
+      }
+    })
+  }
+
+  async latestAssignDate(user_id: string): Promise<StoreVisit | null> {
+    const record =  await this.prisma.storeVisit.findFirst({
+      where: {
+        user_id
+      }, 
+      orderBy: {
+        visit_date: "desc"
+      }
+    })
+
+    if(!record) return null
+
+    return StoreVisit.hydrate(record)
+  }
 }

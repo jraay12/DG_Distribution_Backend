@@ -10,6 +10,7 @@ import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { ForbiddenError } from "../../utils/error/ForbiddenError";
+import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignResponseDTO";
 
 export class StoreVisitService {
   constructor(
@@ -84,5 +85,22 @@ export class StoreVisitService {
     }
 
     return storeVisits.map((v) => v.toJSON());
+  }
+
+  async getPreviousAssignRoute(user_id: string): Promise<PreviousRouteAssignResponseDTO[]>  {
+    const user_exist = await this.userRepository.findById(user_id)
+    if(!user_exist) throw new NotFoundError("User does not exists")
+
+    const latest_date = await this.storeVisitRepository.latestAssignDate(user_id)
+    const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(user_id, latest_date?.visitDate!)
+
+    return previousRoutes.map((previousRoute) => ({
+      id: previousRoute.id,
+      customer_id: previousRoute.customer_id,
+      owner_name: previousRoute.customer.owner_name,
+      store_name: previousRoute.customer.store_name,
+      user_id: previousRoute.user_id,
+      visit_date: previousRoute.visit_date
+    }))
   }
 }

@@ -18,5 +18,16 @@ export class StoreVisitController {
     }
   };
 
-
+  previousRoutesAssign = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {user_id} = req.params as {user_id: string};
+      const result = await this.storeVisitService.getPreviousAssignRoute(user_id);
+      res.status(200).json({
+        message: "Successfully retrieve previous routes assigned",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
