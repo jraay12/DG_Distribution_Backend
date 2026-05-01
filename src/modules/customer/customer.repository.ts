@@ -86,12 +86,13 @@ export class CustomerRepository {
     return customers.map((customer) => Customer.hydrate(customer));
   }
 
-  async findManyByIds(ids: string[]) {
+  async findByIds(ids: string[]) {
     return this.prisma.customer.findMany({
       where: {
         id: {
           in: ids,
         },
+        
       },
     });
   }

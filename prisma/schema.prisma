@@ -161,11 +161,14 @@ model StoreVisit {
   customer_id String
   time_in  DateTime?
   time_out DateTime?
+  visit_date DateTime
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   deletedAt DateTime?
 
   deliveryReports DeliveryReport[]
+
+  @@unique([user_id, customer_id, visit_date])
 
 }
 

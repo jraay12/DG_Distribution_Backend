@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { BadRequestError } from "../../utils/error/BadRequestError";
 
 export interface StoreVisitProps {
   id: string;
@@ -6,6 +7,7 @@ export interface StoreVisitProps {
   customer_id: string;
   time_in?: Date | null
   time_out?: Date | null
+  visit_date: Date
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;
@@ -26,16 +28,18 @@ export class StoreVisit {
   static create(
     props: Omit<
       StoreVisitProps,
-      "id" | "createdAt" | "updatedAt" | "deletedAt" | "visted" | "time_in" | "time_out"
+      "id" | "createdAt" | "updatedAt" | "deletedAt" | "time_in" | "time_out"
     >,
   ): StoreVisit {
     if (!props.user_id) {
-      throw new Error("User ID is required");
+      throw new BadRequestError("User ID is required");
     }
 
     if (!props.customer_id) {
-      throw new Error("Customer ID is required");
+      throw new BadRequestError("Customer ID is required");
     }
+
+    if(!props.visit_date) throw new BadRequestError("Visit date is required")
 
     return new StoreVisit({
       ...props,
@@ -79,6 +83,10 @@ export class StoreVisit {
 
   get deletedAt(): Date | null {
     return this.props.deletedAt ?? null;
+  }
+
+  get visitDate(): Date  {
+    return this.props.visit_date;
   }
 
   // behaviors

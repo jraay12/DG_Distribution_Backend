@@ -9,6 +9,7 @@ import { BadRequestError } from "../../utils/error/BadRequestError";
 import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
+import { ForbiddenError } from "../../utils/error/ForbiddenError";
 
 export class StoreVisitService {
   constructor(
@@ -19,58 +20,69 @@ export class StoreVisitService {
   ) {}
 
   async save(dto: CreateStoreVisitDto): Promise<StoreVisitResponseDto[]> {
+    // checker if user exist & user role is USER
     const user = await this.userRepository.findById(dto.user_id);
+
     if (!user) throw new NotFoundError("User not found");
 
     if (user.role !== "USER") {
-      throw new BadRequestError("Only agent role can be assigned");
+      throw new ForbiddenError("Only users with USER role are allowed");
     }
 
-    const customers = await this.customerRepository.findManyByIds(
-      dto.customer_id,
-    );
+    // checker ensuring that it will not be duplicated
 
-    if (customers.length !== dto.customer_id.length) {
-      throw new NotFoundError("One or more stores not found");
+    const seen = new Set();
+    const duplicatesInPayload: string[] = [];
+
+    for (const visit of dto.visits) {
+      const key = `${visit.customer_id}_${visit.visit_date}`;
+
+      if (seen.has(key)) {
+        duplicatesInPayload.push(key);
+      } else {
+        seen.add(key);
+      }
     }
 
-    const existing =
-      await this.storeVisitRepository.findByUserAndCustomersAndDate(
-        dto.user_id,
-        dto.customer_id,
-        start,
-        end,
-      );
+    if (duplicatesInPayload.length > 0)
+      throw new BadRequestError(`Assign routes to the agent is duplicated`);
 
-    const existingIds = new Set(existing.map((v) => v.customerId));
+    // checking for valid customer ids
 
-    const validCustomerIds = dto.customer_id.filter(
-      (id) => !existingIds.has(id),
-    );
+    const customerIds = dto.visits.map((v) => v.customer_id);
 
-    if (validCustomerIds.length === 0) {
-      throw new ConflictError("All stores already visited today");
+    const customers = await this.customerRepository.findByIds(customerIds);
+
+    const foundIds = new Set(customers.map((customer) => customer.id));
+
+    const missing = customerIds.filter((id) => !foundIds.has(id));
+
+    if (missing.length > 0) {
+      throw new NotFoundError(`Stores not found`);
     }
 
-    const storeVisits = validCustomerIds.map((customer_id) =>
+    const storeVisits = dto.visits.map((v) =>
       StoreVisit.create({
         user_id: dto.user_id,
-        customer_id,
+        customer_id: v.customer_id,
+        visit_date: v.visit_date,
       }),
     );
 
-    await this.prisma.$transaction(async (tx) => {
-     
-
-  
-
-      await this.storeVisitRepository.saveMany(
-        storeVisits,
-        tx as typeof this.prisma,
+    // 4. Save
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await this.storeVisitRepository.saveMany(
+          storeVisits,
+          tx as typeof this.prisma,
+        );
+      });
+    } catch (error) {
+      throw new ConflictError(
+        "User already has a route assigned for the same store on the selected date",
       );
-    });
+    }
 
-    return storeVisits.map((visit) => visit.toJSON());
+    return storeVisits.map((v) => v.toJSON());
   }
-
 }

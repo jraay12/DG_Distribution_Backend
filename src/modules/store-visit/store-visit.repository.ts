@@ -29,8 +29,10 @@ export class StoreVisitRepository {
           user_id: storeVisit.user_id,
           customer_id: storeVisit.customer_id,
           deletedAt: storeVisit.deletedAt,
+          visit_date: storeVisit.visit_date
         };
       }),
+      
     });
   }
 
@@ -56,5 +58,27 @@ export class StoreVisitRepository {
 
     return record.map((a) => StoreVisit.hydrate(a));
   }
+
+  async findExistingVisits(
+  user_id: string,
+  visits: { customer_id: string; visit_date: Date }[],
+) {
+  if (visits.length === 0) return [];
+
+  return this.prisma.storeVisit.findMany({
+    where: {
+      user_id,
+      OR: visits.map(v => ({
+        customer_id: v.customer_id,
+        visit_date: v.visit_date,
+      })),
+    },
+    select: {
+      id: true,
+      customer_id: true,
+      visit_date: true,
+    },
+  });
+}
 
 }
