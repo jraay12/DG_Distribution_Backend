@@ -10,15 +10,19 @@ export function getStayDuration(
 
   const diffMs = endDate.getTime() - startDate.getTime();
 
-  if (diffMs <= 0) return "0m";
+  if (diffMs <= 0) return "0s";
 
-  const totalMinutes = Math.floor(diffMs / 1000 / 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  const totalSeconds = Math.floor(diffMs / 1000);
 
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
 
-  return `${minutes}m`;
+  let result = "";
+
+  if (hours > 0) result += `${hours}h `;
+  if (minutes > 0) result += `${minutes}m `;
+  if (seconds > 0) result += `${seconds}s`;
+
+  return result.trim();
 }
