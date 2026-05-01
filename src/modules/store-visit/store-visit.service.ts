@@ -157,18 +157,31 @@ export class StoreVisitService {
       visit_date,
     );
 
-    return store_visits.map((store_visit) => ({
-      id: store_visit.id,
-      customer_id: store_visit.customer_id,
-      owner_name: store_visit.customer.owner_name,
-      store_name: store_visit.customer.store_name,
-      user_id: store_visit.user_id,
-      visit_date: store_visit.visit_date,
-      time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
-      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
-      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out)
-      
-    }));
+    return store_visits.map((store_visit) => {
+      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED";
+
+      if (store_visit.time_in && store_visit.time_out) {
+        visited = "VISITED";
+      } else if (store_visit.time_in || store_visit.time_out) {
+        visited = "ONGOING";
+      }
+
+      return {
+        id: store_visit.id,
+        customer_id: store_visit.customer_id,
+        owner_name: store_visit.customer.owner_name,
+        store_name: store_visit.customer.store_name,
+        user_id: store_visit.user_id,
+        visit_date: store_visit.visit_date,
+        time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
+        time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
+        stay_duration: getStayDuration(
+          store_visit.time_in,
+          store_visit.time_out,
+        ),
+        status: visited,
+      };
+    });
   }
 
   async deleteAssignedRoute(id: string): Promise<void> {
@@ -204,17 +217,14 @@ export class StoreVisitService {
     await this.storeVisitRepository.update(existing_store_visit);
   }
 
-   async getAllAssignedRoutes(
+  async getAllAssignedRoutes(
     visit_date?: Date,
   ): Promise<GetAssignedResponseDTO[]> {
-    const store_visits = await this.storeVisitRepository.getAllAssignedRoutes(
-      visit_date,
-    );
-
+    const store_visits =
+      await this.storeVisitRepository.getAllAssignedRoutes(visit_date);
 
     return store_visits.map((store_visit) => {
-
-      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED"
+      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED";
 
       if (store_visit.time_in && store_visit.time_out) {
         visited = "VISITED";
@@ -223,18 +233,20 @@ export class StoreVisitService {
       }
 
       return {
-      id: store_visit.id,
-      customer_id: store_visit.customer_id,
-      owner_name: store_visit.customer.owner_name,
-      store_name: store_visit.customer.store_name,
-      user_id: store_visit.user_id,
-      visit_date: store_visit.visit_date,
-      time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
-      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
-      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out),
-      status: visited
-      
-    }
+        id: store_visit.id,
+        customer_id: store_visit.customer_id,
+        owner_name: store_visit.customer.owner_name,
+        store_name: store_visit.customer.store_name,
+        user_id: store_visit.user_id,
+        visit_date: store_visit.visit_date,
+        time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
+        time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
+        stay_duration: getStayDuration(
+          store_visit.time_in,
+          store_visit.time_out,
+        ),
+        status: visited,
+      };
     });
   }
 }
