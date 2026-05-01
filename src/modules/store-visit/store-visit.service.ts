@@ -11,6 +11,7 @@ import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { ForbiddenError } from "../../utils/error/ForbiddenError";
 import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignResponseDTO";
+import { GetAssignedResponseDTO } from "./dto/GetAssignedResponseDTO";
 
 export class StoreVisitService {
   constructor(
@@ -143,7 +144,7 @@ export class StoreVisitService {
     return storeVisits.map((storeVisit) => storeVisit.toJSON());
   }
 
-  async getAssignedRoutes(user_id: string, visit_date?: Date): Promise<PreviousRouteAssignResponseDTO[]> {
+  async getAssignedRoutes(user_id: string, visit_date?: Date): Promise<GetAssignedResponseDTO[]> {
     const user_exist = await this.userRepository.findById(user_id);
     if (!user_exist) throw new NotFoundError("User does not exists");
 
@@ -155,7 +156,10 @@ export class StoreVisitService {
       owner_name: store_visit.customer.owner_name,
       store_name: store_visit.customer.store_name,
       user_id: store_visit.user_id,
-      visit_date: store_visit.visit_date
+      visit_date: store_visit.visit_date,
+      time_in: store_visit.time_in,
+      time_out: store_visit.time_out
+      
     }))
   }
 
