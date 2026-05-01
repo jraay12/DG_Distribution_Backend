@@ -98,4 +98,34 @@ export class StoreVisitRepository {
       },
     });
   }
+
+  async update(data: Partial<StoreVisit>): Promise<StoreVisit> {
+    const result = await this.prisma.storeVisit.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        time_in: data.time_in,
+        time_out: data.time_out,
+      }
+    });
+
+    return StoreVisit.hydrate(result);
+  }
+
+  async findByIdByUser(
+    id: string,
+    user_id: string,
+  ): Promise<StoreVisit | null> {
+    const record = await this.prisma.storeVisit.findFirst({
+      where: {
+        id,
+        user_id,
+      },
+    });
+
+    if(!record) return null
+
+    return StoreVisit.hydrate(record)
+  }
 }

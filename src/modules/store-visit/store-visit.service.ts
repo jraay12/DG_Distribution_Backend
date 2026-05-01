@@ -170,4 +170,16 @@ export class StoreVisitService {
     existing_store_visit.delete()
     await this.storeVisitRepository.deleteAssignedRoutes(id)
   }
+
+  async markTimeIn(id: string, user_id: string): Promise<void> {
+    const existing_store_visit = await this.storeVisitRepository.findById(id)
+    if(!existing_store_visit) throw new NotFoundError("Store visit doesn't exist")
+
+    const allowed_to_mark = await this.storeVisitRepository.findByIdByUser(id, user_id)
+
+    if(!allowed_to_mark) throw new ForbiddenError("You are only allowed to mark your own routes")
+
+    existing_store_visit.markTimeIn()
+    await this.storeVisitRepository.update(existing_store_visit)
+  }
 }

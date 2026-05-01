@@ -112,6 +112,11 @@ export class StoreVisit {
       );
   }
 
+  markTimeIn(){
+    this.props.time_in = new Date()
+    this.touch()
+  }
+
   // serialization (for repository)
 
   toJSON(): StoreVisitProps {

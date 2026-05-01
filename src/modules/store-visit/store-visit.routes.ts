@@ -39,6 +39,12 @@ const storeVisitRoutes = (
     storeVisitController.deleteAssignedRoutes,
   );
 
+  routes.patch(
+    "/:id/time-in",
+    AuthMiddleware(jwtService, ["USER"]),
+    storeVisitController.markTimeIn,
+  );
+
 
   
   return routes;

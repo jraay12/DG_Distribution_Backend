@@ -93,4 +93,20 @@ export class StoreVisitController {
       next(error);
     }
   };
+
+  markTimeIn = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params as { id: string };
+      const user_id = req.user.user_id 
+      await this.storeVisitService.markTimeIn(id, user_id);
+      res.status(200).json({message: "Successfully mark time in"});
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 }
