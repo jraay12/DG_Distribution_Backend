@@ -3,8 +3,7 @@ import crypto from "crypto";
 
 export interface DeliveryReportProps {
   id: string;
-  user_id: string;
-  customer_id: string;
+  store_visit_id: string;
   date: Date;
   remarks?: string | null;
   createdAt?: Date;
@@ -30,9 +29,8 @@ export class DeliveryReport {
       "id" | "createdAt" | "updatedAt" | "deletedAt"
     >,
   ) {
-    if (!props.user_id) throw new BadRequestError("User ID is required");
-    if (!props.customer_id)
-      throw new BadRequestError("Customer ID is required");
+    if (!props.store_visit_id)
+      throw new BadRequestError("Store Visit ID is required");
     if (!props.date) throw new BadRequestError("Date is required");
 
     return new DeliveryReport({
@@ -53,12 +51,8 @@ export class DeliveryReport {
     return this.props.id;
   }
 
-  get userId(): string {
-    return this.props.user_id;
-  }
-
-  get customerId(): string {
-    return this.props.customer_id;
+  get storeVisitId(): string {
+    return this.props.store_visit_id;
   }
 
   get date(): Date {

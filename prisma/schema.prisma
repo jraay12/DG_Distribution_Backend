@@ -21,11 +21,11 @@ model User {
   isActive  Boolean  @default(true)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt 
 
   product Product[]
   stockmovement StockMovement[]
-  deliveryreport DeliveryReport[]
+  storeVisit StoreVisit[]
 }
 
 model Brand {
@@ -103,16 +103,14 @@ model Customer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
-
-  deliveryreport DeliveryReport[]
+  
+  storeVisit StoreVisit[]
 }
 
 model DeliveryReport {
   id        String   @id @default(uuid())
-  user    User    @relation(fields: [user_id], references: [id])
-  user_id String
-  customer    Customer    @relation(fields: [customer_id], references: [id])
-  customer_id String
+  storeVisit    StoreVisit    @relation(fields: [store_visit_id], references: [id])
+  store_visit_id String
   date DateTime
   remarks String?
   createdAt DateTime @default(now())
@@ -140,6 +138,44 @@ model ImageEvidence {
   image_path String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PromoCode {
+  id              String   @id @default(uuid())
+  code            String   @unique
+  discountType    DiscountType
+  discountValue   Float    
+  maxUsage        Int?     
+  usedCount       Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model StoreVisit {
+  id              String   @id @default(uuid())
+  user    User    @relation(fields: [user_id], references: [id])
+  user_id String
+  customer    Customer    @relation(fields: [customer_id], references: [id])
+  customer_id String
+  time_in  DateTime?
+  time_out DateTime?
+  visit_date DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt DateTime?
+
+  deliveryReports DeliveryReport[]
+
+  @@unique([user_id, customer_id, visit_date])
+
+}
+
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
 }
 
 enum Role {

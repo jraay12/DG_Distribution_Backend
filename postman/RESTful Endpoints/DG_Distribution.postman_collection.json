@@ -125,7 +125,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                  "value": "b5592809-f0a5-4c35-865d-a8a1efdc96c1"
                 }
               ]
             }
@@ -1882,7 +1882,216 @@
               "variable": [
                 {
                   "key": "delivery_id",
-                  "value": "d6fea38a-e57c-4951-ae27-82381f6f96a"
+                  "value": "d6fea38a-e57c-4951-ae27-82381f6f96a4"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Promo Codes",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"WELCOME11\",\r\n  \"discountType\": \"FIXED_AMOUNT\",\r\n  \"discountValue\": 10,\r\n  \"maxUsage\": 100,\r\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/promo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "promo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Disabled",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"WELCOME10\",\r\n  \"discountType\": \"FIXED_AMOUNT\",\r\n  \"discountValue\": 10,\r\n  \"maxUsage\": 100,\r\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\"\r\n  }"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/promo/:promo_id/disabled",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "promo",
+                ":promo_id",
+                "disabled"
+              ],
+              "variable": [
+                {
+                  "key": "promo_id",
+                  "value": "636b7e59-6843-48f5-8453-e9f6eccd5bd9"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activate",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"WELCOME10\",\r\n  \"discountType\": \"FIXED_AMOUNT\",\r\n  \"discountValue\": 10,\r\n  \"maxUsage\": 100,\r\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\"\r\n  }"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/promo/:promo_id/enabled",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "promo",
+                ":promo_id",
+                "enabled"
+              ],
+              "variable": [
+                {
+                  "key": "promo_id",
+                  "value": "0e5ac7ba-2d76-43b9-8d54-ab77b6d9237e"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Promos",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"WELCOME10\",\r\n  \"discountType\": \"FIXED_AMOUNT\",\r\n  \"discountValue\": 10,\r\n  \"maxUsage\": 100,\r\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\"\r\n  }"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/promo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "promo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Promo by ID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"WELCOME10\",\r\n  \"discountType\": \"FIXED_AMOUNT\",\r\n  \"discountValue\": 10,\r\n  \"maxUsage\": 100,\r\n  \"expiresAt\": \"2026-12-31T23:59:59.000Z\"\r\n  }"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/promo/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "promo",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "0e5ac7ba-2d76-43b9-8d54-ab77b6d9237e"
                 }
               ]
             }

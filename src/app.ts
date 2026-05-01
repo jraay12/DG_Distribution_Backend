@@ -7,7 +7,7 @@ import brandRoutes from "./modules/brand/brand.routes";
 import modelRoutes from "./modules/model/model.routes";
 import productRoutes from "./modules/product/product.routes";
 import statsRoutes from "./modules/stats/stats.routes";
-import { userController, authController, jwt, brandController, modelController, productController, statsController, inventoryController, customerController, deliveryController } from "./container";
+import { userController, promoCodeController, authController, jwt, brandController, modelController, productController, statsController, inventoryController, customerController, deliveryController, storeVisitController } from "./container";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { createServer } from "node:http";
@@ -15,7 +15,8 @@ import { socketInit } from "./utils/socket/socket.server";
 import inventoryRoutes from "./modules/inventory/inventory.routes"; 
 import customerRoutes from "./modules/customer/customer.routes";
 import deliveryRoutes from "./modules/delivery/delivery-report.routes";
-
+import promoCodeRoutes from "./modules/promo/promo.routes";
+import storeVisitRoutes from "./modules/store-visit/store-visit.routes";
 const app = express();
 const server = createServer(app)
 socketInit(server)
@@ -40,6 +41,8 @@ app.use("/api/product", productRoutes(productController, jwt));
 app.use("/api/customer", customerRoutes(customerController, jwt));
 app.use("/api/inventory", inventoryRoutes(inventoryController, jwt));
 app.use("/api/delivery", deliveryRoutes(deliveryController, jwt));
+app.use("/api/promo", promoCodeRoutes(promoCodeController, jwt));
+app.use("/api/store-visit", storeVisitRoutes(storeVisitController, jwt));
 app.use("/api/auth", authRoutes(authController));
 
 
