@@ -5,9 +5,9 @@ export interface StoreVisitProps {
   id: string;
   user_id: string;
   customer_id: string;
-  time_in?: Date | null
-  time_out?: Date | null
-  visit_date: Date
+  time_in?: Date | null;
+  time_out?: Date | null;
+  visit_date: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date | null;
@@ -39,7 +39,7 @@ export class StoreVisit {
       throw new BadRequestError("Customer ID is required");
     }
 
-    if(!props.visit_date) throw new BadRequestError("Visit date is required")
+    if (!props.visit_date) throw new BadRequestError("Visit date is required");
 
     return new StoreVisit({
       ...props,
@@ -85,7 +85,7 @@ export class StoreVisit {
     return this.props.deletedAt ?? null;
   }
 
-  get visitDate(): Date  {
+  get visitDate(): Date {
     return this.props.visit_date;
   }
 
@@ -103,6 +103,13 @@ export class StoreVisit {
 
   private touch() {
     this.props.updatedAt = new Date();
+  }
+
+  delete() {
+    if (this.props.time_in != null || this.props.time_out != null)
+      throw new BadRequestError(
+        "Cannot delete assigned routes that has marked time in or time out already",
+      );
   }
 
   // serialization (for repository)

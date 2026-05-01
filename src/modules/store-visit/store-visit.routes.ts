@@ -33,6 +33,12 @@ const storeVisitRoutes = (
     storeVisitController.getAssignedRoutes,
   );
 
+  routes.delete(
+    "/:id",
+    AuthMiddleware(jwtService, ["ADMIN"]),
+    storeVisitController.deleteAssignedRoutes,
+  );
+
 
   
   return routes;

@@ -1,7 +1,6 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { StoreVisit } from "./store-visit.entity";
 
-
 export class StoreVisitRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
@@ -29,10 +28,9 @@ export class StoreVisitRepository {
           user_id: storeVisit.user_id,
           customer_id: storeVisit.customer_id,
           deletedAt: storeVisit.deletedAt,
-          visit_date: storeVisit.visit_date
+          visit_date: storeVisit.visit_date,
         };
       }),
-      
     });
   }
 
@@ -40,43 +38,42 @@ export class StoreVisitRepository {
     return await this.prisma.storeVisit.findMany({
       where: {
         user_id,
-        visit_date: latest_date
+        visit_date: latest_date,
       },
       orderBy: {
-        visit_date: "desc"
+        visit_date: "desc",
       },
       include: {
         customer: {
           select: {
             store_name: true,
-            owner_name: true
-          }
-        }
-      }
-    })
+            owner_name: true,
+          },
+        },
+      },
+    });
   }
 
   async latestAssignDate(user_id: string): Promise<StoreVisit | null> {
-    const record =  await this.prisma.storeVisit.findFirst({
+    const record = await this.prisma.storeVisit.findFirst({
       where: {
-        user_id
-      }, 
+        user_id,
+      },
       orderBy: {
-        visit_date: "desc"
-      }
-    })
+        visit_date: "desc",
+      },
+    });
 
-    if(!record) return null
+    if (!record) return null;
 
-    return StoreVisit.hydrate(record)
+    return StoreVisit.hydrate(record);
   }
 
   async getAssignedRoutes(user_id: string, visit_date?: Date) {
+    const whereClause: any = { user_id: user_id };
 
-    const whereClause: any = {user_id: user_id};
-
-    if(visit_date){
-      whereClause.visit_date = visit_date
+    if (visit_date) {
+      whereClause.visit_date = visit_date;
     }
     return await this.prisma.storeVisit.findMany({
       where: whereClause,
@@ -84,13 +81,21 @@ export class StoreVisitRepository {
         customer: {
           select: {
             owner_name: true,
-            store_name: true
-          }
-        }
+            store_name: true,
+          },
+        },
       },
       orderBy: {
-        visit_date: "asc"
-      }
-    })
+        visit_date: "asc",
+      },
+    });
+  }
+
+  async deleteAssignedRoutes(id: string): Promise<void> {
+    await this.prisma.storeVisit.deleteMany({
+      where: {
+        id,
+      },
+    });
   }
 }

@@ -158,4 +158,12 @@ export class StoreVisitService {
       visit_date: store_visit.visit_date
     }))
   }
+
+  async deleteAssignedRoute(id: string): Promise<void> {
+    const existing_store_visit = await this.storeVisitRepository.findById(id)
+    if(!existing_store_visit) throw new NotFoundError("Store visit doesn't exist")
+
+    existing_store_visit.delete()
+    await this.storeVisitRepository.deleteAssignedRoutes(id)
+  }
 }
