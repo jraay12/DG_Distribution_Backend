@@ -112,4 +112,26 @@ export class StoreVisitRepository {
 
     return StoreVisit.hydrate(result);
   }
+
+  async getAllAssignedRoutes( visit_date?: Date) {
+    const whereClause: any = { };
+
+    if (visit_date) {
+      whereClause.visit_date = visit_date;
+    }
+    return await this.prisma.storeVisit.findMany({
+      where: whereClause,
+      include: {
+        customer: {
+          select: {
+            owner_name: true,
+            store_name: true,
+          },
+        },
+      },
+      orderBy: {
+        visit_date: "asc",
+      },
+    });
+  }
 }

@@ -12,6 +12,7 @@ import { ForbiddenError } from "../../utils/error/ForbiddenError";
 import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignResponseDTO";
 import { GetAssignedResponseDTO } from "./dto/GetAssignedResponseDTO";
 import { toPHT } from "../../utils/utcToPht";
+import { getStayDuration } from "../../utils/stayDuration";
 
 export class StoreVisitService {
   constructor(
@@ -165,6 +166,8 @@ export class StoreVisitService {
       visit_date: store_visit.visit_date,
       time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
       time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
+      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out)
+
     }));
   }
 
@@ -199,5 +202,25 @@ export class StoreVisitService {
 
     existing_store_visit.markTimeOut();
     await this.storeVisitRepository.update(existing_store_visit);
+  }
+
+   async getAllAssignedRoutes(
+    visit_date?: Date,
+  ): Promise<GetAssignedResponseDTO[]> {
+    const store_visits = await this.storeVisitRepository.getAllAssignedRoutes(
+      visit_date,
+    );
+
+    return store_visits.map((store_visit) => ({
+      id: store_visit.id,
+      customer_id: store_visit.customer_id,
+      owner_name: store_visit.customer.owner_name,
+      store_name: store_visit.customer.store_name,
+      user_id: store_visit.user_id,
+      visit_date: store_visit.visit_date,
+      time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
+      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
+      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out)
+    }));
   }
 }

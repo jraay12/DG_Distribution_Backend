@@ -88,40 +88,52 @@ export class StoreVisitController {
     try {
       const { id } = req.params as { id: string };
       await this.storeVisitService.deleteAssignedRoute(id);
-      res.status(200).json({message: "Successfully deleted route"});
+      res.status(200).json({ message: "Successfully deleted route" });
     } catch (error) {
       next(error);
     }
   };
 
-  markTimeIn = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  markTimeIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params as { id: string };
-      const user_id = req.user.user_id 
+      const user_id = req.user.user_id;
       await this.storeVisitService.markTimeIn(id, user_id);
-      res.status(200).json({message: "Successfully mark time in"});
+      res.status(200).json({ message: "Successfully mark time in" });
     } catch (error) {
       next(error);
     }
   };
 
-  markTimeOut = async (
+  markTimeOut = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params as { id: string };
+      const user_id = req.user.user_id;
+      await this.storeVisitService.markTimeOut(id, user_id);
+      res.status(200).json({ message: "Successfully mark time out" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAllAssignedRoutes = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const { id } = req.params as { id: string };
-      const user_id = req.user.user_id 
-      await this.storeVisitService.markTimeOut(id, user_id);
-      res.status(200).json({message: "Successfully mark time out"});
+      const { visit_date } = req.query as { visit_date?: string };
+      const result = await this.storeVisitService.getAllAssignedRoutes(
+        visit_date ? new Date(visit_date) : undefined,
+      );
+      res.status(200).json({
+        message: visit_date
+          ? `Successfully retrieved all assigned routes for ${visit_date}`
+          : `Successfully retrieved all assigned routes`,
+        data: result,
+      });
     } catch (error) {
       next(error);
     }
   };
-  
 }

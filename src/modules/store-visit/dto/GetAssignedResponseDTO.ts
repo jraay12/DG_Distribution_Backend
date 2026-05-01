@@ -7,4 +7,5 @@ export interface GetAssignedResponseDTO {
   visit_date: Date
   time_in?: string | null
   time_out?: string | null
+  stay_duration: string | null
 }

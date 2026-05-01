@@ -51,6 +51,12 @@ const storeVisitRoutes = (
     storeVisitController.markTimeOut,
   );
 
+  routes.get(
+    "/",
+    AuthMiddleware(jwtService, ["ADMIN"]),
+    storeVisitController.getAllAssignedRoutes,
+  );
+
 
   
   return routes;
