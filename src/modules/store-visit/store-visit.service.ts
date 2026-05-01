@@ -167,7 +167,7 @@ export class StoreVisitService {
       time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
       time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
       stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out)
-
+      
     }));
   }
 
@@ -211,7 +211,18 @@ export class StoreVisitService {
       visit_date,
     );
 
-    return store_visits.map((store_visit) => ({
+
+    return store_visits.map((store_visit) => {
+
+      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED"
+
+      if (store_visit.time_in && store_visit.time_out) {
+        visited = "VISITED";
+      } else if (store_visit.time_in || store_visit.time_out) {
+        visited = "ONGOING";
+      }
+
+      return {
       id: store_visit.id,
       customer_id: store_visit.customer_id,
       owner_name: store_visit.customer.owner_name,
@@ -220,7 +231,10 @@ export class StoreVisitService {
       visit_date: store_visit.visit_date,
       time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
       time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
-      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out)
-    }));
+      stay_duration: getStayDuration(store_visit.time_in, store_visit.time_out),
+      status: visited
+      
+    }
+    });
   }
 }

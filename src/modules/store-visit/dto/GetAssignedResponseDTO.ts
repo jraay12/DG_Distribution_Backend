@@ -8,4 +8,5 @@ export interface GetAssignedResponseDTO {
   time_in?: string | null
   time_out?: string | null
   stay_duration: string | null
+  status?: string
 }
