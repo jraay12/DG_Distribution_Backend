@@ -9,7 +9,7 @@ import { BadRequestError } from "../../utils/error/BadRequestError";
 import { start, end } from "../../utils/convertToPHTTime";
 import { ConflictError } from "../../utils/error/ConflictError";
 import { ExtendedPrismaClient } from "../../config/prisma";
-import { ResponseStoreVisitHistoryWithCustomerDTO } from "./dto/ResponseStoreHistory";
+
 export class StoreVisitService {
   constructor(
     private storeVisitRepository: StoreVisitRepository,
@@ -60,32 +60,12 @@ export class StoreVisitService {
     );
 
     await this.prisma.$transaction(async (tx) => {
-      const store_visit_exist =
-        await this.storeVisitRepository.findStoreVisitHistoryToday(
-          dto.user_id,
-          start,
-          end,
-          tx as typeof this.prisma,
-        );
+     
 
-      console.log(store_visit_exist);
-
-      if (!store_visit_exist) {
-        await this.storeVisitRepository.deleteStoreVisitHistory(
-          dto.user_id,
-          tx as typeof this.prisma,
-        );
-      }
+  
 
       await this.storeVisitRepository.saveMany(
         storeVisits,
-        tx as typeof this.prisma,
-      );
-      await this.storeVisitRepository.saveHistory(
-        {
-          user_id: dto.user_id,
-          customer_id: validCustomerIds,
-        },
         tx as typeof this.prisma,
       );
     });
@@ -93,15 +73,4 @@ export class StoreVisitService {
     return storeVisits.map((visit) => visit.toJSON());
   }
 
-  async getPreviousStoreVisit(
-    user_id: string,
-  ): Promise<ResponseStoreVisitHistoryWithCustomerDTO[]> {
-    const existing_user = await this.userRepository.findById(user_id);
-
-    if (!existing_user) {
-      throw new NotFoundError("User not found");
-    }
-
-    return await this.storeVisitRepository.getStoreVisitHistory(user_id);
-  }
 }

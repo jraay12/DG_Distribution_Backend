@@ -18,21 +18,5 @@ export class StoreVisitController {
     }
   };
 
-  getPreviousStoreVisit = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    try {
-      const inputParams = req.params as { user_id: string };
-      const result = await this.storeVisitService.getPreviousStoreVisit(
-        inputParams.user_id,
-      );
-      res.status(200).json({
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+
 }
