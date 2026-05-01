@@ -108,5 +108,20 @@ export class StoreVisitController {
       next(error);
     }
   };
+
+  markTimeOut = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params as { id: string };
+      const user_id = req.user.user_id 
+      await this.storeVisitService.markTimeOut(id, user_id);
+      res.status(200).json({message: "Successfully mark time out"});
+    } catch (error) {
+      next(error);
+    }
+  };
   
 }

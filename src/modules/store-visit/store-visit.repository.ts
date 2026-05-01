@@ -112,20 +112,4 @@ export class StoreVisitRepository {
 
     return StoreVisit.hydrate(result);
   }
-
-  async findByIdByUser(
-    id: string,
-    user_id: string,
-  ): Promise<StoreVisit | null> {
-    const record = await this.prisma.storeVisit.findFirst({
-      where: {
-        id,
-        user_id,
-      },
-    });
-
-    if(!record) return null
-
-    return StoreVisit.hydrate(record)
-  }
 }

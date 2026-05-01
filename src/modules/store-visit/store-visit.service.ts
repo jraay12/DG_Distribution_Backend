@@ -144,11 +144,17 @@ export class StoreVisitService {
     return storeVisits.map((storeVisit) => storeVisit.toJSON());
   }
 
-  async getAssignedRoutes(user_id: string, visit_date?: Date): Promise<GetAssignedResponseDTO[]> {
+  async getAssignedRoutes(
+    user_id: string,
+    visit_date?: Date,
+  ): Promise<GetAssignedResponseDTO[]> {
     const user_exist = await this.userRepository.findById(user_id);
     if (!user_exist) throw new NotFoundError("User does not exists");
 
-    const store_visits = await this.storeVisitRepository.getAssignedRoutes(user_id, visit_date)
+    const store_visits = await this.storeVisitRepository.getAssignedRoutes(
+      user_id,
+      visit_date,
+    );
 
     return store_visits.map((store_visit) => ({
       id: store_visit.id,
@@ -158,28 +164,40 @@ export class StoreVisitService {
       user_id: store_visit.user_id,
       visit_date: store_visit.visit_date,
       time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
-      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null
-      
-    }))
+      time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
+    }));
   }
 
   async deleteAssignedRoute(id: string): Promise<void> {
-    const existing_store_visit = await this.storeVisitRepository.findById(id)
-    if(!existing_store_visit) throw new NotFoundError("Store visit doesn't exist")
+    const existing_store_visit = await this.storeVisitRepository.findById(id);
+    if (!existing_store_visit)
+      throw new NotFoundError("Store visit doesn't exist");
 
-    existing_store_visit.delete()
-    await this.storeVisitRepository.deleteAssignedRoutes(id)
+    existing_store_visit.delete();
+    await this.storeVisitRepository.deleteAssignedRoutes(id);
   }
 
   async markTimeIn(id: string, user_id: string): Promise<void> {
-    const existing_store_visit = await this.storeVisitRepository.findById(id)
-    if(!existing_store_visit) throw new NotFoundError("Store visit doesn't exist")
+    const existing_store_visit = await this.storeVisitRepository.findById(id);
+    if (!existing_store_visit)
+      throw new NotFoundError("Store visit doesn't exist");
 
-    const allowed_to_mark = await this.storeVisitRepository.findByIdByUser(id, user_id)
+    if (existing_store_visit.userId !== user_id)
+      throw new ForbiddenError("You are only allowed to mark your own routes");
 
-    if(!allowed_to_mark) throw new ForbiddenError("You are only allowed to mark your own routes")
+    existing_store_visit.markTimeIn();
+    await this.storeVisitRepository.update(existing_store_visit);
+  }
 
-    existing_store_visit.markTimeIn()
-    await this.storeVisitRepository.update(existing_store_visit)
+  async markTimeOut(id: string, user_id: string): Promise<void> {
+    const existing_store_visit = await this.storeVisitRepository.findById(id);
+    if (!existing_store_visit)
+      throw new NotFoundError("Store visit doesn't exist");
+
+    if (existing_store_visit.userId !== user_id)
+      throw new ForbiddenError("You are only allowed to mark your own routes");
+
+    existing_store_visit.markTimeOut();
+    await this.storeVisitRepository.update(existing_store_visit);
   }
 }

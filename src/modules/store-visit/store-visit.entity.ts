@@ -117,6 +117,11 @@ export class StoreVisit {
     this.touch()
   }
 
+  markTimeOut(){
+    this.props.time_out = new Date()
+    this.touch()
+  }
+
   // serialization (for repository)
 
   toJSON(): StoreVisitProps {

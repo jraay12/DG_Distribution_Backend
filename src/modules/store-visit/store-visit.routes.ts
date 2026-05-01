@@ -45,6 +45,12 @@ const storeVisitRoutes = (
     storeVisitController.markTimeIn,
   );
 
+  routes.patch(
+    "/:id/time-out",
+    AuthMiddleware(jwtService, ["USER"]),
+    storeVisitController.markTimeOut,
+  );
+
 
   
   return routes;
