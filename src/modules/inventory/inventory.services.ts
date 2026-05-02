@@ -8,6 +8,7 @@ import { StockMovementRepository } from "../Stock Movement/stock-movement.reposi
 import { AddStockInventoryDTO } from "./dto/AddStockInventoryDTO";
 import { InventoryResponseDTO } from "./dto/InventoryResponseDTO";
 import { InventoryRepository } from "./inventory.repository";
+import { emitAddStock } from "../../utils/socket/socket.publisher";
 
 export class InventoryService {
   constructor(private inventoryRepo: InventoryRepository, private productRepo: ProductRepository, private stockMovementRepo: StockMovementRepository, private prisma: ExtendedPrismaClient){}
@@ -29,8 +30,9 @@ export class InventoryService {
       await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
       await this.stockMovementRepo.save(stockMovement, tx as typeof this.prisma)
     })
-    
 
+    emitAddStock(inventory.toJson())
+    
     return inventory.toJson()
   }
 
