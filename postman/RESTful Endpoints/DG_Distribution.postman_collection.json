@@ -292,7 +292,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"admin123\"\r\n}",
+              "raw": "{\r\n    \"email\":\"johnraycaete12@gmail.com\",\r\n    \"password\":\"qwerty123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1729,14 +1729,8 @@
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "user_id",
-                  "value": "b5592809-f0a5-4c35-865d-a8a1efdc96c1",
-                  "type": "text",
-                  "uuid": "63270304-31d1-4526-8e1a-507e8df6c6c3"
-                },
-                {
-                  "key": "customer_id",
-                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156",
+                  "key": "store_visit_id",
+                  "value": "6b720511-f0fd-4346-8e54-45f27c0195a9",
                   "type": "text",
                   "uuid": "4adb090f-78db-4598-ad1d-ea5f627c84d4"
                 },
@@ -2092,6 +2086,357 @@
                 {
                   "key": "id",
                   "value": "0e5ac7ba-2d76-43b9-8d54-ab77b6d9237e"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Store",
+      "item": [
+        {
+          "name": "Assign Routes to agent",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"d3597e34-390e-4376-8f36-9ac596f3c9f4\",\r\n  \"visits\": [\r\n    {\r\n        \"customer_id\": \"81c82463-fa53-4875-be06-4752445cb33a\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    },\r\n    {\r\n        \"customer_id\": \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    }\r\n    \r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Previous Asssign Routes By Agent",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:user_id/previous-route",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":user_id",
+                "previous-route"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Use Previous Routes Asssign to the Agent",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"visit_date\": \"2026-05-10T00:00:00.000Z\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:user_id/previous-assign",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":user_id",
+                "previous-assign"
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Assigned Routes by User (With filter check the params)",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:user_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":user_id"
+              ],
+              "query": [
+                {
+                  "key": "visit_date",
+                  "value": "2026-05-04",
+                  "description": "you can specify the date you want to return example 2026-05-10 by default it return all",
+                  "disabled": true
+                }
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "d3597e34-390e-4376-8f36-9ac596f3c9f4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete assigned routes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "47756995-1390-4e1d-a21f-c0ea68f202cc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Time IN",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:id/time-in",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":id",
+                "time-in"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Time Out",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:id/time-out",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ":id",
+                "time-out"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Assigned Store( With Filter check in the params)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "visit_date",
+                  "value": "2026-05-04",
+                  "disabled": true
                 }
               ]
             }
