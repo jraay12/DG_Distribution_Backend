@@ -6,13 +6,12 @@ export class InventoryRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
   async update(inventory: Inventory, tx?: typeof this.prisma): Promise<void> {
-
     const client = tx ?? (this.prisma as ExtendedPrismaClient);
     await client.inventory.update({
       where: { product_id: inventory.productId },
       data: {
         quantity: inventory.quantity,
-        reorder_level: inventory.reorderLevel ?? null
+        reorder_level: inventory.reorderLevel ?? null,
       },
     });
   }
@@ -26,6 +25,26 @@ export class InventoryRepository {
 
     if (!inventory) return null;
 
-    return Inventory.hydrate(inventory)
+    return Inventory.hydrate(inventory);
+  }
+
+  async deductStockAtomic(
+    product_id: string,
+    quantity: number,
+    tx?: typeof this.prisma,
+  ): Promise<void> {
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+
+    await client.inventory.updateMany({
+      where: {
+        product_id,
+        quantity: { gte: quantity },
+      },
+      data: {
+        quantity: {
+          decrement: quantity,
+        },
+      },
+    });
   }
 }

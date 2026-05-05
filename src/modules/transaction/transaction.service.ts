@@ -5,11 +5,19 @@ import { Transaction } from "./transaction.entity";
 import { StoreVisitRepository } from "../store-visit/store-visit.repository";
 import { TransactionType } from "./transaction.entity";
 import { ProductRepository } from "../product/product.repository";
+import { InventoryRepository } from "../inventory/inventory.repository";
+import { ExtendedPrismaClient } from "../../config/prisma";
+import { StockMovementRepository } from "../Stock Movement/stock-movement.repository";
+import { StockMovement } from "../Stock Movement/stock-movement.entity";
+import { Type } from "../Stock Movement/stock-movement.enum";
 export class TransactionService {
   constructor(
     private transactionRepo: TransactionRepository,
     private storeVisitRepo: StoreVisitRepository,
     private productRepo: ProductRepository,
+    private inventoryRepo: InventoryRepository,
+    private stockMovementRepo: StockMovementRepository,
+    private prisma: ExtendedPrismaClient,
   ) {}
 
   async create(dto: {
@@ -110,7 +118,29 @@ export class TransactionService {
       }),
     });
 
-    await this.transactionRepo.save(transaction);
+    await this.prisma.$transaction(async (tx) => {
+      await this.transactionRepo.save(transaction, tx as typeof this.prisma);
+
+      for (const item of convertItemToArray) {
+        await this.inventoryRepo.deductStockAtomic(
+          item.product_id,
+          item.quantity,
+        );
+      }
+
+      await this.stockMovementRepo.createMany(
+        convertItemToArray.map((item) =>
+          StockMovement.create({
+            type: Type.OUT,
+            product_id: item.product_id,
+            quantity: item.quantity,
+            created_by: dto.user_id,
+          }),
+        ),
+        tx as typeof this.prisma,
+      );
+
+    });
 
     return transaction.toJSON();
   }

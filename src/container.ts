@@ -67,7 +67,7 @@ const customerService = new CustomerService(customerRepository)
 const deliveryService = new DeliveryService(deliveryRepository, storeVisitRepository)
 const promoCodeService = new PromoCodeService(promoCodeRepository)
 const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository, prisma)
-const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository)
+const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository, inventoryRepository, stockMovementRepository, prisma)
 // controller
 export const userController = new UserController(userService);
 export const authController = new AuthController(authService)

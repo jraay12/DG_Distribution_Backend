@@ -4,8 +4,10 @@ import { Transaction } from "./transaction.entity";
 export class TransactionRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
 
-  async save(transaction: Transaction): Promise<void> {
-    await this.prisma.transaction.create({
+  async save(transaction: Transaction, tx?: typeof this.prisma): Promise<void> {
+    const client = tx ?? (this.prisma as ExtendedPrismaClient);
+    
+    await client.transaction.create({
       data: {
         id: transaction.id,
         store_visit_id: transaction.storeVisitId,
