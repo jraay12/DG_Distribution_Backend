@@ -64,6 +64,8 @@ model Product {
   @@index([category, deletedAt])
   inventory Inventory?
   stockmovement StockMovement[]
+  transactionItem TransactionItem[]
+
 }
 
 model Inventory {
@@ -167,9 +169,42 @@ model StoreVisit {
   deletedAt DateTime?
 
   deliveryReports DeliveryReport[]
+  transaction Transaction[]
 
   @@unique([user_id, customer_id, visit_date])
 
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+
+  store_visit_id  String
+  storeVisit      StoreVisit @relation(fields: [store_visit_id], references: [id])
+
+  type            TransactionType
+  total_amount    Decimal? @db.Decimal(10,2)
+
+  createdAt       DateTime @default(now())
+
+  items           TransactionItem[]
+}
+
+model TransactionItem {
+  id              String   @id @default(uuid())
+
+  transaction_id  String
+  transaction     Transaction @relation(fields: [transaction_id], references: [id])
+
+  product_id      String
+  product         Product @relation(fields: [product_id], references: [id])
+
+  quantity        Int
+  price           Decimal? @db.Decimal(10,2)
+}
+
+enum TransactionType {
+  SALE
+  DELIVERY
 }
 
 
