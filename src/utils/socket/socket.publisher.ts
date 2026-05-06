@@ -7,3 +7,7 @@ export const emitProductStats = (data: any) => {
 export const emitAddStock = (data: any) => {
   getIO().emit("product:add", data)
 }
+
+export const emitProductInventory = (data: any) => {
+  getIO().to("stocks").emit("product:inventory", data)
+}

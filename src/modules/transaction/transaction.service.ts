@@ -10,6 +10,7 @@ import { ExtendedPrismaClient } from "../../config/prisma";
 import { StockMovementRepository } from "../Stock Movement/stock-movement.repository";
 import { StockMovement } from "../Stock Movement/stock-movement.entity";
 import { Type } from "../Stock Movement/stock-movement.enum";
+import { emitProductInventory } from "../../utils/socket/socket.publisher";
 export class TransactionService {
   constructor(
     private transactionRepo: TransactionRepository,
@@ -118,14 +119,21 @@ export class TransactionService {
       }),
     });
 
+    const updatedInventories: any[] = [];
     await this.prisma.$transaction(async (tx) => {
       await this.transactionRepo.save(transaction, tx as typeof this.prisma);
 
       for (const item of convertItemToArray) {
-        await this.inventoryRepo.deductStockAtomic(
+        const updated = await this.inventoryRepo.deductStockAtomic(
           item.product_id,
           item.quantity,
+          tx as typeof this.prisma,
         );
+
+        updatedInventories.push({
+          productId: updated?.product_id,
+          quantity: updated?.quantity
+        })
       }
 
       await this.stockMovementRepo.createMany(
@@ -139,8 +147,11 @@ export class TransactionService {
         ),
         tx as typeof this.prisma,
       );
-
     });
+
+    updatedInventories.forEach(inventory => {
+      emitProductInventory(inventory)
+    })
 
     return transaction.toJSON();
   }

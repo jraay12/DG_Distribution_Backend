@@ -32,7 +32,7 @@ export class InventoryRepository {
     product_id: string,
     quantity: number,
     tx?: typeof this.prisma,
-  ): Promise<void> {
+  ) {
     const client = tx ?? (this.prisma as ExtendedPrismaClient);
 
     await client.inventory.updateMany({
@@ -46,5 +46,15 @@ export class InventoryRepository {
         },
       },
     });
+
+    const updated = await client.inventory.findUnique({
+      where: { product_id },
+      select: {
+        product_id: true,
+        quantity: true,
+      },
+    });
+
+    return updated;
   }
 }
