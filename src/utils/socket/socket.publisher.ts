@@ -8,6 +8,6 @@ export const emitAddStock = (data: any) => {
   getIO().emit("product:add", data)
 }
 
-export const emitProductInventory = (data: any) => {
+export const emitProductInventory = (data: {product_id: string, quantity: number}) => {
   getIO().to("stocks").emit("product:inventory", data)
 }
