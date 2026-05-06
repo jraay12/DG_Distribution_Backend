@@ -50,12 +50,15 @@ export class InventoryService {
     const stockMovement = StockMovement.create({type: Type.ADJUSTMENT , product_id: data.product_id, quantity: data.quantity, created_by: user_id})
 
 
-    await this.prisma.$transaction(async (tx) => {
-      await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
+    const updatedInventory = await this.prisma.$transaction(async (tx) => {
+      const updated = await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
       await this.stockMovementRepo.save(stockMovement, tx as typeof this.prisma)
-    })
-    
 
+      return updated
+    })
+
+    emitProductInventory({product_id: updatedInventory.product_id, quantity: updatedInventory.quantity})
+    
     return inventory.toJson()
   }
 
