@@ -39,6 +39,7 @@ export class StockMovementRepository {
         created_by: movement.createdBy,
         createdAt: movement.createdAt,
         product_id: movement.productId,
+        store_id: movement.storeId ?? null
       })),
     });
   }
