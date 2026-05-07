@@ -8,7 +8,7 @@ import { StockMovementRepository } from "../Stock Movement/stock-movement.reposi
 import { AddStockInventoryDTO } from "./dto/AddStockInventoryDTO";
 import { InventoryResponseDTO } from "./dto/InventoryResponseDTO";
 import { InventoryRepository } from "./inventory.repository";
-import { emitAddStock } from "../../utils/socket/socket.publisher";
+import { emitAddStock, emitProductInventory } from "../../utils/socket/socket.publisher";
 
 export class InventoryService {
   constructor(private inventoryRepo: InventoryRepository, private productRepo: ProductRepository, private stockMovementRepo: StockMovementRepository, private prisma: ExtendedPrismaClient){}
@@ -26,12 +26,14 @@ export class InventoryService {
 
     const stockMovement = StockMovement.create({type: Type.IN , product_id: data.product_id, quantity: data.quantity, created_by: user_id})
 
-    await this.prisma.$transaction(async (tx) => {
-      await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
+    const updatedInventory = await this.prisma.$transaction(async (tx) => {
+      const updated = await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
       await this.stockMovementRepo.save(stockMovement, tx as typeof this.prisma)
+
+      return updated
     })
 
-    emitAddStock(inventory.toJson())
+    emitProductInventory({product_id: updatedInventory.product_id, quantity: updatedInventory.quantity})
     
     return inventory.toJson()
   }
@@ -48,12 +50,15 @@ export class InventoryService {
     const stockMovement = StockMovement.create({type: Type.ADJUSTMENT , product_id: data.product_id, quantity: data.quantity, created_by: user_id})
 
 
-    await this.prisma.$transaction(async (tx) => {
-      await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
+    const updatedInventory = await this.prisma.$transaction(async (tx) => {
+      const updated = await this.inventoryRepo.update(inventory, tx as typeof this.prisma)
       await this.stockMovementRepo.save(stockMovement, tx as typeof this.prisma)
-    })
-    
 
+      return updated
+    })
+
+    emitProductInventory({product_id: updatedInventory.product_id, quantity: updatedInventory.quantity})
+    
     return inventory.toJson()
   }
 

@@ -292,7 +292,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"johnraycaete12@gmail.com\",\r\n    \"password\":\"qwerty123\"\r\n}",
+              "raw": "{\r\n    \"email\":\"johnraycaete@gmail.com\",\r\n    \"password\":\"qwerty123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1278,7 +1278,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "e89c504f-c0fc-42b4-9819-efdc7b8c2ab8"
+                  "value": "ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc"
                 }
               ]
             }
@@ -1711,7 +1711,7 @@
       "name": "Delivery",
       "item": [
         {
-          "name": "Create",
+          "name": "Create Evidence",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2437,6 +2437,140 @@
                   "key": "visit_date",
                   "value": "2026-05-04",
                   "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transaction",
+      "item": [
+        {
+          "name": "Add Transaction",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n   \r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 20\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/transaction/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "transaction",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction By ID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 2,\r\n      \"price\": 150.00\r\n    },\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 1,\r\n      \"price\": 300.00\r\n    }\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/transaction/:transaction_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "transaction",
+                ":transaction_id"
+              ],
+              "variable": [
+                {
+                  "key": "transaction_id",
+                  "value": "c54ba5fa-6455-4d7c-822f-60bed1505440"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 2,\r\n      \"price\": 150.00\r\n    },\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 1,\r\n      \"price\": 300.00\r\n    }\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/transaction/store-visit/:store_visit_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "transaction",
+                "store-visit",
+                ":store_visit_id"
+              ],
+              "variable": [
+                {
+                  "key": "store_visit_id",
+                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
                 }
               ]
             }

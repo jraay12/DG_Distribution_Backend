@@ -148,4 +148,23 @@ export class ProductRepository {
       }
     });
   }
+
+  async findByManyIds(productIds: string[]) {
+    return await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: productIds
+        }
+      },
+      include: {
+        inventory: {
+          select: {
+            quantity: true
+          }
+        }
+      }
+    })
+
+    
+  }
 }

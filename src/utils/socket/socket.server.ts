@@ -32,6 +32,11 @@ export const socketInit = (server: HttpServer) => {
 
  io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
+
+    socket.join("stocks")
+    socket.join("store-inventory");
+
+    console.log(`Socket ${socket.id} joined stocks`)
   });
 }
 
