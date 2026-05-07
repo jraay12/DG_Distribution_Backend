@@ -5,6 +5,7 @@ import crypto from "crypto";
 export interface StockMovementProps {
   id: string;
   product_id: string;
+  store_id?: string | null
   type: Type;
   quantity: number;
   createdAt?: Date;
@@ -86,6 +87,10 @@ export class StockMovement {
 
   get createdBy(): string {
     return this.props.created_by;
+  }
+
+  get storeId(): string | null | undefined {
+    return this.props.store_id
   }
 
   toJSON(): StockMovementProps {

@@ -18,6 +18,9 @@ export class StockMovementRepository {
         created_by: stockMovement.createdBy,
         createdAt: stockMovement.createdAt,
         product_id: stockMovement.productId,
+        store_id: stockMovement.storeId ?? null
+        
+        
       },
     });
   }

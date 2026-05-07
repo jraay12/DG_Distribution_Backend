@@ -1,3 +1,6 @@
+import { StoreInventoryController } from './modules/inventory/store-inventory.controller';
+import { StoreInventoryRepositiory } from './modules/inventory/store-inventory.repository';
+import { StoreInventoryService } from './modules/inventory/store-inventory.service';
 import { UserService } from "./modules/user/user.service";
 import { UserController } from "./modules/user/user.controller";
 import { UserRepository } from "./modules/user/user.repository";
@@ -55,6 +58,7 @@ const deliveryRepository = new DeliveryRepository(prisma)
 const promoCodeRepository = new PromoCodeRepository(prisma)
 const storeVisitRepository = new StoreVisitRepository(prisma)
 const transactionRepository = new TransactionRepository(prisma)
+const storeInventoryRepository = new StoreInventoryRepositiory(prisma)
 // service
 const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
@@ -68,6 +72,7 @@ const deliveryService = new DeliveryService(deliveryRepository, storeVisitReposi
 const promoCodeService = new PromoCodeService(promoCodeRepository)
 const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository, prisma)
 const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository, inventoryRepository, stockMovementRepository, prisma)
+const storeInventoryService = new StoreInventoryService(storeInventoryRepository, customerRepository, productRepository, stockMovementRepository, prisma)
 // controller
 export const userController = new UserController(userService);
 export const authController = new AuthController(authService)
@@ -81,3 +86,4 @@ export const deliveryController = new DeliveryController(deliveryService)
 export const promoCodeController = new PromoCodeController(promoCodeService)
 export const storeVisitController = new StoreVisitController(storeVisitService)
 export const transactionController = new TransactionController(transactionService)
+export const storeInventoryController = new StoreInventoryController(storeInventoryService)

@@ -1,5 +1,4 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
-import { AddStockInventoryDTO } from "./dto/AddStockInventoryDTO";
 import { Inventory } from "./inventory.entity";
 
 export class InventoryRepository {
