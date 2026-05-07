@@ -26,7 +26,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"John Doe\",\r\n  \"email\": \"johnraycaete12@gmail.com\",\r\n  \"password\": \"qwerty123\",\r\n  \"role\": \"USER\"\r\n}",
+              "raw": "{\r\n  \"name\": \"John Ray Canete\",\r\n  \"email\": \"johnraycaete@gmail.com\",\r\n  \"password\": \"qwerty123\",\r\n  \"role\": \"USER\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -407,7 +407,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"brand_name\": \"test brand\"\r\n}",
+              "raw": "{\r\n    \"brand_name\": \"ANDROID\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -688,7 +688,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"brand_id\": \"d470f8f7-3a5f-4d0b-8978-1677fe004b1d\",\r\n    \"model_name\": \"Model 123\"\r\n}",
+              "raw": "{\r\n    \"brand_id\": \"eeb56c54-ce70-4066-bb07-4db4edd464e1\",\r\n    \"model_name\": \"IPHONE\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -983,7 +983,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Apparel\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"fec48d6e-91c1-4d24-9a37-45101bc1ae9d\",\r\n  \"product_name\": \"NEW PRODUCT CREATED\"\r\n}",
+              "raw": "{\r\n  \"price\": 1000,\r\n  \"category\": \"Electronics\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"811c13d6-7afe-4211-b032-588d388b80e5\",\r\n  \"product_name\": \"Samsung A7\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1254,7 +1254,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"quantity\": 50\r\n}",
+              "raw": "{\r\n  \"quantity\": 100\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1278,7 +1278,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc"
+                  "value": "81313313-3b54-4e7b-b571-521fcf40f4d4"
                 }
               ]
             }
@@ -1302,7 +1302,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"quantity\": 50\r\n}",
+              "raw": "{\r\n  \"quantity\": 10\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1326,7 +1326,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "e89c504f-c0fc-42b4-9819-efdc7b8c2ab8"
+                  "value": "81313313-3b54-4e7b-b571-521fcf40f4d4"
                 }
               ]
             }
@@ -1373,7 +1373,7 @@
               "variable": [
                 {
                   "key": "product_id",
-                  "value": "834772b2-f96f-4be4-b761-79576e36d4e3"
+                  "value": "b47df84b-278f-42e4-90be-5dbfe7175b9f"
                 }
               ]
             }
@@ -1402,7 +1402,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"store_name\": \"Ray's Store\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
+              "raw": "{\r\n  \"store_name\": \"Renante Store\",\r\n  \"owner_name\": \"Renante Canete\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1730,7 +1730,7 @@
               "formdata": [
                 {
                   "key": "store_visit_id",
-                  "value": "6b720511-f0fd-4346-8e54-45f27c0195a9",
+                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97",
                   "type": "text",
                   "uuid": "4adb090f-78db-4598-ad1d-ea5f627c84d4"
                 },
@@ -1762,7 +1762,7 @@
                   "key": "evidence",
                   "type": "file",
                   "uuid": "9def52dc-28ca-47c9-86ec-3004d833213b",
-                  "src": "/C:/Users/johnr/Downloads/download.jpg"
+                  "src": "/C:/Users/johnr/Downloads/0649792d-b231-463b-a442-01d5c42a35e7.jpg"
                 }
               ]
             },
@@ -1876,7 +1876,7 @@
               "variable": [
                 {
                   "key": "delivery_id",
-                  "value": "d6fea38a-e57c-4951-ae27-82381f6f96a4"
+                  "value": "31d168ff-576c-4388-86a5-19f2d2b2d5bc"
                 }
               ]
             }
@@ -2114,7 +2114,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"user_id\": \"d3597e34-390e-4376-8f36-9ac596f3c9f4\",\r\n  \"visits\": [\r\n    {\r\n        \"customer_id\": \"81c82463-fa53-4875-be06-4752445cb33a\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    },\r\n    {\r\n        \"customer_id\": \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    }\r\n    \r\n  ]\r\n}",
+              "raw": "{\r\n  \"user_id\": \"93b8e2c6-2e9c-4a4e-ab62-374bbb08df14\",\r\n  \"visits\": [\r\n    {\r\n        \"customer_id\": \"99e5b7b8-f719-4004-821e-2e6beca270f2\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    },\r\n    {\r\n        \"customer_id\": \"c89852bd-4019-44af-a34d-e24c8bf9b303\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    }\r\n    \r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2174,7 +2174,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                  "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14"
                 }
               ]
             }
@@ -2198,7 +2198,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"visit_date\": \"2026-05-10T00:00:00.000Z\"\r\n}",
+              "raw": "{\r\n    \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2221,7 +2221,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "df11d765-037d-4a55-90cf-52248817cb9a"
+                  "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14"
                 }
               ]
             }
@@ -2273,7 +2273,7 @@
               "variable": [
                 {
                   "key": "user_id",
-                  "value": "d3597e34-390e-4376-8f36-9ac596f3c9f4"
+                  "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14"
                 }
               ]
             }
@@ -2356,7 +2356,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
+                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97"
                 }
               ]
             }
@@ -2398,7 +2398,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
+                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97"
                 }
               ]
             }
@@ -2465,7 +2465,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n   \r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 20\r\n    }\r\n  ]\r\n}",
+              "raw": "{\r\n  \"store_visit_id\": \"3ab2afef-094f-4199-bd6a-f20288ec4a97\",\r\n  \"type\": \"DELIVERY\", // SALE = CUSTOMER(STORE) -> STORE CUSTOMER, DELIVERY = WAREHOUSE -> CUSTOMER(STORE)\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"81313313-3b54-4e7b-b571-521fcf40f4d4\",\r\n      \"quantity\": 100\r\n    }\r\n    \r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2533,7 +2533,7 @@
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "Retrieve Transaction by Store Visit",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -2570,7 +2570,7 @@
               "variable": [
                 {
                   "key": "store_visit_id",
-                  "value": "41b206f8-fef0-4f9c-8fb5-2f17d5079b39"
+                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97"
                 }
               ]
             }
