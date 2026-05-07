@@ -1,3 +1,4 @@
+import { emitStoreInventory } from './../../utils/socket/socket.publisher';
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { TransactionRepository } from "./transaction.repository";
@@ -127,6 +128,7 @@ export class TransactionService {
     });
 
     const updatedInventories: any[] = [];
+    const updateStoreInventories: any[] = []
 
     // 6. EXECUTE TRANSACTION
     await this.prisma.$transaction(async (tx) => {
@@ -145,9 +147,10 @@ export class TransactionService {
             tx as typeof this.prisma,
           );
 
-          updatedInventories.push({
+          updateStoreInventories.push({
             productId: updated.product_id,
             quantity: updated.quantity,
+            customerId: updated.customer_id
           });
         }
 
@@ -171,11 +174,16 @@ export class TransactionService {
       if (dto.type === TransactionType.DELIVERY) {
         for (const item of items) {
           // 1. deduct warehouse stock
-          await this.inventoryRepo.deductStockAtomic(
+         const updateWarehouseStock =  await this.inventoryRepo.deductStockAtomic(
             item.product_id,
             item.quantity,
             tx as typeof this.prisma,
           );
+
+          updatedInventories.push({
+            productId: updateWarehouseStock?.product_id,
+            quantity: updateWarehouseStock?.quantity
+          })
 
           // 2. increase store stock (UPSERT)
           const updated = await this.storeInventoryRepo.increaseStock(
@@ -185,9 +193,10 @@ export class TransactionService {
             tx as typeof this.prisma,
           );
 
-          updatedInventories.push({
+          updateStoreInventories.push({
             productId: updated.product_id,
             quantity: updated.quantity,
+            customerId: updated.customer_id
           });
 
           // 3. stock movement (STORE IN)
@@ -221,10 +230,15 @@ export class TransactionService {
       }
     });
 
-    // 7. Emit updates
+    // Emit updates warehouse
     updatedInventories.forEach((inv) => {
       emitProductInventory(inv);
     });
+
+    // Emit Store Inventory
+    updateStoreInventories.forEach((inv) => {
+      emitStoreInventory(inv)
+    })
 
     return transaction.toJSON();
   }

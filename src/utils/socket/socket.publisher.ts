@@ -9,5 +9,13 @@ export const emitAddStock = (data: any) => {
 }
 
 export const emitProductInventory = (data: {product_id: string, quantity: number}) => {
-  getIO().to("stocks").emit("product:inventory", data)
+  getIO().to("stocks").emit("warehouse:inventory", data)
 }
+
+export const emitStoreInventory = (data: {
+  customer_id: string;
+  product_id: string;
+  quantity: number;
+}) => {
+  getIO().to("store-inventory").emit("store:inventory", data);
+};

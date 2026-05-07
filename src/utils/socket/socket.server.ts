@@ -34,6 +34,7 @@ export const socketInit = (server: HttpServer) => {
     console.log("Client connected:", socket.id);
 
     socket.join("stocks")
+    socket.join("store-inventory");
 
     console.log(`Socket ${socket.id} joined stocks`)
   });
