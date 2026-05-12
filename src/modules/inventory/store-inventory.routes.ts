@@ -8,6 +8,8 @@ const storeInventoryRoutes = (storeInventoryController: StoreInventoryController
 
   routes.post("/", AuthMiddleware(jwtService, ["USER"]), storeInventoryController.create)
   routes.get("/:customer_id", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.getStoreInventories)
+  routes.get("/:customer_id/recommendation", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.getProductRecommendation)
+
 
   return routes
 
