@@ -50,4 +50,25 @@ export class StoreInventoryService {
       product_id: record.product_id
     }))
   }
+
+  async getTopProducts(customer_id: string) {
+    const existingCustomer = await this.customerRepo.findById(customer_id);
+    if (!existingCustomer) throw new NotFoundError("Customer doesn't exists");
+
+    const topProducts = await this.stockMovementRepo.getTopOutMovements(customer_id)
+
+    const productIds = topProducts.map(product => product.product_id)
+
+    const products = await this.productRepo.findByManyIds(productIds)
+
+    return topProducts.map(m => {
+      const product = products.find(p => p.id === m.product_id)
+
+      return {
+        product_id: m.product_id,
+        product_name: product?.product_name,
+        total_sold: m._sum.quantity
+      }
+    })
+  }
 }
