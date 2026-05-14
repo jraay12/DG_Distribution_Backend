@@ -2421,7 +2421,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8000/api/store-visit/",
+              "raw": "http://localhost:8000/api/store-inventory/",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2429,7 +2429,7 @@
               "port": "8000",
               "path": [
                 "api",
-                "store-visit",
+                "store-inventory",
                 ""
               ],
               "query": [
@@ -2437,6 +2437,95 @@
                   "key": "visit_date",
                   "value": "2026-05-04",
                   "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store inventories",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 2,\r\n      \"price\": 150.00\r\n    },\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 1,\r\n      \"price\": 300.00\r\n    }\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-inventory/:customer_id",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-inventory",
+                ":customer_id"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "c89852bd-4019-44af-a34d-e24c8bf9b303"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Recommendation (by month)",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 2,\r\n      \"price\": 150.00\r\n    },\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 1,\r\n      \"price\": 300.00\r\n    }\r\n  ]\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-inventory/:customer_id/recommendation",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-inventory",
+                ":customer_id",
+                "recommendation"
+              ],
+              "variable": [
+                {
+                  "key": "customer_id",
+                  "value": "c89852bd-4019-44af-a34d-e24c8bf9b303"
                 }
               ]
             }
