@@ -92,4 +92,25 @@ export class StoreInventoryRepositiory {
       },
     });
   }
+
+  async findInventoriesByCustomerId(customer_id: string) {
+    return await this.prisma.storeInventory.findMany({
+      where: {
+        customer_id
+      },
+      include : {
+        product: {
+          select: {
+            product_name: true
+          },
+        },
+        customer: {
+          select: {
+            owner_name: true,
+            store_name: true
+          }
+        }
+      }
+    })
+  }
 }

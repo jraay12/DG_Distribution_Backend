@@ -14,5 +14,25 @@ export class StoreInventoryController {
       next(error);
     }
   };
+
+  getStoreInventories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {customer_id} = req.params as {customer_id: string}
+      const result = await this.storeInventoryService.getStoreInventories(customer_id);
+      res.status(200).json({ result });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getProductRecommendation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {customer_id} = req.params as {customer_id: string}
+      const result = await this.storeInventoryService.getTopProducts(customer_id);
+      res.status(200).json({ result });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
