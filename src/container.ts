@@ -39,6 +39,18 @@ import { StoreVisitService } from "./modules/store-visit/store-visit.service";
 import { TransactionController } from "./modules/transaction/transaction.controller";
 import { TransactionService } from "./modules/transaction/transaction.service";
 import { TransactionRepository } from "./modules/transaction/transaction.repository";
+import { DailyReportRepository } from "./modules/daily-report/daily-report.repository";
+import { DailyReportService } from "./modules/daily-report/daily-report.service";
+import { DailyReportController } from "./modules/daily-report/daily-report.controller";
+import { QuotaRepository } from "./modules/quota/quota.repository";
+import { QuotaService } from "./modules/quota/quota.service";
+import { QuotaController } from "./modules/quota/quota.controller";
+import { ActivityRepository } from "./modules/activity/activity.repository";
+import { ActivityService } from "./modules/activity/activity.service";
+import { ActivityController } from "./modules/activity/activity.controller";
+import { ReportRepository } from "./modules/report/report.repository";
+import { ReportService } from "./modules/report/report.service";
+import { ReportController } from "./modules/report/report.controller";
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET!;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET!;
 
@@ -59,20 +71,28 @@ const promoCodeRepository = new PromoCodeRepository(prisma)
 const storeVisitRepository = new StoreVisitRepository(prisma)
 const transactionRepository = new TransactionRepository(prisma)
 const storeInventoryRepository = new StoreInventoryRepositiory(prisma)
+const dailyReportRepository = new DailyReportRepository(prisma)
+const quotaRepository = new QuotaRepository(prisma)
+const activityRepository = new ActivityRepository(prisma)
+const reportRepository = new ReportRepository(prisma)
 // service
 const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
 const brandService = new BrandService(brandRepository, userRepository)
 const modelService = new ModelService(modelRepository, userRepository, brandRepository)
 const productService = new ProductService(productRepository, modelRepository, prisma)
-const statsService = new StatsService(productRepository)
+const statsService = new StatsService(productRepository, prisma)
 const inventoryService = new InventoryService(inventoryRepository, productRepository, stockMovementRepository, prisma)
 const customerService = new CustomerService(customerRepository)
 const deliveryService = new DeliveryService(deliveryRepository, storeVisitRepository)
 const promoCodeService = new PromoCodeService(promoCodeRepository)
 const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository, prisma)
-const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository, inventoryRepository, stockMovementRepository, storeInventoryRepository, prisma)
-const storeInventoryService = new StoreInventoryService(storeInventoryRepository, customerRepository, productRepository, stockMovementRepository, prisma)
+const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository, inventoryRepository, stockMovementRepository, storeInventoryRepository, promoCodeRepository, prisma)
+const storeInventoryService = new StoreInventoryService(storeInventoryRepository, customerRepository, productRepository, stockMovementRepository, prisma, storeVisitRepository)
+const dailyReportService = new DailyReportService(dailyReportRepository)
+const quotaService = new QuotaService(quotaRepository, userRepository)
+const activityService = new ActivityService(activityRepository, storeVisitRepository)
+const reportService = new ReportService(reportRepository)
 // controller
 export const userController = new UserController(userService);
 export const authController = new AuthController(authService)
@@ -87,3 +107,7 @@ export const promoCodeController = new PromoCodeController(promoCodeService)
 export const storeVisitController = new StoreVisitController(storeVisitService)
 export const transactionController = new TransactionController(transactionService)
 export const storeInventoryController = new StoreInventoryController(storeInventoryService)
+export const dailyReportController = new DailyReportController(dailyReportService)
+export const quotaController = new QuotaController(quotaService)
+export const activityController = new ActivityController(activityService)
+export const reportController = new ReportController(reportService)

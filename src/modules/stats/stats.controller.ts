@@ -9,10 +9,8 @@ export class StatsController {
     next: NextFunction,
   ) => {
     try {
-      const { productCount } = await this.statsService.getDashboardStats();
-      res.status(200).json({
-        "Active Product Count": productCount,
-      });
+      const stats = await this.statsService.getDashboardStats();
+      res.status(200).json({ data: stats });
     } catch (error) {
       next(error);
     }

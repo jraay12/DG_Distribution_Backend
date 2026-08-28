@@ -70,26 +70,34 @@ export class UserService {
   async updateUser(data: {
     name: string;
     email: string;
+    role?: "ADMIN" | "USER";
     user_id: string;
   }): Promise<UserReponseDTO> {
     const user = await this.userRepo.findById(data.user_id);
     if (!user) throw new NotFoundError("User not found");
 
     const findByEmail = await this.userRepo.findByEmail(data.email);
-    if (findByEmail) throw new ConflictError("Email already exist");
+    if (findByEmail && findByEmail.id !== data.user_id) {
+      throw new ConflictError("Email already exist");
+    }
 
     user.updateEmail(data.email);
     user.updateName(data.name);
+    if (data.role) user.changeRole(data.role);
 
     await this.userRepo.update(user);
 
     return user.toSafeObject();
   }
 
-  async getUsers(page: number = 1, limit: number = 10): Promise<PaginatedUserResponseDTO> {
+  async getUsers(
+    page: number = 1,
+    limit: number = 10,
+    status: "active" | "inactive" | "all" = "all",
+  ): Promise<PaginatedUserResponseDTO> {
     const [data, total] = await Promise.all([
-      this.userRepo.getUsers(page, limit),
-      this.userRepo.userCount(),
+      this.userRepo.getUsers(page, limit, status),
+      this.userRepo.userCount(status),
     ]);
     const totalPage = Math.ceil(total / limit);
     const hasNextPage = page < totalPage;

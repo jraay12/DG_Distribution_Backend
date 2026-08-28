@@ -13,6 +13,7 @@ import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignRespons
 import { GetAssignedResponseDTO } from "./dto/GetAssignedResponseDTO";
 import { toPHT } from "../../utils/utcToPht";
 import { getStayDuration } from "../../utils/stayDuration";
+import { Payload } from "../../utils/jwt";
 
 export class StoreVisitService {
   constructor(
@@ -148,7 +149,11 @@ export class StoreVisitService {
   async getAssignedRoutes(
     user_id: string,
     visit_date?: Date,
+    requester?: Payload,
   ): Promise<GetAssignedResponseDTO[]> {
+    if (requester?.role === "USER" && requester.user_id !== user_id) {
+      throw new ForbiddenError("You can only view your own assigned routes");
+    }
     const user_exist = await this.userRepository.findById(user_id);
     if (!user_exist) throw new NotFoundError("User does not exists");
 
@@ -248,5 +253,28 @@ export class StoreVisitService {
         status: visited,
       };
     });
+  }
+
+  async reassignRoute(id: string, data: { user_id: string; customer_id: string; visit_date: Date }) {
+    const existing = await this.storeVisitRepository.findById(id);
+    if (!existing) throw new NotFoundError("Store visit doesn't exist");
+    if (existing.time_in || existing.time_out) {
+      throw new BadRequestError("A route already in progress cannot be reassigned");
+    }
+    const [user, customer] = await Promise.all([
+      this.userRepository.findById(data.user_id),
+      this.customerRepository.findById(data.customer_id),
+    ]);
+    if (!user || user.role !== "USER" || !user.isActive) throw new BadRequestError("A valid active agent is required");
+    if (!customer) throw new NotFoundError("Store not found");
+    const visit_date = new Date(data.visit_date);
+    if (Number.isNaN(visit_date.getTime())) throw new BadRequestError("Invalid visit date");
+    try {
+      return await this.storeVisitRepository.reassign(id, {
+        user_id: data.user_id, customer_id: data.customer_id, visit_date,
+      });
+    } catch (error) {
+      throw new ConflictError("The agent already has this store assigned on the selected date");
+    }
   }
 }

@@ -62,23 +62,13 @@ export class StoreInventoryRepositiory {
   ) {
     const client = tx ?? this.prisma;
 
-    return await client.storeInventory.upsert({
-      where: {
-        customer_id_product_id: {
-          customer_id,
-          product_id,
-        },
-      },
-      create: {
-        customer_id,
-        product_id,
-        quantity,
-      },
-      update: {
-        quantity: {
-          decrement: quantity,
-        },
-      },
+    const result = await client.storeInventory.updateMany({
+      where: { customer_id, product_id, quantity: { gte: quantity } },
+      data: { quantity: { decrement: quantity } },
+    });
+    if (result.count !== 1) return null;
+    return client.storeInventory.findUnique({
+      where: { customer_id_product_id: { customer_id, product_id } },
     });
   }
 

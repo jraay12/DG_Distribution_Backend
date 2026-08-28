@@ -12,13 +12,13 @@ export class DeliveryController {
       const inputBody: CreateDeliveryReportDTO =
         req.body as CreateDeliveryReportDTO;
 
-      if (!req.file)
-        res.status(400).json({
-          error: "No file uploaded",
-        });
+      if (!req.file) {
+        res.status(400).json({ error: "No file uploaded" });
+        return;
+      }
       filePath = (req.file as any).path;
 
-      await this.deliveryService.save({ ...inputBody, image_path: filePath });
+      await this.deliveryService.save({ ...inputBody, image_path: filePath }, req.user.user_id);
       res.status(201).json({
         message: "Successfully create delivery report",
       });
@@ -40,15 +40,15 @@ export class DeliveryController {
 
     try {
       const { delivery_id } = req.params as { delivery_id: string };
-      if (!req.file)
-        res.status(400).json({
-          error: "No file uploaded",
-        });
+      if (!req.file) {
+        res.status(400).json({ error: "No file uploaded" });
+        return;
+      }
       filePath = (req.file as any).path;
       await this.deliveryService.saveNewEvidence({
         id: delivery_id,
         image_path: filePath,
-      });
+      }, req.user.user_id);
       res.status(201).json({ message: "Successfully added new evidence " });
     } catch (error) {
       if (filePath! && fs.existsSync(filePath)) {
@@ -62,7 +62,7 @@ export class DeliveryController {
   getEvidences = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { delivery_id } = req.params as { delivery_id: string };
-      const result = await this.deliveryService.getAllEvidences(delivery_id)
+      const result = await this.deliveryService.getAllEvidences(delivery_id, req.user)
       res.status(200).json({
         message: result
       })

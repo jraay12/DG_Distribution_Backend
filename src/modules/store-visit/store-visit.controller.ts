@@ -68,6 +68,7 @@ export class StoreVisitController {
       const result = await this.storeVisitService.getAssignedRoutes(
         user_id,
         visit_date ? new Date(visit_date) : undefined,
+        req.user,
       );
       res.status(200).json({
         message: visit_date
@@ -135,5 +136,12 @@ export class StoreVisitController {
     } catch (error) {
       next(error);
     }
+  };
+
+  reassign = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.storeVisitService.reassignRoute(req.params.id as string, req.body);
+      res.status(200).json({ message: "Route reassigned successfully", data });
+    } catch (error) { next(error); }
   };
 }

@@ -12,6 +12,9 @@ export class TransactionRepository {
         id: transaction.id,
         store_visit_id: transaction.storeVisitId,
         type: transaction.type,
+        promo_code_id: transaction.promoCodeId,
+        subtotal_amount: transaction.subtotalAmount,
+        discount_amount: transaction.discountAmount,
         total_amount: transaction.totalAmount,
         createdAt: transaction.createdAt,
 
@@ -37,6 +40,7 @@ export class TransactionRepository {
           },
         },
         storeVisit: true,
+        promoCode: true,
       },
     });
   }
@@ -46,6 +50,7 @@ export class TransactionRepository {
       where: { store_visit_id: storeVisitId },
       include: {
         items: true,
+        promoCode: true,
       },
     });
   }

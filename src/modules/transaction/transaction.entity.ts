@@ -20,7 +20,9 @@ export interface TransactionProps {
   user_id: string;
   type: TransactionType;
   items: TransactionItemProps[];
-
+  promo_code_id?: string | null;
+  subtotal_amount?: number;
+  discount_amount?: number;
   total_amount?: number;
 
   createdAt?: Date;
@@ -35,7 +37,9 @@ export class Transaction {
     this.props = {
       ...props,
       items: props.items ?? [],
-      total_amount: props.total_amount ?? 0,
+      subtotal_amount: props.subtotal_amount ?? 0,
+      discount_amount: props.discount_amount ?? 0,
+      total_amount: props.total_amount ?? props.subtotal_amount ?? 0,
       createdAt: props.createdAt ?? new Date(),
       updatedAt: props.updatedAt ?? new Date(),
       deletedAt: props.deletedAt ?? null,
@@ -46,7 +50,7 @@ export class Transaction {
   static create(
     props: Omit<
       TransactionProps,
-      "id" | "createdAt" | "updatedAt" | "deletedAt" | "total_amount"
+      "id" | "createdAt" | "updatedAt" | "deletedAt"
     >
   ): Transaction {
     if (!props.store_visit_id) {
@@ -68,7 +72,6 @@ export class Transaction {
     return new Transaction({
       ...props,
       id: crypto.randomUUID(),
-      total_amount: 0,
     });
   }
 
@@ -102,6 +105,18 @@ export class Transaction {
 
   get totalAmount(): number {
     return this.props.total_amount ?? 0;
+  }
+
+  get promoCodeId(): string | null {
+    return this.props.promo_code_id ?? null;
+  }
+
+  get subtotalAmount(): number {
+    return this.props.subtotal_amount ?? 0;
+  }
+
+  get discountAmount(): number {
+    return this.props.discount_amount ?? 0;
   }
 
   get createdAt(): Date {
@@ -142,10 +157,14 @@ export class Transaction {
   }
 
   recalculateTotal() {
-    this.props.total_amount = this.props.items.reduce((sum, item) => {
+    this.props.subtotal_amount = this.props.items.reduce((sum, item) => {
       const price = item.price ?? 0;
       return sum + price * item.quantity;
     }, 0);
+    this.props.total_amount = Math.max(
+      0,
+      this.props.subtotal_amount - (this.props.discount_amount ?? 0),
+    );
   }
 
   softDelete() {

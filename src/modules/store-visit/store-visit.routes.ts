@@ -40,6 +40,12 @@ const storeVisitRoutes = (
   );
 
   routes.patch(
+    "/:id/reassign",
+    AuthMiddleware(jwtService, ["ADMIN"]),
+    storeVisitController.reassign,
+  );
+
+  routes.patch(
     "/:id/time-in",
     AuthMiddleware(jwtService, ["USER"]),
     storeVisitController.markTimeIn,

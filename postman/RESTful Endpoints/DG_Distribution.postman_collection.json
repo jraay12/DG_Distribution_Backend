@@ -191,7 +191,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\":\"johnraycaete@gmail.com\",\r\n    \"name\":\"admin123\"\r\n}",
+              "raw": "{\r\n    \"email\": \"johnraycaete@gmail.com\",\r\n    \"name\": \"John Ray Canete\",\r\n    \"role\": \"USER\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -221,6 +221,39 @@
           "response": []
         },
         {
+          "name": "Delete User (Deactivate)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/users/:user_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "users", ":user_id"],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "df11d765-037d-4a55-90cf-52248817cb9a",
+                  "description": "User to deactivate"
+                }
+              ]
+            },
+            "description": "ADMIN only. This is a reversible deactivation; use the Activate User request to restore access."
+          },
+          "response": []
+        },
+        {
           "name": "Fetch Users",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
@@ -243,7 +276,7 @@
               "raw": "{\r\n  \"price\": 12,\r\n  \"category\": \"Electronics\",\r\n  \"model_id\": \"14e97f76-b497-4d72-8b43-b194a68fc721\",\r\n  \"product_name\": \"Laptop X1\",\r\n  \"created_by\": \"30e2b40c-6736-43ed-8390-ea5d05e671cc\"\r\n}"
             },
             "url": {
-              "raw": "http://localhost:8000/api/users/?page=1&limit=10",
+              "raw": "http://localhost:8000/api/users/?page=1&limit=10&status=all",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -264,6 +297,11 @@
                   "key": "limit",
                   "value": "10",
                   "description": "Items per Page default 10"
+                },
+                {
+                  "key": "status",
+                  "value": "all",
+                  "description": "Allowed values: all, active, inactive"
                 }
               ]
             }
@@ -2421,7 +2459,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8000/api/store-inventory/",
+              "raw": "http://localhost:8000/api/store-visit/",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2429,7 +2467,7 @@
               "port": "8000",
               "path": [
                 "api",
-                "store-inventory",
+                "store-visit",
                 ""
               ],
               "query": [
@@ -2531,6 +2569,79 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Reassign Planned Route",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"93b8e2c6-2e9c-4a4e-ab62-374bbb08df14\",\r\n  \"customer_id\": \"c89852bd-4019-44af-a34d-e24c8bf9b303\",\r\n  \"visit_date\": \"2026-08-25T00:00:00.000Z\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit/:id/reassign",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "store-visit", ":id", "reassign"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97",
+                  "description": "Unstarted store visit ID"
+                }
+              ]
+            },
+            "description": "ADMIN only. Reassigns an unstarted route to an agent/store/date."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Store Stock In or Out",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"3ab2afef-094f-4199-bd6a-f20288ec4a97\",\r\n  \"type\": \"IN\",\r\n  \"quantity\": 5\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/store-inventory/:customer_id/:product_id/stock",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["api", "store-inventory", ":customer_id", ":product_id", "stock"],
+              "variable": [
+                { "key": "customer_id", "value": "c89852bd-4019-44af-a34d-e24c8bf9b303" },
+                { "key": "product_id", "value": "81313313-3b54-4e7b-b571-521fcf40f4d4" }
+              ]
+            },
+            "description": "USER or ADMIN. Agents must provide a store_visit_id assigned to themselves and the selected customer. Type must be IN or OUT."
+          },
+          "response": []
         }
       ]
     },
@@ -2554,7 +2665,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"store_visit_id\": \"3ab2afef-094f-4199-bd6a-f20288ec4a97\",\r\n  \"type\": \"DELIVERY\", // SALE = CUSTOMER(STORE) -> STORE CUSTOMER, DELIVERY = WAREHOUSE -> CUSTOMER(STORE)\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"81313313-3b54-4e7b-b571-521fcf40f4d4\",\r\n      \"quantity\": 100\r\n    }\r\n    \r\n  ]\r\n}",
+              "raw": "{\r\n  \"store_visit_id\": \"3ab2afef-094f-4199-bd6a-f20288ec4a97\",\r\n  \"type\": \"SALE\",\r\n  \"promo_code\": \"PROMO10\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"81313313-3b54-4e7b-b571-521fcf40f4d4\",\r\n      \"quantity\": 2\r\n    }\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2663,6 +2774,296 @@
                 }
               ]
             }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Daily Reports",
+      "item": [
+        {
+          "name": "Submit Daily Report",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"report_date\": \"2026-08-24\",\r\n  \"summary\": \"Completed all assigned visits and recorded sales.\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/daily-report",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "daily-report"]
+            },
+            "description": "USER only. One immutable submission is allowed per agent and report date."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Daily Reports",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/daily-report/mine",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "daily-report", "mine"]
+            },
+            "description": "USER only. Returns the authenticated agent's submitted reports."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Daily Reports",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/daily-report?status=SUBMITTED&user_id=&from=&to=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "daily-report"],
+              "query": [
+                { "key": "status", "value": "SUBMITTED", "description": "SUBMITTED, VERIFIED, or CORRECTED" },
+                { "key": "user_id", "value": "", "disabled": true },
+                { "key": "from", "value": "2026-08-01", "disabled": true },
+                { "key": "to", "value": "2026-08-31", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Optional filters can be enabled independently."
+          },
+          "response": []
+        },
+        {
+          "name": "Review or Correct Daily Report",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"CORRECTED\",\r\n  \"admin_remarks\": \"Corrected the store count after verification.\",\r\n  \"corrected_summary\": \"Completed five assigned visits and recorded sales.\"\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/daily-report/:id/review",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "daily-report", ":id", "review"],
+              "variable": [{ "key": "id", "value": "daily-report-uuid" }]
+            },
+            "description": "ADMIN only. Use VERIFIED without corrected_summary, or CORRECTED with remarks and corrected_summary."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quota and Performance",
+      "item": [
+        {
+          "name": "Set or Update Agent Quota",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user_id\": \"93b8e2c6-2e9c-4a4e-ab62-374bbb08df14\",\r\n  \"period_start\": \"2026-08-01T00:00:00.000Z\",\r\n  \"period_end\": \"2026-08-31T23:59:59.999Z\",\r\n  \"target_amount\": 100000\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/quota",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "quota"]
+            },
+            "description": "ADMIN only. Reusing the same agent and period updates the target."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Quota Progress",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/quota/mine?from=&to=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "quota", "mine"],
+              "query": [
+                { "key": "from", "value": "2026-08-01", "disabled": true },
+                { "key": "to", "value": "2026-08-31", "disabled": true }
+              ]
+            },
+            "description": "USER only. Returns target, actual sales, progress percentage, and performance status."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Quota Progress by Agent",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/quota/user/:user_id",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "quota", "user", ":user_id"],
+              "variable": [{ "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14" }]
+            },
+            "description": "ADMIN only. Optional from and to query filters may be added."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Agent Quotas",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/quota?from=&to=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "quota"],
+              "query": [
+                { "key": "from", "value": "2026-08-01", "disabled": true },
+                { "key": "to", "value": "2026-08-31", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Returns quota progress and status for all agents."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agent Activity and GPS",
+      "item": [
+        {
+          "name": "Record Agent Location",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"store_visit_id\": \"3ab2afef-094f-4199-bd6a-f20288ec4a97\",\r\n  \"latitude\": 14.5995,\r\n  \"longitude\": 120.9842\r\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:8000/api/activity/location",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "activity", "location"]
+            },
+            "description": "USER only. The optional store_visit_id must belong to the authenticated agent."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Agent Location History",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/activity/locations?user_id=&from=&to=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "activity", "locations"],
+              "query": [
+                { "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14", "disabled": true },
+                { "key": "from", "value": "2026-08-24T00:00:00.000Z", "disabled": true },
+                { "key": "to", "value": "2026-08-24T23:59:59.999Z", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Returns GPS points with agent and optional store-visit details."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Agent Activities",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/activity/agents?user_id=&visit_date=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "activity", "agents"],
+              "query": [
+                { "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14", "disabled": true },
+                { "key": "visit_date", "value": "2026-08-24T00:00:00.000Z", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Returns routes, visit status, transactions, delivery reports, GPS logs, images, and recorded location points."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Reports",
+      "item": [
+        {
+          "name": "Sales Report",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/reports/sales?from=&to=&user_id=&format=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "reports", "sales"],
+              "query": [
+                { "key": "from", "value": "2026-08-01T00:00:00.000Z", "disabled": true },
+                { "key": "to", "value": "2026-08-31T23:59:59.999Z", "disabled": true },
+                { "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14", "disabled": true },
+                { "key": "format", "value": "csv", "description": "Enable to download a printable CSV", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Includes transaction count, gross sales, discounts, net sales, and detailed records."
+          },
+          "response": []
+        },
+        {
+          "name": "Inventory Report",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/reports/inventory?format=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "reports", "inventory"],
+              "query": [
+                { "key": "format", "value": "csv", "description": "Enable to download a printable CSV", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Includes warehouse/store quantities and low/out-of-stock summaries."
+          },
+          "response": []
+        },
+        {
+          "name": "Agent Performance Report",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/reports/agents?from=&to=&user_id=&format=",
+              "protocol": "http", "host": ["localhost"], "port": "8000",
+              "path": ["api", "reports", "agents"],
+              "query": [
+                { "key": "from", "value": "2026-08-01T00:00:00.000Z", "disabled": true },
+                { "key": "to", "value": "2026-08-31T23:59:59.999Z", "disabled": true },
+                { "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14", "disabled": true },
+                { "key": "format", "value": "csv", "description": "Enable to download a printable CSV", "disabled": true }
+              ]
+            },
+            "description": "ADMIN only. Includes assignments, completed/unvisited stores, reports, sales count, and total sales."
           },
           "response": []
         }

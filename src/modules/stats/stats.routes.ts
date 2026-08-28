@@ -6,7 +6,7 @@ import { AuthMiddleware } from "../../utils/middleware/authMiddleware";
 const statsRoutes = (statsController: StatsController, jwtService: Jwt): Router => {
   const routes = Router()
 
-  routes.get('/', AuthMiddleware(jwtService), statsController.getDashboardStats)
+  routes.get('/', AuthMiddleware(jwtService, ["ADMIN"]), statsController.getDashboardStats)
 
   return routes
 }

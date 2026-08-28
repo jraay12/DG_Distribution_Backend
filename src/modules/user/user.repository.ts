@@ -69,10 +69,13 @@ export class UserRepository {
   async getUsers(
     page: number,
     limit: number,
+    status: "active" | "inactive" | "all" = "all",
   ): Promise<UserReponseDTO[]> {
     const skip = (page - 1) * limit;
 
-    const whereClause: any = { isActive: true };
+    const whereClause = status === "all"
+      ? {}
+      : { isActive: status === "active" };
  
     const users = await this.prisma.user.findMany({
       skip,
@@ -94,11 +97,14 @@ export class UserRepository {
     }));
   }
 
-  async userCount(tx?: typeof this.prisma): Promise<number> {
+  async userCount(
+    status: "active" | "inactive" | "all" = "all",
+    tx?: typeof this.prisma,
+  ): Promise<number> {
     const client = (tx ?? this.prisma) as ExtendedPrismaClient;
-    const whereClause: any = {
-      isActive: true,
-    };
+    const whereClause = status === "all"
+      ? {}
+      : { isActive: status === "active" };
     const total = await client.user.count({ where: whereClause });
     return total;
   }

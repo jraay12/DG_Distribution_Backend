@@ -21,7 +21,11 @@ import {
   deliveryController,
   storeVisitController,
   transactionController,
-  storeInventoryController
+  storeInventoryController,
+  dailyReportController,
+  quotaController,
+  activityController,
+  reportController,
 } from "./container";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -34,6 +38,10 @@ import promoCodeRoutes from "./modules/promo/promo.routes";
 import storeVisitRoutes from "./modules/store-visit/store-visit.routes";
 import transactionRoutes from "./modules/transaction/transaction.routes";
 import storeInventoryRoutes from "./modules/inventory/store-inventory.routes";
+import dailyReportRoutes from "./modules/daily-report/daily-report.routes";
+import quotaRoutes from "./modules/quota/quota.routes";
+import activityRoutes from "./modules/activity/activity.routes";
+import reportRoutes from "./modules/report/report.routes";
 
 const app = express();
 const server = createServer(app);
@@ -68,8 +76,14 @@ app.use("/api/delivery", deliveryRoutes(deliveryController, jwt));
 app.use("/api/promo", promoCodeRoutes(promoCodeController, jwt));
 app.use("/api/store-visit", storeVisitRoutes(storeVisitController, jwt));
 app.use("/api/transaction", transactionRoutes(transactionController, jwt));
-app.use("/api/store-inventory", storeInventoryRoutes(storeInventoryController, jwt));
-
+app.use(
+  "/api/store-inventory",
+  storeInventoryRoutes(storeInventoryController, jwt),
+);
+app.use("/api/daily-report", dailyReportRoutes(dailyReportController, jwt));
+app.use("/api/quota", quotaRoutes(quotaController, jwt));
+app.use("/api/activity", activityRoutes(activityController, jwt));
+app.use("/api/reports", reportRoutes(reportController, jwt));
 
 app.use("/api/auth", authRoutes(authController));
 

@@ -7,6 +7,11 @@ import { StockMovementRepository } from "../Stock Movement/stock-movement.reposi
 import { GetStoreInventoriesResponseDTO } from "./dto/GetStoreInventoriesResponseDTO";
 import { StoreInventoryRepositiory } from "./store-inventory.repository";
 import crypto from "crypto";
+import { StockMovement } from "../Stock Movement/stock-movement.entity";
+import { Type } from "../Stock Movement/stock-movement.enum";
+import { emitStoreInventory } from "../../utils/socket/socket.publisher";
+import { StoreVisitRepository } from "../store-visit/store-visit.repository";
+import { ForbiddenError } from "../../utils/error/ForbiddenError";
 
 export class StoreInventoryService {
   constructor(
@@ -14,7 +19,8 @@ export class StoreInventoryService {
     private customerRepo: CustomerRepository,
     private productRepo: ProductRepository,
     private stockMovementRepo: StockMovementRepository,
-    private prisma: ExtendedPrismaClient
+    private prisma: ExtendedPrismaClient,
+    private storeVisitRepo: StoreVisitRepository,
   ) {}
 
   async create(data: {
@@ -70,5 +76,54 @@ export class StoreInventoryService {
         total_sold: m._sum.quantity
       }
     })
+  }
+
+  async adjustStock(data: {
+    customer_id: string;
+    product_id: string;
+    quantity: number;
+    type: "IN" | "OUT";
+    user_id: string;
+    role: string;
+    store_visit_id?: string;
+  }) {
+    const customer = await this.customerRepo.findById(data.customer_id);
+    if (!customer) throw new NotFoundError("Customer doesn't exist");
+    const product = await this.productRepo.findById(data.product_id);
+    if (!product || product.isDeleted) throw new NotFoundError("Product doesn't exist");
+    if (!Number.isInteger(data.quantity) || data.quantity <= 0) {
+      throw new BadRequestError("Quantity must be a positive integer");
+    }
+    if (!["IN", "OUT"].includes(data.type)) throw new BadRequestError("Type must be IN or OUT");
+    if (data.role === "USER") {
+      if (!data.store_visit_id) throw new BadRequestError("Store visit is required for agent stock updates");
+      const visit = await this.storeVisitRepo.findById(data.store_visit_id);
+      if (!visit) throw new NotFoundError("Store visit not found");
+      if (visit.userId !== data.user_id || visit.customerId !== data.customer_id) {
+        throw new ForbiddenError("You can only update stock for your own assigned store visit");
+      }
+    }
+
+    const updated = await this.prisma.$transaction(async tx => {
+      const inventory = data.type === "IN"
+        ? await this.storeInventoryRepo.increaseStock(data.customer_id, data.product_id, data.quantity, tx as typeof this.prisma)
+        : await this.storeInventoryRepo.decreaseStock(data.customer_id, data.product_id, data.quantity, tx as typeof this.prisma);
+      if (!inventory) throw new BadRequestError("Insufficient store stock");
+      await this.stockMovementRepo.save(StockMovement.create({
+        product_id: data.product_id,
+        store_id: data.customer_id,
+        type: data.type === "IN" ? Type.IN : Type.OUT,
+        quantity: data.quantity,
+        created_by: data.user_id,
+      }), tx as typeof this.prisma);
+      return inventory;
+    });
+
+    emitStoreInventory({
+      product_id: updated.product_id,
+      customer_id: updated.customer_id,
+      quantity: updated.quantity,
+    });
+    return updated;
   }
 }

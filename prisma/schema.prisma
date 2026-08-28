@@ -26,6 +26,10 @@ model User {
   product Product[]
   stockmovement StockMovement[]
   storeVisit StoreVisit[]
+  dailyReports DailyReport[] @relation("AgentDailyReports")
+  verifiedReports DailyReport[] @relation("VerifiedDailyReports")
+  quotas AgentQuota[]
+  locations AgentLocation[]
 }
 
 model Brand {
@@ -159,6 +163,7 @@ model PromoCode {
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  transactions    Transaction[]
 }
 
 model StoreVisit {
@@ -176,6 +181,7 @@ model StoreVisit {
 
   deliveryReports DeliveryReport[]
   transaction Transaction[]
+  locations AgentLocation[]
 
   @@unique([user_id, customer_id, visit_date])
 
@@ -188,11 +194,65 @@ model Transaction {
   storeVisit      StoreVisit @relation(fields: [store_visit_id], references: [id])
 
   type            TransactionType
+  promo_code_id   String?
+  promoCode       PromoCode? @relation(fields: [promo_code_id], references: [id])
+  subtotal_amount Decimal? @db.Decimal(10,2)
+  discount_amount Decimal? @db.Decimal(10,2)
   total_amount    Decimal? @db.Decimal(10,2)
 
   createdAt       DateTime @default(now())
 
   items           TransactionItem[]
+
+  @@index([promo_code_id])
+  @@index([createdAt])
+}
+
+model DailyReport {
+  id              String @id @default(uuid())
+  user_id         String
+  user            User @relation("AgentDailyReports", fields: [user_id], references: [id])
+  report_date     DateTime
+  summary         String
+  corrected_summary String?
+  status          DailyReportStatus @default(SUBMITTED)
+  admin_remarks   String?
+  verified_by     String?
+  verifiedBy      User? @relation("VerifiedDailyReports", fields: [verified_by], references: [id])
+  submittedAt     DateTime @default(now())
+  reviewedAt      DateTime?
+
+  @@unique([user_id, report_date])
+  @@index([report_date])
+  @@index([status])
+}
+
+model AgentQuota {
+  id              String @id @default(uuid())
+  user_id         String
+  user            User @relation(fields: [user_id], references: [id])
+  period_start    DateTime
+  period_end      DateTime
+  target_amount   Decimal @db.Decimal(12,2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([user_id, period_start, period_end])
+  @@index([period_start, period_end])
+}
+
+model AgentLocation {
+  id              String @id @default(uuid())
+  user_id         String
+  user            User @relation(fields: [user_id], references: [id])
+  store_visit_id  String?
+  storeVisit      StoreVisit? @relation(fields: [store_visit_id], references: [id])
+  latitude        Float
+  longitude       Float
+  recordedAt      DateTime @default(now())
+
+  @@index([user_id, recordedAt])
+  @@index([store_visit_id])
 }
 
 model TransactionItem {
@@ -230,6 +290,12 @@ model StoreInventory {
 enum TransactionType {
   SALE
   DELIVERY
+}
+
+enum DailyReportStatus {
+  SUBMITTED
+  VERIFIED
+  CORRECTED
 }
 
 

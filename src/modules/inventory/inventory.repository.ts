@@ -34,7 +34,7 @@ export class InventoryRepository {
   ) {
     const client = tx ?? (this.prisma as ExtendedPrismaClient);
 
-    await client.inventory.updateMany({
+    const result = await client.inventory.updateMany({
       where: {
         product_id,
         quantity: { gte: quantity },
@@ -45,6 +45,8 @@ export class InventoryRepository {
         },
       },
     });
+
+    if (result.count !== 1) return null;
 
     const updated = await client.inventory.findUnique({
       where: { product_id },

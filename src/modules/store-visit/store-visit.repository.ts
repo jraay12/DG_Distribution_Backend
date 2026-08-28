@@ -134,4 +134,8 @@ export class StoreVisitRepository {
       },
     });
   }
+
+  async reassign(id: string, data: { user_id: string; customer_id: string; visit_date: Date }) {
+    return this.prisma.storeVisit.update({ where: { id }, data });
+  }
 }

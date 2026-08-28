@@ -10,9 +10,9 @@ const deliveryRoutes = (
   jwtService: Jwt,
 ): Router => {
   const routes = Router();
-  routes.post("/", AuthMiddleware(jwtService), upload.single('evidence'),deliveryController.create);
-  routes.post("/:delivery_id/evidence", AuthMiddleware(jwtService), upload.single('evidence'),deliveryController.createNewEvidence);
-  routes.get("/:delivery_id/evidence", AuthMiddleware(jwtService),deliveryController.getEvidences);
+  routes.post("/", AuthMiddleware(jwtService, ["USER"]), upload.single('evidence'),deliveryController.create);
+  routes.post("/:delivery_id/evidence", AuthMiddleware(jwtService, ["USER"]), upload.single('evidence'),deliveryController.createNewEvidence);
+  routes.get("/:delivery_id/evidence", AuthMiddleware(jwtService, ["ADMIN", "USER"]),deliveryController.getEvidences);
 
 
 
