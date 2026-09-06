@@ -56,9 +56,17 @@ export class ProductService {
 
   }
 
-  async getProduct(page: number = 1, limit: number = 10, category?: string): Promise<PaginatedProductResponseDTO> {
+  async getProduct(
+    page: number = 1,
+    limit: number = 10,
+    category?: string,
+    status: "active" | "deleted" | "all" = "active",
+  ): Promise<PaginatedProductResponseDTO> {
 
-    const [data, total] = await Promise.all([this.productRepo.getProduct(page, limit, category), this.productRepo.productCount(category)])
+    const [data, total] = await Promise.all([
+      this.productRepo.getProduct(page, limit, category, status),
+      this.productRepo.productCount(category, undefined, status),
+    ])
     
     const totalPage = Math.ceil(total / limit)
 

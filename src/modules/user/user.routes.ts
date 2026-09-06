@@ -5,6 +5,7 @@ import { Jwt } from "../../utils/jwt";
 const userRoutes = (userController: UserController, jwtService: Jwt): Router => {
   const routes = Router();
 
+  routes.get("/me", AuthMiddleware(jwtService), userController.getMe);
   routes.post("/create", AuthMiddleware(jwtService, ["ADMIN"]), userController.createUser);
   routes.post("/change-password",  AuthMiddleware(jwtService, ["ADMIN"]), userController.updatePassword);
   routes.patch("/:user_id/activate",  AuthMiddleware(jwtService, ["ADMIN"]), userController.activateUser);

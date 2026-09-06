@@ -90,6 +90,13 @@ export class UserService {
     return user.toSafeObject();
   }
 
+  async getMe(user_id: string): Promise<UserReponseDTO> {
+    const user = await this.userRepo.findById(user_id);
+    if (!user) throw new NotFoundError("User not found");
+
+    return user.toSafeObject();
+  }
+
   async getUsers(
     page: number = 1,
     limit: number = 10,

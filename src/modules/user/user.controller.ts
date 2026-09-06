@@ -72,6 +72,18 @@ export class UserController {
     }
   }
 
+  getMe = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user_id = req.user?.user_id;
+      const result = await this.userService.getMe(user_id);
+      res.status(200).json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const page = parseInt(req.query.page as string) || 1;

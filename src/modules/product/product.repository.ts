@@ -31,9 +31,12 @@ export class ProductRepository {
   }
 
   async softDelete(product_id: string): Promise<void> {
-    await this.prisma.product.delete({
+    await this.prisma.product.update({
       where: {
         id: product_id,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }
@@ -69,10 +72,12 @@ export class ProductRepository {
     page: number,
     limit: number,
     category?: string,
+    status: "active" | "deleted" | "all" = "active",
   ): Promise<ProductWithModelResponseDTO[]> {
     const skip = (page - 1) * limit;
 
-    const whereClause: any = { deletedAt: null };
+    const whereClause: any =
+      status === "all" ? {} : status === "deleted" ? { deletedAt: { not: null } } : { deletedAt: null };
     if (category) {
       whereClause.category = category;
     }
@@ -120,11 +125,11 @@ export class ProductRepository {
   async productCount(
     category?: string,
     tx?: typeof this.prisma,
+    status: "active" | "deleted" | "all" = "active",
   ): Promise<number> {
     const client = (tx ?? this.prisma) as ExtendedPrismaClient;
-    const whereClause: any = {
-      deletedAt: null,
-    };
+    const whereClause: any =
+      status === "all" ? {} : status === "deleted" ? { deletedAt: { not: null } } : { deletedAt: null };
 
     if (category) {
       whereClause.category = category;

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ProductService } from "./product.service";
 import { CreateProductDTO } from "./dto/CreateProductDTO";
 import { UpdateProductDTO } from "./dto/UpdateProductDTO";
+import { BadRequestError } from "../../utils/error/BadRequestError";
 
 export class ProductController {
   constructor(private productService: ProductService) {}
@@ -54,8 +55,18 @@ export class ProductController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const category = req.query.category as string | undefined;
+      const requestedStatus = (req.query.status as string | undefined)?.toLowerCase() ?? "active";
 
-      const result = await this.productService.getProduct(page, limit, category);
+      if (!["active", "deleted", "all"].includes(requestedStatus)) {
+        throw new BadRequestError("Status must be active, deleted, or all");
+      }
+
+      const result = await this.productService.getProduct(
+        page,
+        limit,
+        category,
+        requestedStatus as "active" | "deleted" | "all",
+      );
       res.status(200).json({
         data: result.data,
         meta: result.meta,
