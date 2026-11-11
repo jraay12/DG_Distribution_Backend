@@ -1,3 +1,6 @@
+import performanceRoutes from "./modules/performance/performance.routes";
+import orderRoutes from "./modules/order/order.routes";
+import categoryRoutes from "./modules/category/category.routes";
 import express from "express";
 import { Request, Response } from "express";
 import { errorHandler } from "./utils/middleware/error.middleware";
@@ -15,6 +18,9 @@ import {
   brandController,
   modelController,
   productController,
+  categoryController,
+  orderController,
+  performanceController,
   statsController,
   inventoryController,
   customerController,
@@ -69,18 +75,21 @@ app.use("/api/users", userRoutes(userController, jwt));
 app.use("/api/brand", brandRoutes(brandController, jwt));
 app.use("/api/model", modelRoutes(modelController, jwt));
 app.use("/api/stats", statsRoutes(statsController, jwt));
+app.use("/api/category", categoryRoutes(categoryController, jwt));
 app.use("/api/product", productRoutes(productController, jwt));
 app.use("/api/customer", customerRoutes(customerController, jwt));
 app.use("/api/inventory", inventoryRoutes(inventoryController, jwt));
 app.use("/api/delivery", deliveryRoutes(deliveryController, jwt));
 app.use("/api/promo", promoCodeRoutes(promoCodeController, jwt));
 app.use("/api/store-visit", storeVisitRoutes(storeVisitController, jwt));
+app.use("/api/orders", orderRoutes(orderController, jwt));
 app.use("/api/transaction", transactionRoutes(transactionController, jwt));
 app.use(
   "/api/store-inventory",
   storeInventoryRoutes(storeInventoryController, jwt),
 );
 app.use("/api/daily-report", dailyReportRoutes(dailyReportController, jwt));
+app.use("/api/performance", performanceRoutes(performanceController, jwt));
 app.use("/api/quota", quotaRoutes(quotaController, jwt));
 app.use("/api/activity", activityRoutes(activityController, jwt));
 app.use("/api/reports", reportRoutes(reportController, jwt));

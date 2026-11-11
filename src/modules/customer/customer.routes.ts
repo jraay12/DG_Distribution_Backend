@@ -9,6 +9,7 @@ const customerRoutes = (
   const routes = Router();
   routes.post("/", AuthMiddleware(jwtService, ["ADMIN"]), customerController.create);
   routes.patch("/:customer_id", AuthMiddleware(jwtService, ["ADMIN"]), customerController.update)
+  routes.get("/territories", AuthMiddleware(jwtService, ["ADMIN"]), customerController.listTerritories);
   routes.get("/:customer_id", AuthMiddleware(jwtService), customerController.findById)
   routes.delete("/:customer_id", AuthMiddleware(jwtService, ["ADMIN"]), customerController.delete)
   routes.patch("/:customer_id/restore", AuthMiddleware(jwtService, ["ADMIN"]), customerController.restore)

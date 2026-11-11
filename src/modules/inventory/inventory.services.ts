@@ -1,3 +1,4 @@
+import { requiredText } from "../../utils/input";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { NotFoundError } from "../../utils/error/NotFoundError";
@@ -75,5 +76,32 @@ export class InventoryService {
     await this.inventoryRepo.update(inventory)
 
     return inventory.toJson()
+  }
+  async updateIdentifiers(product_id: string, input: { case_code?: unknown; barcode?: unknown }) {
+    const data: { case_code?: string | null; barcode?: string | null } = {};
+    for (const field of ["case_code", "barcode"] as const) {
+      const value = input?.[field];
+      if (value !== undefined) data[field] = value === null ? null : requiredText(value, field);
+    }
+    if (!Object.keys(data).length) throw new BadRequestError("Provide case_code or barcode");
+    try {
+      return await this.inventoryRepo.updateIdentifiers(product_id, data);
+    } catch (error) {
+      if (typeof error === "object" && error && "code" in error && error.code === "P2025") {
+        throw new NotFoundError("Active product inventory not found");
+      }
+      throw error;
+    }
+  }
+
+  async lookup(input: { case_code?: unknown; barcode?: unknown }) {
+    if ((input.case_code === undefined) === (input.barcode === undefined)) {
+      throw new BadRequestError("Provide exactly one of case_code or barcode");
+    }
+    const inventory = await this.inventoryRepo.lookup(input.case_code === undefined
+      ? { barcode: requiredText(input.barcode, "barcode") }
+      : { case_code: requiredText(input.case_code, "case_code") });
+    if (!inventory) throw new NotFoundError("Active product inventory not found");
+    return inventory;
   }
 }

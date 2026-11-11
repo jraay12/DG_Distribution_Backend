@@ -30,6 +30,7 @@ model User {
   verifiedReports DailyReport[] @relation("VerifiedDailyReports")
   quotas AgentQuota[]
   locations AgentLocation[]
+  performanceTargets PerformanceTarget[]
 }
 
 model Brand {
@@ -39,6 +40,7 @@ model Brand {
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
   model Model[]
+  performanceTargets PerformanceTarget[]
 }
 
 model Model {
@@ -58,7 +60,8 @@ model Product {
   model    Model    @relation(fields: [model_id], references: [id])
   product_name String
   price Decimal @db.Decimal(10, 2)
-  category Category
+  category String
+  productCategory ProductCategory @relation(fields: [category], references: [id])
   created_by String
   user    User    @relation(fields: [created_by], references: [id])
   createdAt DateTime @default(now())
@@ -70,6 +73,8 @@ model Product {
   stockmovement StockMovement[]
   transactionItem TransactionItem[]
   storeInventory StoreInventory[]
+  visitInventory VisitInventoryItem[]
+  orderItems CustomerOrderItem[]
 
 }
 
@@ -79,6 +84,8 @@ model Inventory {
   product    Product    @relation(fields: [product_id], references: [id])
   quantity Int
   reorder_level Int?
+  case_code String? @unique
+  barcode String? @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -107,7 +114,12 @@ model Customer {
   id        String   @id @default(uuid())
   store_name String
   owner_name String
-  address String
+  address String @db.VarChar(800)
+  street String?
+  barangay String?
+  city_municipality String?
+  province String?
+  territory String?
   contact_number String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -117,6 +129,7 @@ model Customer {
   storeInventory StoreInventory[]
   stockMovement StockMovement[]
 
+  @@index([territory, deletedAt])
 }
 
 model DeliveryReport {
@@ -182,7 +195,10 @@ model StoreVisit {
   deliveryReports DeliveryReport[]
   transaction Transaction[]
   locations AgentLocation[]
+  inventoryItems VisitInventoryItem[]
+  order CustomerOrder?
 
+  @@index([visit_date])
   @@unique([user_id, customer_id, visit_date])
 
 }
@@ -309,13 +325,63 @@ enum Role {
   ADMIN
 }
 
-enum Category {
-  Electronics
-  Apparel
-  Books
-  Toys
-  Furniture
-  Misc
+model ProductCategory {
+  id String @id @default(uuid())
+  name String @unique
+  products Product[]
+}
+
+model VisitInventoryItem {
+  store_visit_id String
+  storeVisit StoreVisit @relation(fields: [store_visit_id], references: [id])
+  product_id String
+  product Product @relation(fields: [product_id], references: [id])
+  quantity Int
+  recent_units_out Int
+  suggested_quantity Int
+
+  @@id([store_visit_id, product_id])
+}
+
+model CustomerOrder {
+  id String @id @default(uuid())
+  store_visit_id String @unique
+  storeVisit StoreVisit @relation(fields: [store_visit_id], references: [id])
+  createdAt DateTime @default(now())
+  items CustomerOrderItem[]
+
+  @@index([createdAt])
+}
+
+model CustomerOrderItem {
+  order_id String
+  order CustomerOrder @relation(fields: [order_id], references: [id])
+  product_id String
+  product Product @relation(fields: [product_id], references: [id])
+  suggested_quantity Int
+  actual_quantity Int
+  unit_price Decimal @db.Decimal(10, 2)
+
+  @@id([order_id, product_id])
+}
+
+model PerformanceTarget {
+  user_id String
+  user User @relation(fields: [user_id], references: [id])
+  brand_id String
+  brand Brand @relation(fields: [brand_id], references: [id])
+  period PerformancePeriod
+  period_date DateTime @db.Date
+  sales Decimal @db.Decimal(12, 2)
+  calls Int
+  promo Int
+
+  @@id([user_id, brand_id, period, period_date])
+}
+
+enum PerformancePeriod {
+  DAILY
+  MONTHLY
 }
 
 enum Type {

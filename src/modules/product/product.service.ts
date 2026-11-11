@@ -1,3 +1,5 @@
+import { CategoryRepository } from "../category/category.repository";
+import { requiredText } from "../../utils/input";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { ModelRepository } from "../model/model.repository";
@@ -10,14 +12,15 @@ import { emitProductStats } from "../../utils/socket/socket.publisher";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { UpdateProductDTO } from "./dto/UpdateProductDTO";
 export class ProductService {
-  constructor(private productRepo: ProductRepository, private modelRepo: ModelRepository, private prisma: ExtendedPrismaClient){}
+  constructor(private productRepo: ProductRepository, private modelRepo: ModelRepository, private prisma: ExtendedPrismaClient, private categoryRepo: CategoryRepository){}
 
   async save(data: CreateProductDTO): Promise<ProductResponseDTO> {
     const model = await this.modelRepo.findById(data.model_id)
     if(!model) throw new NotFoundError("Model not found")
     if(model.isDeleted) throw new BadRequestError("This model is no longer available")
 
-    const product = Product.create(data)
+    const category = await this.requireCategory(data.category);
+    const product = Product.create({ ...data, category: category.id });
 
     let productCount: number;
 
@@ -28,7 +31,7 @@ export class ProductService {
     
     emitProductStats(productCount!)
 
-    return product.toJson()
+    return { ...product.toJson(), category_name: category.name };
   }
 
   async softDelete(product_id: string): Promise<ProductResponseDTO> {
@@ -94,11 +97,17 @@ export class ProductService {
     const model = await this.modelRepo.findById(data.model_id)
     if(!model) throw new NotFoundError("Model not found")
 
-    product.update(data.product_name, data.price, data.category, data.model_id)
+    const category = await this.requireCategory(data.category);
+    product.update(data.product_name, data.price, category.id, data.model_id)
 
     await this.productRepo.update(product)
 
-    return product.toJson()
+    return { ...product.toJson(), category_name: category.name };
+  }
 
+  private async requireCategory(value: unknown) {
+    const category = await this.categoryRepo.findById(requiredText(value, "category"));
+    if (!category) throw new BadRequestError("Unknown category ID");
+    return category;
   }
 }

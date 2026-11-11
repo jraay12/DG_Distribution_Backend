@@ -1,3 +1,12 @@
+import { PerformanceController } from "./modules/performance/performance.controller";
+import { PerformanceService } from "./modules/performance/performance.service";
+import { PerformanceRepository } from "./modules/performance/performance.repository";
+import { OrderController } from "./modules/order/order.controller";
+import { OrderService } from "./modules/order/order.service";
+import { OrderRepository } from "./modules/order/order.repository";
+import { CategoryController } from "./modules/category/category.controller";
+import { CategoryService } from "./modules/category/category.service";
+import { CategoryRepository } from "./modules/category/category.repository";
 import { StoreInventoryController } from './modules/inventory/store-inventory.controller';
 import { StoreInventoryRepositiory } from './modules/inventory/store-inventory.repository';
 import { StoreInventoryService } from './modules/inventory/store-inventory.service';
@@ -62,6 +71,7 @@ export const jwt = new Jwt(access_token_secret, refresh_token_secret);
 const userRepository = new UserRepository(prisma);
 const brandRepository = new BrandRepository(prisma)
 const modelRepository = new ModelRepository(prisma)
+const categoryRepository = new CategoryRepository(prisma);
 const productRepository = new ProductRepository(prisma)
 const inventoryRepository = new InventoryRepository(prisma)
 const stockMovementRepository = new StockMovementRepository(prisma)
@@ -80,13 +90,13 @@ const userService = new UserService(userRepository, bcrypt);
 const authService = new AuthService(userRepository, jwt, bcrypt);
 const brandService = new BrandService(brandRepository, userRepository)
 const modelService = new ModelService(modelRepository, userRepository, brandRepository)
-const productService = new ProductService(productRepository, modelRepository, prisma)
+const productService = new ProductService(productRepository, modelRepository, prisma, categoryRepository)
 const statsService = new StatsService(productRepository, prisma)
 const inventoryService = new InventoryService(inventoryRepository, productRepository, stockMovementRepository, prisma)
 const customerService = new CustomerService(customerRepository)
 const deliveryService = new DeliveryService(deliveryRepository, storeVisitRepository)
 const promoCodeService = new PromoCodeService(promoCodeRepository)
-const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository, prisma)
+const storeVisitService = new StoreVisitService(storeVisitRepository, customerRepository, userRepository)
 const transactionService = new TransactionService(transactionRepository, storeVisitRepository, productRepository, inventoryRepository, stockMovementRepository, storeInventoryRepository, promoCodeRepository, prisma)
 const storeInventoryService = new StoreInventoryService(storeInventoryRepository, customerRepository, productRepository, stockMovementRepository, prisma, storeVisitRepository)
 const dailyReportService = new DailyReportService(dailyReportRepository)
@@ -111,3 +121,13 @@ export const dailyReportController = new DailyReportController(dailyReportServic
 export const quotaController = new QuotaController(quotaService)
 export const activityController = new ActivityController(activityService)
 export const reportController = new ReportController(reportService)
+
+export const categoryController = new CategoryController(new CategoryService(categoryRepository));
+
+export const orderController = new OrderController(new OrderService(
+  new OrderRepository(prisma), storeVisitRepository, storeInventoryRepository, prisma,
+));
+
+export const performanceController = new PerformanceController(new PerformanceService(
+  new PerformanceRepository(prisma), userRepository, brandRepository,
+));

@@ -8,6 +8,8 @@ const storeInventoryRoutes = (storeInventoryController: StoreInventoryController
 
   routes.post("/", AuthMiddleware(jwtService, ["ADMIN"]), storeInventoryController.create)
   routes.patch("/:customer_id/:product_id/stock", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.adjustStock)
+  routes.put("/:customer_id/visit-count", AuthMiddleware(jwtService, ["USER"]), storeInventoryController.submitVisitCount)
+  routes.get("/:customer_id/visit-count", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.getVisitCount)
   routes.get("/:customer_id", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.getStoreInventories)
   routes.get("/:customer_id/recommendation", AuthMiddleware(jwtService, ["USER", "ADMIN"]), storeInventoryController.getProductRecommendation)
 

@@ -72,6 +72,11 @@ export class UserController {
     }
   }
 
+  updateMe = async (req: Request, res: Response) => {
+    const data = await this.userService.updateMe(req.user.user_id, req.body);
+    res.json({ data });
+  };
+
   getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user_id = req.user?.user_id;

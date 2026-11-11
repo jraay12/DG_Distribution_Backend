@@ -1,7 +1,6 @@
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { ProductWithModelResponseDTO } from "./dto/ProductWithModelResponse";
 import { Product } from "./product.entity";
-import { ProductCategory } from "./product.enum";
 
 export class ProductRepository {
   constructor(private prisma: ExtendedPrismaClient) {}
@@ -53,7 +52,6 @@ export class ProductRepository {
     const productProps = {
       ...product,
       price: product.price.toNumber(),
-      category: product.category as ProductCategory,
     };
 
     return Product.hydrate(productProps);
@@ -100,10 +98,13 @@ export class ProductRepository {
             name: true,
           },
         },
+        productCategory: { select: { name: true } },
         inventory: {
           select: {
             quantity: true,
-            reorder_level: true
+            reorder_level: true,
+            case_code: true,
+            barcode: true
           }
         }
       },
@@ -114,11 +115,14 @@ export class ProductRepository {
       product_name: e.product_name,
       model_name: e.model.model_name,
       model_id: e.model_id,
-      category: e.category as ProductCategory,
+      category: e.category,
+      category_name: e.productCategory.name,
       price: e.price.toNumber(),
       created_by: e.user.name,
       stock: e.inventory?.quantity!,
-      reorder_level: e.inventory?.reorder_level
+      reorder_level: e.inventory?.reorder_level,
+      case_code: e.inventory?.case_code ?? null,
+      barcode: e.inventory?.barcode ?? null
     }));
   }
 

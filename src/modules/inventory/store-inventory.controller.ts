@@ -28,11 +28,25 @@ export class StoreInventoryController {
   getProductRecommendation = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const {customer_id} = req.params as {customer_id: string}
-      const result = await this.storeInventoryService.getTopProducts(customer_id);
+      const result = await this.storeInventoryService.getRecommendations(customer_id, req.query.store_visit_id, req.user);
       res.status(200).json({ result });
     } catch (error) {
       next(error);
     }
+  };
+
+  submitVisitCount = async (req: Request, res: Response) => {
+    const result = await this.storeInventoryService.submitVisitCount(
+      req.params.customer_id as string, req.body, req.user,
+    );
+    res.json({ result });
+  };
+
+  getVisitCount = async (req: Request, res: Response) => {
+    const result = await this.storeInventoryService.getVisitCount(
+      req.params.customer_id as string, req.query.store_visit_id, req.user,
+    );
+    res.json({ result });
   };
 
   adjustStock = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { ExtendedPrismaClient } from "../../config/prisma";
 
 export class ActivityRepository {
@@ -21,15 +22,16 @@ export class ActivityRepository {
     });
   }
 
-  getAgentActivities(filters: { user_id?: string; visit_date?: Date }) {
+  getAgentActivities(filters: { user_id?: string; visit_date: Prisma.DateTimeFilter }) {
     return this.prisma.storeVisit.findMany({
-      where: { user_id: filters.user_id, visit_date: filters.visit_date },
+      where: { deletedAt: null, user_id: filters.user_id, visit_date: filters.visit_date },
       include: {
         user: { select: { id: true, name: true, email: true, isActive: true } },
         customer: true,
         transaction: {
           include: { items: { include: { product: true } }, promoCode: true },
         },
+        order: { select: { id: true } },
         deliveryReports: {
           include: { gpsLog: true, imageEvidence: true },
         },

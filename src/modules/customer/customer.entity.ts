@@ -1,3 +1,6 @@
+import { requiredText } from "../../utils/input";
+import { CreateCustomerDTO } from "./dto/CreateCustomerDTO";
+import { UpdateCustomerDTO } from "./dto/UpdateCustomerDTO";
 import crypto from "crypto";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 
@@ -7,7 +10,12 @@ export interface CustomerProps {
   owner_name: string;
   contact_number: string;
   createdAt?: Date;
-  address: string
+  address: string;
+  street?: string | null;
+  barangay?: string | null;
+  city_municipality?: string | null;
+  province?: string | null;
+  territory?: string | null;
   updatedAt?: Date;
   deletedAt?: Date | null;
 }
@@ -23,34 +31,48 @@ export class Customer {
     };
   }
 
-  static create(
-    props: Omit<CustomerProps, "id" | "createdAt" | "updatedAt" | "deletedAt">,
-  ) {
-    if (!props.store_name) throw new BadRequestError("Store name is required");
-    if (!props.owner_name) throw new BadRequestError("Owner name is required");
-    if (!props.contact_number)
-      throw new BadRequestError("Contact number is required");
-    if (!props.address)
-      throw new BadRequestError("Address is required");
-
-    return new Customer({ ...props, id: crypto.randomUUID() });
+  static create(input: CreateCustomerDTO) {
+    return new Customer({ id: crypto.randomUUID(), ...this.details(input) });
   }
 
-  updateCustomer(props: Omit<CustomerProps, "id" | "createdAt" | "updatedAt" | "deletedAt">){
-    if (!props.store_name) throw new BadRequestError("Store name is required");
-    if (!props.owner_name) throw new BadRequestError("Owner name is required");
-    if (!props.contact_number)
-      throw new BadRequestError("Contact number is required");
-    if (!props.address)
-      throw new BadRequestError("Address is required");
-
-    this.props.store_name = props.store_name
-    this.props.owner_name = props.owner_name
-    this.props.address = props.address
-    this.props.contact_number = props.contact_number
-    this.props.updatedAt = new Date()
+  updateCustomer(input: UpdateCustomerDTO) {
+    this.props = { ...this.props, ...Customer.details(input, this.props), updatedAt: new Date() };
   }
-  
+
+  private static details(input: UpdateCustomerDTO, existing?: CustomerProps) {
+    const detail = (key: "store_name" | "owner_name" | "contact_number") =>
+      requiredText(input?.[key] === undefined ? existing?.[key] : input[key], key);
+
+    let { address, street, barangay, city_municipality, province, territory } = existing ?? {};
+    if (input?.street !== undefined || input?.barangay !== undefined ||
+        input?.city_municipality !== undefined || input?.province !== undefined) {
+      street = requiredText(input.street === undefined ? street : input.street, "street");
+      barangay = requiredText(input.barangay === undefined ? barangay : input.barangay, "barangay");
+      city_municipality = requiredText(
+        input.city_municipality === undefined ? city_municipality : input.city_municipality,
+        "city_municipality",
+      );
+      province = requiredText(input.province === undefined ? province : input.province, "province");
+      address = [street, barangay, city_municipality, province].join(", ");
+    } else if (input?.address !== undefined && input.address !== address) {
+      address = requiredText(input.address, "address", 800);
+      street = barangay = city_municipality = province = null;
+    }
+    if (!address) throw new BadRequestError("Provide the four address fields or an address");
+    if (input?.territory !== undefined) {
+      territory = input.territory === null ? null : requiredText(input.territory, "territory");
+    }
+
+    return {
+      store_name: detail("store_name"),
+      owner_name: detail("owner_name"),
+      contact_number: detail("contact_number"),
+      address, street: street ?? null, barangay: barangay ?? null,
+      city_municipality: city_municipality ?? null, province: province ?? null,
+      territory: territory ?? null,
+    };
+  }
+
   static hydrate(props: CustomerProps):Customer {
     return new Customer(props)
   }

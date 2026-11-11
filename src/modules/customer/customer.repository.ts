@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { Customer } from "./customer.entity";
 
@@ -6,16 +7,7 @@ export class CustomerRepository {
 
   async save(customer: Customer): Promise<void> {
     await this.prisma.customer.create({
-      data: {
-        id: customer.id,
-        contact_number: customer.contactNumber,
-        address: customer.address,
-        owner_name: customer.ownerName,
-        store_name: customer.storeName,
-        createdAt: customer.createdAt,
-        deletedAt: customer.deletedAt,
-        updatedAt: customer.updatedAt,
-      },
+      data: customer.toJSON(),
     });
   }
 
@@ -32,17 +24,12 @@ export class CustomerRepository {
   }
 
   async update(customer: Customer): Promise<void> {
+    const { id, createdAt, deletedAt, ...details } = customer.toJSON();
     await this.prisma.customer.update({
       where: {
         id: customer.id,
       },
-      data: {
-        address: customer.address,
-        contact_number: customer.contactNumber,
-        owner_name: customer.ownerName,
-        store_name: customer.storeName,
-        updatedAt: customer.updatedAt,
-      },
+      data: details,
     });
   }
 
@@ -67,8 +54,9 @@ export class CustomerRepository {
 
   async getCustomers(
     status: "all" | "active" | "deleted" = "active",
+    territory?: string,
   ): Promise<Customer[]> {
-    const whereClause: any = {};
+    const whereClause: Prisma.CustomerWhereInput = { territory };
 
     if (status) {
       whereClause.deletedAt =
@@ -89,11 +77,21 @@ export class CustomerRepository {
   async findByIds(ids: string[]) {
     return this.prisma.customer.findMany({
       where: {
+        deletedAt: null,
         id: {
           in: ids,
         },
         
       },
     });
+  }
+  async listTerritories() {
+    const groups = await this.prisma.customer.groupBy({
+      by: ["territory"],
+      where: { deletedAt: null, territory: { not: null } },
+      orderBy: { territory: "asc" },
+      _count: { _all: true },
+    });
+    return groups.map(({ territory, _count }) => ({ territory, store_count: _count._all }));
   }
 }

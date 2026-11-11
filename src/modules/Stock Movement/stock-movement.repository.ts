@@ -68,4 +68,16 @@ export class StockMovementRepository {
       take: 3,
     });
   }
+  getRecentStoreDemand(customer_id: string, product_ids: string[], since: Date, until: Date, tx: ExtendedPrismaClient) {
+    return tx.stockMovement.groupBy({
+      by: ["product_id"],
+      where: {
+        store_id: customer_id,
+        product_id: { in: product_ids },
+        type: "OUT",
+        createdAt: { gte: since, lte: until },
+      },
+      _sum: { quantity: true },
+    });
+  }
 }

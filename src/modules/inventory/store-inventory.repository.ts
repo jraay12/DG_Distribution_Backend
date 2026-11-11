@@ -1,5 +1,5 @@
-import { ExtendedPrismaClient, prisma } from "../../config/prisma";
-import { StoreInventory } from "@prisma/client";
+import { ExtendedPrismaClient } from "../../config/prisma";
+import { StoreInventory, VisitInventoryItem } from "@prisma/client";
 
 export class StoreInventoryRepositiory {
   constructor(private prisma: ExtendedPrismaClient) {}
@@ -102,5 +102,18 @@ export class StoreInventoryRepositiory {
         }
       }
     })
+  }
+  findVisitCount(store_visit_id: string, tx = this.prisma) {
+    return tx.visitInventoryItem.findMany({
+      where: { store_visit_id },
+      include: { product: { select: { product_name: true, deletedAt: true } } },
+      orderBy: [{ suggested_quantity: "desc" }, { product_id: "asc" }],
+    });
+  }
+
+  async replaceVisitCount(store_visit_id: string, items: VisitInventoryItem[], tx: ExtendedPrismaClient) {
+    await tx.visitInventoryItem.deleteMany({ where: { store_visit_id } });
+    await tx.visitInventoryItem.createMany({ data: items });
+    return this.findVisitCount(store_visit_id, tx);
   }
 }

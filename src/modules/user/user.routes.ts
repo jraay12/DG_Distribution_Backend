@@ -6,8 +6,9 @@ const userRoutes = (userController: UserController, jwtService: Jwt): Router => 
   const routes = Router();
 
   routes.get("/me", AuthMiddleware(jwtService), userController.getMe);
+  routes.patch("/me", AuthMiddleware(jwtService), userController.updateMe);
   routes.post("/create", AuthMiddleware(jwtService, ["ADMIN"]), userController.createUser);
-  routes.post("/change-password",  AuthMiddleware(jwtService, ["ADMIN"]), userController.updatePassword);
+  routes.post("/change-password", AuthMiddleware(jwtService), userController.updatePassword);
   routes.patch("/:user_id/activate",  AuthMiddleware(jwtService, ["ADMIN"]), userController.activateUser);
   routes.patch("/:user_id/deactivate",  AuthMiddleware(jwtService, ["ADMIN"]), userController.deactivateUser);
   routes.patch("/:user_id",  AuthMiddleware(jwtService, ["ADMIN"]), userController.update);

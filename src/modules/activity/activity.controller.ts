@@ -12,7 +12,7 @@ export class ActivityController {
     catch (error) { next(error); }
   };
   getActivities = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.status(200).json({ data: await this.activityService.getAgentActivities(req.query as any) }); }
+    try { res.status(200).json({ data: await this.activityService.getAgentActivities(req.query) }); }
     catch (error) { next(error); }
   };
 }

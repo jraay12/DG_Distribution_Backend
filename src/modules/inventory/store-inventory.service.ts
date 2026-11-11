@@ -1,3 +1,7 @@
+import { requiredText } from "../../utils/input";
+import { productQuantities } from "../../utils/product-quantities";
+import { ConflictError } from "../../utils/error/ConflictError";
+import { Payload } from "../../utils/jwt";
 import { ExtendedPrismaClient } from "../../config/prisma";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { NotFoundError } from "../../utils/error/NotFoundError";
@@ -76,6 +80,69 @@ export class StoreInventoryService {
         total_sold: m._sum.quantity
       }
     })
+  }
+
+  async submitVisitCount(customer_id: string, input: { store_visit_id?: unknown; items?: unknown }, requester: Payload) {
+    const store_visit_id = requiredText(input?.store_visit_id, "store_visit_id");
+    const counts = productQuantities(input?.items, true);
+    return this.prisma.$transaction(async (transaction) => {
+      const tx = transaction as ExtendedPrismaClient;
+      const [visit] = await this.storeVisitRepo.lockForOrdering(store_visit_id, tx);
+      if (!visit || visit.customer_id !== customer_id) throw new NotFoundError("Store visit not found");
+      if (visit.user_id !== requester.user_id) throw new ForbiddenError("This visit is assigned to another agent");
+      if (!visit.time_in) throw new ConflictError("Check in before counting store inventory");
+      if (await tx.customerOrder.findUnique({ where: { store_visit_id }, select: { id: true } })) {
+        throw new ConflictError("The customer order for this visit is already final");
+      }
+      const ids = [...counts.keys()];
+      const products = await tx.product.findMany({
+        where: { id: { in: ids }, deletedAt: null },
+        select: { id: true },
+      });
+      if (products.length !== ids.length) throw new NotFoundError("One or more active products were not found");
+
+      const now = new Date();
+      const since = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const movements = await this.stockMovementRepo.getRecentStoreDemand(customer_id, ids, since, now, tx);
+      const demand = new Map(movements.map((item) => [item.product_id, item._sum.quantity ?? 0]));
+      const items = ids.map((product_id) => {
+        const quantity = counts.get(product_id)!;
+        const recent_units_out = Math.min(demand.get(product_id) ?? 0, 2147483647);
+        return {
+          store_visit_id, product_id, quantity, recent_units_out,
+          suggested_quantity: Math.max(0, recent_units_out - quantity),
+        };
+      });
+      const saved = await this.storeInventoryRepo.replaceVisitCount(store_visit_id, items, tx);
+      return this.formatVisitCount(saved);
+    });
+  }
+
+  async getVisitCount(customer_id: string, visitId: unknown, requester: Payload) {
+    const store_visit_id = requiredText(visitId, "store_visit_id");
+    const visit = await this.storeVisitRepo.findById(store_visit_id);
+    if (!visit || visit.deletedAt || visit.customerId !== customer_id) throw new NotFoundError("Store visit not found");
+    if (requester.role === "USER" && visit.userId !== requester.user_id) {
+      throw new ForbiddenError("This visit is assigned to another agent");
+    }
+    return this.formatVisitCount(await this.storeInventoryRepo.findVisitCount(store_visit_id));
+  }
+
+  async getRecommendations(customer_id: string, visitId: unknown, requester: Payload) {
+    if (requester.role === "ADMIN" && visitId === undefined) {
+      return this.getTopProducts(customer_id);
+    }
+    const items = await this.getVisitCount(customer_id, visitId, requester);
+    if (!items.length) throw new ConflictError("Submit store inventory before requesting suggestions");
+    return items.filter((item) => item.suggested_quantity > 0 && item.active);
+  }
+
+  private formatVisitCount(items: Awaited<ReturnType<StoreInventoryRepositiory["findVisitCount"]>>) {
+    return items.map(({ product, ...item }) => ({
+      ...item,
+      product_name: product.product_name,
+      active: product.deletedAt === null,
+    }));
   }
 
   async adjustStock(data: {

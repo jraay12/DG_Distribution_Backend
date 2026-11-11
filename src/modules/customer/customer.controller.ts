@@ -83,7 +83,7 @@ export class CustomerController {
           throw new BadRequestError("Invalid status value")
         }
       }
-      const result = await this.customerService.getCustomers(normalizedStatus)
+      const result = await this.customerService.getCustomers(normalizedStatus, req.query.territory)
       res.status(200).json({
         data: result
       })
@@ -92,4 +92,7 @@ export class CustomerController {
     }
   }
 
+  listTerritories = async (_req: Request, res: Response) => {
+    res.json({ data: await this.customerService.listTerritories() });
+  };
 }

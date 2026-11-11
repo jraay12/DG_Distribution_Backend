@@ -3,8 +3,71 @@
     "_postman_id": "534e9867-8d09-40ea-b447-34d1c71d454a",
     "name": "DG_Distribution",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "34904796"
+    "_exporter_id": "34904796",
+    "description": "Set token to the access token for the role required by each request. For the agent order workflow, assign a visit as admin, then as the agent check in, submit the visit inventory count, view suggestions, and submit the actual quantities. Review the final order as admin. Set the collection IDs and dates to match your test data."
   },
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "agent_id",
+      "value": ""
+    },
+    {
+      "key": "brand_id",
+      "value": ""
+    },
+    {
+      "key": "model_id",
+      "value": ""
+    },
+    {
+      "key": "product_id",
+      "value": ""
+    },
+    {
+      "key": "customer_id",
+      "value": ""
+    },
+    {
+      "key": "store_visit_id",
+      "value": ""
+    },
+    {
+      "key": "category_id",
+      "value": "Electronics"
+    },
+    {
+      "key": "territory",
+      "value": "Cebu Central"
+    },
+    {
+      "key": "visit_date",
+      "value": "2026-11-11"
+    },
+    {
+      "key": "month_start",
+      "value": "2026-11-01"
+    },
+    {
+      "key": "from_date",
+      "value": "2026-11-01"
+    },
+    {
+      "key": "to_date",
+      "value": "2026-11-30"
+    },
+    {
+      "key": "old_password",
+      "value": ""
+    },
+    {
+      "key": "new_password",
+      "value": ""
+    }
+  ],
   "item": [
     {
       "name": "User",
@@ -50,31 +113,22 @@
           "response": []
         },
         {
-          "name": "Change Password",
+          "name": "Change My Password",
           "request": {
             "auth": {
               "type": "bearer",
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQURNSU4iLCJ1c2VyX2lkIjoiMzBlMmI0MGMtNjczNi00M2VkLTgzOTAtZWE1ZDA1ZTY3MWNjIiwiaWF0IjoxNzczMjkyNDY2LCJleHAiOjE3NzMyOTMzNjZ9.CYrsmyvCz9IThmr9y43-QW-ryY12zqpNDnfz54OdH04",
+                  "value": "{{token}}",
                   "type": "string"
                 }
               ]
             },
             "method": "POST",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"oldPassword\": \"asdasdasdasd\",\r\n    \"newPassword\": \"qwerty123\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "http://localhost:8000/api/users/change-password/",
+              "raw": "http://localhost:8000/api/users/change-password",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -83,10 +137,19 @@
               "path": [
                 "api",
                 "users",
-                "change-password",
-                ""
+                "change-password"
               ]
-            }
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"{{old_password}}\",\n  \"newPassword\": \"{{new_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Available to administrators and agents. Changes the authenticated account password."
           },
           "response": []
         },
@@ -305,6 +368,78 @@
                 }
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Settings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/users/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update My Settings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/users/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex Reyes\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Available to administrators and agents. Supply name, email, or both."
           },
           "response": []
         }
@@ -1005,7 +1140,7 @@
       "name": "Product",
       "item": [
         {
-          "name": "Create",
+          "name": "Create Product",
           "request": {
             "auth": {
               "type": "bearer",
@@ -1019,15 +1154,6 @@
             },
             "method": "POST",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"price\": 1000,\r\n  \"category\": \"Electronics\", // Electronics, Apparel, Books, Toys,Furniture, Misc = temporary\r\n  \"model_id\": \"811c13d6-7afe-4211-b032-588d388b80e5\",\r\n  \"product_name\": \"Samsung A7\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "http://localhost:8000/api/product",
               "protocol": "http",
@@ -1039,7 +1165,17 @@
                 "api",
                 "product"
               ]
-            }
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 100,\n  \"category\": \"{{category_id}}\",\n  \"model_id\": \"{{model_id}}\",\n  \"product_name\": \"Sample Product\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Use the stable category ID from List Categories."
           },
           "response": []
         },
@@ -1196,17 +1332,8 @@
             },
             "method": "PATCH",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"price\": 12.17,\r\n  \"category\": \"Electronics\",\r\n  \"model_id\": \"14e97f76-b497-4d72-8b43-b194a68fc721\",\r\n  \"product_name\": \"YAWA\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "http://localhost:8000/api/product/:product_id",
+              "raw": "http://localhost:8000/api/product/{{product_id}}",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1215,15 +1342,19 @@
               "path": [
                 "api",
                 "product",
-                ":product_id"
-              ],
-              "variable": [
-                {
-                  "key": "product_id",
-                  "value": "74e9cada-5c55-4eb5-bf71-3c26aa15ebf0"
-                }
+                "{{product_id}}"
               ]
-            }
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 100,\n  \"category\": \"{{category_id}}\",\n  \"model_id\": \"{{model_id}}\",\n  \"product_name\": \"Sample Product\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Use the stable category ID from List Categories."
           },
           "response": []
         }
@@ -1417,53 +1548,9 @@
             }
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "Customer",
-      "item": [
-        {
-          "name": "Create",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"store_name\": \"Renante Store\",\r\n  \"owner_name\": \"Renante Canete\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "http://localhost:8000/api/customer",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "8000",
-              "path": [
-                "api",
-                "customer"
-              ]
-            }
-          },
-          "response": []
         },
         {
-          "name": "Update",
+          "name": "Update Case Code and Barcode",
           "request": {
             "auth": {
               "type": "bearer",
@@ -1477,17 +1564,137 @@
             },
             "method": "PATCH",
             "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/inventory/{{product_id}}/identifiers",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "inventory",
+                "{{product_id}}",
+                "identifiers"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"store_name\": \"Ray's Store Update\",\r\n  \"owner_name\": \"John Ray\",\r\n  \"contact_number\": \"09123456789\",\r\n  \"address\": \"12-28 St. Nazareth\"\r\n}",
+              "raw": "{\n  \"case_code\": \"CASE-001\",\n  \"barcode\": \"0012345678905\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
             },
+            "description": "Administrator only. Both identifiers are strings. Send null to clear either field."
+          },
+          "response": []
+        },
+        {
+          "name": "Find Inventory by Case Code or Barcode",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "http://localhost:8000/api/customer/:customer_id",
+              "raw": "http://localhost:8000/api/inventory/lookup?barcode=0012345678905",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "inventory",
+                "lookup"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "0012345678905"
+                },
+                {
+                  "key": "case_code",
+                  "value": "CASE-001",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Administrator only. Enable one identifier."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customer",
+      "item": [
+        {
+          "name": "Create with Structured Address",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"store_name\": \"Sample Store\",\n  \"owner_name\": \"Alex Reyes\",\n  \"contact_number\": \"09123456789\",\n  \"street\": \"Osme\\u00f1a Boulevard\",\n  \"barangay\": \"Sambag II\",\n  \"city_municipality\": \"Cebu City\",\n  \"province\": \"Cebu\",\n  \"territory\": \"{{territory}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address or Territory",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer/{{customer_id}}",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1496,14 +1703,17 @@
               "path": [
                 "api",
                 "customer",
-                ":customer_id"
-              ],
-              "variable": [
-                {
-                  "key": "customer_id",
-                  "value": "44d8a39f-e8cb-4fb8-8498-38325d3ff156"
-                }
+                "{{customer_id}}"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"street\": \"Osme\\u00f1a Boulevard\",\n  \"barangay\": \"Sambag II\",\n  \"city_municipality\": \"Cebu City\",\n  \"province\": \"Cebu\",\n  \"territory\": \"{{territory}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -1737,6 +1947,74 @@
                 {
                   "key": "status",
                   "value": "all"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Territories",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer/territories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer",
+                "territories"
+              ]
+            },
+            "description": "Administrator only. Lists territories with active stores."
+          },
+          "response": []
+        },
+        {
+          "name": "List Active Customers by Territory",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/customer?territory={{territory}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "customer"
+              ],
+              "query": [
+                {
+                  "key": "territory",
+                  "value": "{{territory}}"
                 }
               ]
             }
@@ -2136,7 +2414,7 @@
       "name": "Store",
       "item": [
         {
-          "name": "Assign Routes to agent",
+          "name": "Assign Individual Stores to Agent",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2150,15 +2428,6 @@
             },
             "method": "POST",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"user_id\": \"93b8e2c6-2e9c-4a4e-ab62-374bbb08df14\",\r\n  \"visits\": [\r\n    {\r\n        \"customer_id\": \"99e5b7b8-f719-4004-821e-2e6beca270f2\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    },\r\n    {\r\n        \"customer_id\": \"c89852bd-4019-44af-a34d-e24c8bf9b303\",\r\n        \"visit_date\": \"2026-05-04T00:00:00.000Z\"\r\n    }\r\n    \r\n  ]\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "http://localhost:8000/api/store-visit",
               "protocol": "http",
@@ -2170,6 +2439,15 @@
                 "api",
                 "store-visit"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{agent_id}}\",\n  \"visits\": [\n    {\n      \"customer_id\": \"{{customer_id}}\",\n      \"visit_date\": \"{{visit_date}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "response": []
@@ -2267,10 +2545,7 @@
           "response": []
         },
         {
-          "name": "Get Assigned Routes by User (With filter check the params)",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
+          "name": "Get Assigned Visits by Agent",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2284,12 +2559,8 @@
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
-            },
             "url": {
-              "raw": "http://localhost:8000/api/store-visit/:user_id",
+              "raw": "http://localhost:8000/api/store-visit/{{agent_id}}?from={{from_date}}&to={{to_date}}",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2298,23 +2569,30 @@
               "path": [
                 "api",
                 "store-visit",
-                ":user_id"
+                "{{agent_id}}"
               ],
               "query": [
                 {
                   "key": "visit_date",
-                  "value": "2026-05-04",
-                  "description": "you can specify the date you want to return example 2026-05-10 by default it return all",
+                  "value": "{{visit_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "{{from_date}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to_date}}"
+                },
+                {
+                  "key": "territory",
+                  "value": "{{territory}}",
                   "disabled": true
                 }
-              ],
-              "variable": [
-                {
-                  "key": "user_id",
-                  "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14"
-                }
               ]
-            }
+            },
+            "description": "Use visit_date for a single Manila calendar day, or use inclusive from/to filters. Enable only one date filter mode."
           },
           "response": []
         },
@@ -2360,7 +2638,7 @@
           "response": []
         },
         {
-          "name": "Mark Time IN",
+          "name": "Check In to Visit",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2374,12 +2652,8 @@
             },
             "method": "PATCH",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
-            },
             "url": {
-              "raw": "http://localhost:8000/api/store-visit/:id/time-in",
+              "raw": "http://localhost:8000/api/store-visit/{{store_visit_id}}/time-in",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2388,21 +2662,15 @@
               "path": [
                 "api",
                 "store-visit",
-                ":id",
+                "{{store_visit_id}}",
                 "time-in"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97"
-                }
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Mark Time Out",
+          "name": "Check Out of Visit",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2416,12 +2684,8 @@
             },
             "method": "PATCH",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"user_id\": \"df11d765-037d-4a55-90cf-52248817cb9a\",\r\n  \"customer_id\": [\r\n    \"44d8a39f-e8cb-4fb8-8498-38325d3ff156\",\r\n    \"81c82463-fa53-4875-be06-4752445cb33a\"\r\n  ]\r\n}"
-            },
             "url": {
-              "raw": "http://localhost:8000/api/store-visit/:id/time-out",
+              "raw": "http://localhost:8000/api/store-visit/{{store_visit_id}}/time-out",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2430,21 +2694,15 @@
               "path": [
                 "api",
                 "store-visit",
-                ":id",
+                "{{store_visit_id}}",
                 "time-out"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "3ab2afef-094f-4199-bd6a-f20288ec4a97"
-                }
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Get All Assigned Store( With Filter check in the params)",
+          "name": "Get All Assigned Visits",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2459,7 +2717,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8000/api/store-visit/",
+              "raw": "http://localhost:8000/api/store-visit?from={{from_date}}&to={{to_date}}",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2467,17 +2725,30 @@
               "port": "8000",
               "path": [
                 "api",
-                "store-visit",
-                ""
+                "store-visit"
               ],
               "query": [
                 {
                   "key": "visit_date",
-                  "value": "2026-05-04",
+                  "value": "{{visit_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "{{from_date}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to_date}}"
+                },
+                {
+                  "key": "territory",
+                  "value": "{{territory}}",
                   "disabled": true
                 }
               ]
-            }
+            },
+            "description": "Use visit_date for a single Manila calendar day, or use inclusive from/to filters. Enable only one date filter mode."
           },
           "response": []
         },
@@ -2526,10 +2797,7 @@
           "response": []
         },
         {
-          "name": "Get Product Recommendation (by month)",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
+          "name": "Get Suggested Order after Inventory Count",
           "request": {
             "auth": {
               "type": "bearer",
@@ -2543,12 +2811,8 @@
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"store_visit_id\": \"41b206f8-fef0-4f9c-8fb5-2f17d5079b39\",\r\n  \"type\": \"SALE\",\r\n  \"items\": [\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 2,\r\n      \"price\": 150.00\r\n    },\r\n    {\r\n      \"product_id\": \"ba1c61b3-fdbb-48af-a3d0-2e6455eabcbc\",\r\n      \"quantity\": 1,\r\n      \"price\": 300.00\r\n    }\r\n  ]\r\n}"
-            },
             "url": {
-              "raw": "http://localhost:8000/api/store-inventory/:customer_id/recommendation",
+              "raw": "http://localhost:8000/api/store-inventory/{{customer_id}}/recommendation?store_visit_id={{store_visit_id}}",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -2557,16 +2821,17 @@
               "path": [
                 "api",
                 "store-inventory",
-                ":customer_id",
+                "{{customer_id}}",
                 "recommendation"
               ],
-              "variable": [
+              "query": [
                 {
-                  "key": "customer_id",
-                  "value": "c89852bd-4019-44af-a34d-e24c8bf9b303"
+                  "key": "store_visit_id",
+                  "value": "{{store_visit_id}}"
                 }
               ]
-            }
+            },
+            "description": "Use the visit ID after submitting the visit inventory count."
           },
           "response": []
         },
@@ -2640,6 +2905,126 @@
               ]
             },
             "description": "USER or ADMIN. Agents must provide a store_visit_id assigned to themselves and the selected customer. Type must be IN or OUT."
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Territory to Agent",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/store-visit",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-visit"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{agent_id}}\",\n  \"territory\": \"{{territory}}\",\n  \"visit_date\": \"{{visit_date}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Administrator only. Assigns every active store in the territory on the requested day."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Visit Inventory Count",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/store-inventory/{{customer_id}}/visit-count",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-inventory",
+                "{{customer_id}}",
+                "visit-count"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"store_visit_id\": \"{{store_visit_id}}\",\n  \"items\": [\n    {\n      \"product_id\": \"{{product_id}}\",\n      \"quantity\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Agent only. Check in first. Submit the full list of observed quantities, including zero where applicable."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Visit Inventory Count",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/store-inventory/{{customer_id}}/visit-count?store_visit_id={{store_visit_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "store-inventory",
+                "{{customer_id}}",
+                "visit-count"
+              ],
+              "query": [
+                {
+                  "key": "store_visit_id",
+                  "value": "{{store_visit_id}}"
+                }
+              ]
+            }
           },
           "response": []
         }
@@ -2937,6 +3322,126 @@
             "description": "ADMIN only. Returns quota progress and status for all agents."
           },
           "response": []
+        },
+        {
+          "name": "Get My Performance",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/performance/mine?date={{visit_date}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "performance",
+                "mine"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "{{visit_date}}"
+                }
+              ]
+            },
+            "description": "Agent only. Returns brand rows for sales, calls, and promo with daily and month-to-date figures. Defaults to today in Manila."
+          },
+          "response": []
+        },
+        {
+          "name": "Set Monthly Performance Targets",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/performance/targets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "performance",
+                "targets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{agent_id}}\",\n  \"brand_id\": \"{{brand_id}}\",\n  \"period\": \"MONTHLY\",\n  \"period_date\": \"{{month_start}}\",\n  \"sales\": 10000,\n  \"calls\": 8,\n  \"promo\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Administrator only. Monthly targets use the first day of the month."
+          },
+          "response": []
+        },
+        {
+          "name": "Set Daily Performance Targets",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/performance/targets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "performance",
+                "targets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{agent_id}}\",\n  \"brand_id\": \"{{brand_id}}\",\n  \"period\": \"DAILY\",\n  \"period_date\": \"{{visit_date}}\",\n  \"sales\": 10000,\n  \"calls\": 8,\n  \"promo\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Administrator only. Monthly targets use the first day of the month."
+          },
+          "response": []
         }
       ]
     },
@@ -2986,19 +3491,52 @@
         {
           "name": "Get All Agent Activities",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8000/api/activity/agents?user_id=&visit_date=",
-              "protocol": "http", "host": ["localhost"], "port": "8000",
-              "path": ["api", "activity", "agents"],
+              "raw": "http://localhost:8000/api/activity/agents?from={{from_date}}&to={{to_date}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "activity",
+                "agents"
+              ],
               "query": [
-                { "key": "user_id", "value": "93b8e2c6-2e9c-4a4e-ab62-374bbb08df14", "disabled": true },
-                { "key": "visit_date", "value": "2026-08-24T00:00:00.000Z", "disabled": true }
+                {
+                  "key": "user_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "visit_date",
+                  "value": "{{visit_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "{{from_date}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to_date}}"
+                }
               ]
             },
-            "description": "ADMIN only. Returns routes, visit status, transactions, delivery reports, GPS logs, images, and recorded location points."
+            "description": "Use visit_date for a single Manila calendar day, or use inclusive from/to filters. Enable only one date filter mode."
           },
           "response": []
         }
@@ -3064,6 +3602,262 @@
               ]
             },
             "description": "ADMIN only. Includes assignments, completed/unvisited stores, reports, sales count, and total sales."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/category",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/category",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "category"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Accessories\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rename Category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/category/{{category_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "category",
+                "{{category_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Mobile Accessories\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Administrator only. Products retain their category ID after a rename."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customer Orders",
+      "item": [
+        {
+          "name": "Submit Final Customer Order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/orders/store-visit/{{store_visit_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "orders",
+                "store-visit",
+                "{{store_visit_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product_id\": \"{{product_id}}\",\n      \"quantity\": 3\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Agent only. Submit actual quantities after counting inventory. Suggested quantities are saved with the order. An identical retry returns the original order."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Final Customer Order by Visit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/orders/store-visit/{{store_visit_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "orders",
+                "store-visit",
+                "{{store_visit_id}}"
+              ]
+            },
+            "description": "Available to administrators and the assigned agent. Lines show suggested_quantity and actual_quantity."
+          },
+          "response": []
+        },
+        {
+          "name": "List Customer Orders",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/api/orders?page=1&limit=25",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "{{from_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "{{to_date}}",
+                  "disabled": true
+                },
+                {
+                  "key": "customer_id",
+                  "value": "{{customer_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "user_id",
+                  "value": "{{agent_id}}",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "25"
+                }
+              ]
+            },
+            "description": "Administrator only. Date filters refer to the date the order was submitted in Manila."
           },
           "response": []
         }

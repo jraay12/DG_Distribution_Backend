@@ -3,6 +3,10 @@ export interface GetAssignedResponseDTO {
   customer_id: string
   store_name: string
   owner_name: string
+  address: string
+  territory: string | null
+  inventory_counted: boolean
+  order_id: string | null
   user_id: string
   visit_date: Date
   time_in?: string | null

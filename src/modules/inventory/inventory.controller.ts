@@ -52,4 +52,12 @@ export class InventoryController {
       next(error);
     }
   };
+  updateIdentifiers = async (req: Request, res: Response) => {
+    const data = await this.inventoryService.updateIdentifiers(req.params.product_id as string, req.body);
+    res.json({ data });
+  };
+
+  lookup = async (req: Request, res: Response) => {
+    res.json({ data: await this.inventoryService.lookup(req.query) });
+  };
 }

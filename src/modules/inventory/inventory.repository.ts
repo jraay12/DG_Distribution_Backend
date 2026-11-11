@@ -58,4 +58,17 @@ export class InventoryRepository {
 
     return updated;
   }
+  updateIdentifiers(product_id: string, data: { case_code?: string | null; barcode?: string | null }) {
+    return this.prisma.inventory.update({
+      where: { product_id, product: { deletedAt: null } },
+      data,
+    });
+  }
+
+  lookup(identifiers: { case_code?: string; barcode?: string }) {
+    return this.prisma.inventory.findFirst({
+      where: { ...identifiers, product: { deletedAt: null } },
+      include: { product: { select: { id: true, product_name: true } } },
+    });
+  }
 }

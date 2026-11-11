@@ -1,13 +1,12 @@
 import crypto from "crypto";
 import { BadRequestError } from "../../utils/error/BadRequestError";
-import { ProductCategory } from "./product.enum";
 
 export interface ProductProps {
   id: string;
   model_id: string;
   product_name: string;
   price: number;
-  category: ProductCategory;
+  category: string;
   created_by: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -46,9 +45,6 @@ export class Product {
 
     if (!props.category) throw new BadRequestError("Category is required");
 
-    if (!Object.values(ProductCategory).includes(props.category))
-      throw new BadRequestError("Invalid category");
-
     if (!props.created_by || props.created_by.trim().length === 0)
       throw new BadRequestError("Created by is required");
 
@@ -65,7 +61,7 @@ export class Product {
   update(
     product_name: string,
     price: number,
-    category: ProductCategory,
+    category: string,
     model_id: string,
   ): void {
     if (!product_name || product_name.trim().length === 0)
@@ -80,9 +76,6 @@ export class Product {
       throw new BadRequestError("Price must be greater than 0");
 
     if (!category) throw new BadRequestError("Category is required");
-
-    if (!Object.values(ProductCategory).includes(category))
-      throw new BadRequestError("Invalid category");
 
     if (!model_id || model_id.trim().length === 0)
       throw new BadRequestError("Model ID is required");
@@ -144,7 +137,7 @@ export class Product {
     return this.props.price;
   }
 
-  get category(): ProductCategory {
+  get category(): string {
     return this.props.category;
   }
 

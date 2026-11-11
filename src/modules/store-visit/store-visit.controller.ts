@@ -43,7 +43,7 @@ export class StoreVisitController {
   ) => {
     try {
       const { user_id } = req.params as { user_id: string };
-      const { visit_date } = req.body as { visit_date: Date };
+      const visit_date = req.body?.visit_date as string;
       const result = await this.storeVisitService.usePreviousAssignedRoutes(
         user_id,
         visit_date,
@@ -64,18 +64,8 @@ export class StoreVisitController {
   ) => {
     try {
       const { user_id } = req.params as { user_id: string };
-      const { visit_date } = req.query as { visit_date?: string };
-      const result = await this.storeVisitService.getAssignedRoutes(
-        user_id,
-        visit_date ? new Date(visit_date) : undefined,
-        req.user,
-      );
-      res.status(200).json({
-        message: visit_date
-          ? `Successfully retrieved assigned routes for ${visit_date}`
-          : `Successfully retrieved assigned routes by user`,
-        data: result,
-      });
+      const data = await this.storeVisitService.list(req.query, req.user, user_id);
+      res.json({ message: "Successfully retrieved assigned routes by user", data });
     } catch (error) {
       next(error);
     }
@@ -123,16 +113,8 @@ export class StoreVisitController {
     next: NextFunction,
   ) => {
     try {
-      const { visit_date } = req.query as { visit_date?: string };
-      const result = await this.storeVisitService.getAllAssignedRoutes(
-        visit_date ? new Date(visit_date) : undefined,
-      );
-      res.status(200).json({
-        message: visit_date
-          ? `Successfully retrieved all assigned routes for ${visit_date}`
-          : `Successfully retrieved all assigned routes`,
-        data: result,
-      });
+      const data = await this.storeVisitService.list(req.query, req.user);
+      res.json({ message: "Successfully retrieved all assigned routes", data });
     } catch (error) {
       next(error);
     }

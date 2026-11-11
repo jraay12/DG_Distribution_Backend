@@ -1,3 +1,4 @@
+import { requiredText } from "../../utils/input";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { Customer } from "./customer.entity";
 import { CustomerRepository } from "./customer.repository";
@@ -56,8 +57,13 @@ export class CustomerService {
     await this.customerRepo.restore(customer_id)
   }
 
-  async getCustomers(status: "all" | "active" | "deleted" = "active"): Promise<CustomerResponseDTO[]> {
-    const customers = await this.customerRepo.getCustomers(status)
+  async getCustomers(status: "all" | "active" | "deleted" = "active", territory?: unknown): Promise<CustomerResponseDTO[]> {
+    const customers = await this.customerRepo.getCustomers(
+      status, territory === undefined ? undefined : requiredText(territory, "territory"),
+    )
     return customers.map(customer => customer.toJSON())
+  }
+  listTerritories() {
+    return this.customerRepo.listTerritories();
   }
 }

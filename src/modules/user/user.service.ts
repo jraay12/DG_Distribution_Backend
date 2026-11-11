@@ -1,3 +1,5 @@
+import { requiredText } from "../../utils/input";
+import { ForbiddenError } from "../../utils/error/ForbiddenError";
 import { CreateUserDTO } from "./dto/CreateUserDTO";
 import { PaginatedUserResponseDTO, UserReponseDTO } from "./dto/UserResponseDTO";
 import { UserRepository } from "./user.repository";
@@ -29,20 +31,49 @@ export class UserService {
     user_id: string,
     data: ChangePasswordDTO,
   ): Promise<void> {
+    if (typeof data?.oldPassword !== "string" || !data.oldPassword ||
+        typeof data.newPassword !== "string" || data.newPassword.length < 8 ||
+        Buffer.byteLength(data.newPassword, "utf8") > 72) {
+      throw new BadRequestError("Provide the current password and a new password with at least 8 characters and at most 72 bytes");
+    }
     const user = await this.userRepo.findById(user_id);
-
-    if (!user) throw new NotFoundError("User not found!");
-
-    const passwordMatch = await this.bcrypt.compare(
-      data.oldPassword,
-      user.password,
-    );
-
-    if (!passwordMatch) throw new BadRequestError("Old password not match");
-
-    user.updatePassword(data.newPassword);
+    if (!user) throw new NotFoundError("User not found");
+    if (!user.isActive) throw new ForbiddenError("Your account is not activated");
+    if (!await this.bcrypt.compare(data.oldPassword, user.password)) {
+      throw new BadRequestError("Current password is incorrect");
+    }
     const hashedPassword = await this.bcrypt.hash(data.newPassword);
-    await this.userRepo.updatePassword(user_id, hashedPassword);
+    if (!await this.userRepo.updatePassword(user_id, user.password, hashedPassword)) {
+      throw new ConflictError("The account changed while updating the password. Retry with your current password.");
+    }
+  }
+
+  async updateMe(user_id: string, data: { name?: unknown; email?: unknown }) {
+    if (data?.name === undefined && data?.email === undefined) {
+      throw new BadRequestError("Provide a name or email");
+    }
+    const user = await this.userRepo.findById(user_id);
+    if (!user) throw new NotFoundError("User not found");
+    if (!user.isActive) throw new ForbiddenError("Your account is not activated");
+    const changes: { name?: string; email?: string } = {};
+    if (data.name !== undefined) {
+      user.updateName(requiredText(data.name, "name"));
+      changes.name = user.name;
+    }
+    if (data.email !== undefined) {
+      user.updateEmail(requiredText(data.email, "email"));
+      const duplicate = await this.userRepo.findByEmail(user.email);
+      if (duplicate && duplicate.id !== user_id) throw new ConflictError("Email already exists");
+      changes.email = user.email;
+    }
+    try {
+      return await this.userRepo.updateProfile(user_id, changes);
+    } catch (error) {
+      if (typeof error === "object" && error && "code" in error && error.code === "P2025") {
+        throw new ConflictError("The account changed while updating the profile");
+      }
+      throw error;
+    }
   }
 
   async activateUser(data: { user_id: string }): Promise<UserReponseDTO> {
@@ -93,6 +124,7 @@ export class UserService {
   async getMe(user_id: string): Promise<UserReponseDTO> {
     const user = await this.userRepo.findById(user_id);
     if (!user) throw new NotFoundError("User not found");
+    if (!user.isActive) throw new ForbiddenError("Your account is not activated");
 
     return user.toSafeObject();
   }

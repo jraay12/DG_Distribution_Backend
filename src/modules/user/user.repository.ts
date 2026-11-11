@@ -43,15 +43,20 @@ export class UserRepository {
     return User.reconstitute(user);
   }
 
-  async updatePassword(user_id: string, newPassword: string): Promise<void> {
-    await this.prisma.user.update({
-      where: {
-        id: user_id,
-      },
-      data: {
-        password: newPassword,
-      },
+  async updatePassword(user_id: string, oldHash: string, newHash: string): Promise<boolean> {
+    const result = await this.prisma.user.updateMany({
+      where: { id: user_id, password: oldHash, isActive: true },
+      data: { password: newHash },
     });
+    return result.count === 1;
+  }
+
+  async updateProfile(user_id: string, data: { name?: string; email?: string }) {
+    const user = await this.prisma.user.update({
+      where: { id: user_id, isActive: true },
+      data,
+    });
+    return User.reconstitute(user).toSafeObject();
   }
 
   async update(user: User): Promise<void> {

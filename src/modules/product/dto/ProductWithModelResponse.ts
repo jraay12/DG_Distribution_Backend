@@ -1,11 +1,13 @@
-import { ProductCategory } from "../product.enum"
 
 export interface ProductWithModelResponseDTO {
   id: string
   product_name: string
   model_name: string
   model_id: string
-  category: ProductCategory
+  category: string
+  category_name: string
+  case_code: string | null
+  barcode: string | null
   price: number
   created_by: string
   stock: number

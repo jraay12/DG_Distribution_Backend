@@ -1,3 +1,6 @@
+import { formatInTimeZone } from "date-fns-tz";
+import { calendarDate, manilaTimeZone, visitDateRange } from "../../utils/calendar-date";
+import { isUniqueViolation, requiredText } from "../../utils/input";
 import { StoreVisitRepository } from "./store-visit.repository";
 import { CreateStoreVisitDto } from "./dto/CreateDTO";
 import { StoreVisitResponseDto } from "./dto/ResponseDTO";
@@ -7,7 +10,6 @@ import { UserRepository } from "../user/user.repository";
 import { NotFoundError } from "../../utils/error/NotFoundError";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { ConflictError } from "../../utils/error/ConflictError";
-import { ExtendedPrismaClient } from "../../config/prisma";
 import { ForbiddenError } from "../../utils/error/ForbiddenError";
 import { PreviousRouteAssignResponseDTO } from "./dto/PreviousRouteAssignResponseDTO";
 import { GetAssignedResponseDTO } from "./dto/GetAssignedResponseDTO";
@@ -20,74 +22,46 @@ export class StoreVisitService {
     private storeVisitRepository: StoreVisitRepository,
     private customerRepository: CustomerRepository,
     private userRepository: UserRepository,
-    private prisma: ExtendedPrismaClient,
   ) {}
 
   async save(dto: CreateStoreVisitDto): Promise<StoreVisitResponseDto[]> {
-    // checker if user exist & user role is USER
-    const user = await this.userRepository.findById(dto.user_id);
-
+    const user_id = requiredText(dto?.user_id, "user_id");
+    const user = await this.userRepository.findById(user_id);
     if (!user) throw new NotFoundError("User not found");
+    if (user.role !== "USER" || !user.isActive) throw new BadRequestError("An active agent is required");
 
-    if (user.role !== "USER") {
-      throw new ForbiddenError("Only users with USER role are allowed");
-    }
-
-    // checker ensuring that it will not be duplicated
-
-    const seen = new Set();
-    const duplicatesInPayload: string[] = [];
-
-    for (const visit of dto.visits) {
-      const key = `${visit.customer_id}_${visit.visit_date}`;
-
-      if (seen.has(key)) {
-        duplicatesInPayload.push(key);
-      } else {
-        seen.add(key);
+    let planned: { customer_id: string; visit_date: Date }[];
+    if (dto.territory !== undefined) {
+      if (dto.visits !== undefined) throw new BadRequestError("Provide a territory or individual visits");
+      const territory = requiredText(dto.territory, "territory");
+      const visit_date = calendarDate(dto.visit_date, "visit_date", true);
+      const customers = await this.customerRepository.getCustomers("active", territory);
+      if (!customers.length) throw new NotFoundError("No active stores found in this territory");
+      planned = customers.map(({ id }) => ({ customer_id: id, visit_date }));
+    } else {
+      if (!Array.isArray(dto.visits) || !dto.visits.length) {
+        throw new BadRequestError("Provide at least one visit");
+      }
+      planned = dto.visits.map((visit) => ({
+        customer_id: requiredText(visit?.customer_id, "customer_id"),
+        visit_date: calendarDate(visit?.visit_date, "visit_date", true),
+      }));
+      const ids = [...new Set(planned.map(({ customer_id }) => customer_id))];
+      if ((await this.customerRepository.findByIds(ids)).length !== ids.length) {
+        throw new NotFoundError("One or more stores were not found");
       }
     }
-
-    if (duplicatesInPayload.length > 0)
-      throw new BadRequestError(`Assign routes to the agent is duplicated`);
-
-    // checking for valid customer ids
-
-    const customerIds = dto.visits.map((v) => v.customer_id);
-
-    const customers = await this.customerRepository.findByIds(customerIds);
-
-    const foundIds = new Set(customers.map((customer) => customer.id));
-
-    const missing = customerIds.filter((id) => !foundIds.has(id));
-
-    if (missing.length > 0) {
-      throw new NotFoundError(`Stores not found`);
-    }
-
-    const storeVisits = dto.visits.map((v) =>
-      StoreVisit.create({
-        user_id: dto.user_id,
-        customer_id: v.customer_id,
-        visit_date: v.visit_date,
-      }),
-    );
-
-    // 4. Save
+    const keys = new Set(planned.map(({ customer_id, visit_date }) => `${customer_id}/${visit_date.toISOString()}`));
+    if (keys.size !== planned.length) throw new BadRequestError("Duplicate store and visit date");
+    const visits = planned.map((visit) => StoreVisit.create({ ...visit, user_id }));
+    await this.requireAvailableSchedule(user_id, planned);
     try {
-      await this.prisma.$transaction(async (tx) => {
-        await this.storeVisitRepository.saveMany(
-          storeVisits,
-          tx as typeof this.prisma,
-        );
-      });
+      await this.storeVisitRepository.saveMany(visits);
     } catch (error) {
-      throw new ConflictError(
-        "User already has a route assigned for the same store on the selected date",
-      );
+      if (!isUniqueViolation(error)) throw error;
+      throw new ConflictError("The agent already has this store assigned on the selected date");
     }
-
-    return storeVisits.map((v) => v.toJSON());
+    return visits.map((visit) => visit.toJSON());
   }
 
   async getPreviousAssignRoute(
@@ -98,9 +72,10 @@ export class StoreVisitService {
 
     const latest_date =
       await this.storeVisitRepository.latestAssignDate(user_id);
+    if (!latest_date) return [];
+    const visit_date = formatInTimeZone(latest_date.visitDate, manilaTimeZone, "yyyy-MM-dd");
     const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(
-      user_id,
-      latest_date?.visitDate!,
+      user_id, visitDateRange({ visit_date }),
     );
 
     return previousRoutes.map((previousRoute) => ({
@@ -113,80 +88,43 @@ export class StoreVisitService {
     }));
   }
 
-  async usePreviousAssignedRoutes(
-    user_id: string,
-    visit_date: Date,
-  ): Promise<StoreVisitResponseDto[]> {
-    const user_exist = await this.userRepository.findById(user_id);
-    if (!user_exist) throw new NotFoundError("User does not exists");
-
-    const latest_date =
-      await this.storeVisitRepository.latestAssignDate(user_id);
-    const previousRoutes = await this.storeVisitRepository.getPreviousRoutes(
+  async usePreviousAssignedRoutes(user_id: string, visit_date: string): Promise<StoreVisitResponseDto[]> {
+    calendarDate(visit_date, "visit_date", true);
+    const previous = await this.getPreviousAssignRoute(user_id);
+    if (!previous.length) throw new NotFoundError("No previous routes found");
+    return this.save({
       user_id,
-      latest_date?.visitDate!,
-    );
-
-    const storeVisits = previousRoutes.map((previousRoute) =>
-      StoreVisit.create({
-        user_id: user_id,
-        customer_id: previousRoute.customer_id,
-        visit_date: visit_date,
-      }),
-    );
-
-    try {
-      await this.storeVisitRepository.saveMany(storeVisits);
-    } catch (error) {
-      throw new ConflictError(
-        "User already has a route assigned for the same store on the selected date",
-      );
-    }
-
-    return storeVisits.map((storeVisit) => storeVisit.toJSON());
+      visits: previous.map(({ customer_id }) => ({ customer_id, visit_date })),
+    });
   }
 
-  async getAssignedRoutes(
-    user_id: string,
-    visit_date?: Date,
-    requester?: Payload,
+  async list(
+    query: { visit_date?: unknown; from?: unknown; to?: unknown; territory?: unknown },
+    requester: Payload,
+    user_id?: string,
   ): Promise<GetAssignedResponseDTO[]> {
-    if (requester?.role === "USER" && requester.user_id !== user_id) {
+    if (requester.role === "USER" && requester.user_id !== user_id) {
       throw new ForbiddenError("You can only view your own assigned routes");
     }
-    const user_exist = await this.userRepository.findById(user_id);
-    if (!user_exist) throw new NotFoundError("User does not exists");
-
-    const store_visits = await this.storeVisitRepository.getAssignedRoutes(
+    if (user_id && !await this.userRepository.findById(user_id)) throw new NotFoundError("User not found");
+    const visits = await this.storeVisitRepository.list({
       user_id,
-      visit_date,
-    );
-
-    return store_visits.map((store_visit) => {
-      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED";
-
-      if (store_visit.time_in && store_visit.time_out) {
-        visited = "VISITED";
-      } else if (store_visit.time_in || store_visit.time_out) {
-        visited = "ONGOING";
-      }
-
-      return {
-        id: store_visit.id,
-        customer_id: store_visit.customer_id,
-        owner_name: store_visit.customer.owner_name,
-        store_name: store_visit.customer.store_name,
-        user_id: store_visit.user_id,
-        visit_date: store_visit.visit_date,
-        time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
-        time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
-        stay_duration: getStayDuration(
-          store_visit.time_in,
-          store_visit.time_out,
-        ),
-        status: visited,
-      };
+      visit_date: visitDateRange(query),
+      territory: query.territory === undefined ? undefined : requiredText(query.territory, "territory"),
     });
+    return visits.map((visit) => ({
+      id: visit.id,
+      customer_id: visit.customer_id,
+      ...visit.customer,
+      user_id: visit.user_id,
+      visit_date: visit.visit_date,
+      time_in: visit.time_in ? toPHT(visit.time_in) : null,
+      time_out: visit.time_out ? toPHT(visit.time_out) : null,
+      stay_duration: getStayDuration(visit.time_in, visit.time_out),
+      status: visit.time_in && visit.time_out ? "VISITED" : visit.time_in || visit.time_out ? "ONGOING" : "NOT VISITED",
+      inventory_counted: visit._count.inventoryItems > 0,
+      order_id: visit.order?.id ?? null,
+    }));
   }
 
   async deleteAssignedRoute(id: string): Promise<void> {
@@ -195,7 +133,8 @@ export class StoreVisitService {
       throw new NotFoundError("Store visit doesn't exist");
 
     existing_store_visit.delete();
-    await this.storeVisitRepository.deleteAssignedRoutes(id);
+    const result = await this.storeVisitRepository.deleteAssignedRoutes(id);
+    if (!result.count) throw new ConflictError("The route has changed");
   }
 
   async markTimeIn(id: string, user_id: string): Promise<void> {
@@ -207,7 +146,8 @@ export class StoreVisitService {
       throw new ForbiddenError("You are only allowed to mark your own routes");
 
     existing_store_visit.markTimeIn();
-    await this.storeVisitRepository.update(existing_store_visit);
+    const result = await this.storeVisitRepository.recordTime(existing_store_visit, "time_in");
+    if (!result.count) throw new ConflictError("The route has changed");
   }
 
   async markTimeOut(id: string, user_id: string): Promise<void> {
@@ -219,61 +159,44 @@ export class StoreVisitService {
       throw new ForbiddenError("You are only allowed to mark your own routes");
 
     existing_store_visit.markTimeOut();
-    await this.storeVisitRepository.update(existing_store_visit);
+    const result = await this.storeVisitRepository.recordTime(existing_store_visit, "time_out");
+    if (!result.count) throw new ConflictError("The route has changed");
   }
 
-  async getAllAssignedRoutes(
-    visit_date?: Date,
-  ): Promise<GetAssignedResponseDTO[]> {
-    const store_visits =
-      await this.storeVisitRepository.getAllAssignedRoutes(visit_date);
-
-    return store_visits.map((store_visit) => {
-      let visited: "ONGOING" | "VISITED" | "NOT VISITED" = "NOT VISITED";
-
-      if (store_visit.time_in && store_visit.time_out) {
-        visited = "VISITED";
-      } else if (store_visit.time_in || store_visit.time_out) {
-        visited = "ONGOING";
-      }
-
-      return {
-        id: store_visit.id,
-        customer_id: store_visit.customer_id,
-        owner_name: store_visit.customer.owner_name,
-        store_name: store_visit.customer.store_name,
-        user_id: store_visit.user_id,
-        visit_date: store_visit.visit_date,
-        time_in: store_visit.time_in ? toPHT(store_visit.time_in!) : null,
-        time_out: store_visit.time_out ? toPHT(store_visit.time_out!) : null,
-        stay_duration: getStayDuration(
-          store_visit.time_in,
-          store_visit.time_out,
-        ),
-        status: visited,
-      };
-    });
-  }
-
-  async reassignRoute(id: string, data: { user_id: string; customer_id: string; visit_date: Date }) {
+  async reassignRoute(id: string, data: { user_id: string; customer_id: string; visit_date: string }) {
     const existing = await this.storeVisitRepository.findById(id);
     if (!existing) throw new NotFoundError("Store visit doesn't exist");
     if (existing.time_in || existing.time_out) {
       throw new BadRequestError("A route already in progress cannot be reassigned");
     }
+    const user_id = requiredText(data?.user_id, "user_id");
+    const customer_id = requiredText(data?.customer_id, "customer_id");
+    const visit_date = calendarDate(data?.visit_date, "visit_date", true);
     const [user, customer] = await Promise.all([
-      this.userRepository.findById(data.user_id),
-      this.customerRepository.findById(data.customer_id),
+      this.userRepository.findById(user_id),
+      this.customerRepository.findById(customer_id),
     ]);
     if (!user || user.role !== "USER" || !user.isActive) throw new BadRequestError("A valid active agent is required");
-    if (!customer) throw new NotFoundError("Store not found");
-    const visit_date = new Date(data.visit_date);
-    if (Number.isNaN(visit_date.getTime())) throw new BadRequestError("Invalid visit date");
+    if (!customer || customer.deletedAt) throw new NotFoundError("Store not found");
+    await this.requireAvailableSchedule(user_id, [{ customer_id, visit_date }], id);
     try {
       return await this.storeVisitRepository.reassign(id, {
-        user_id: data.user_id, customer_id: data.customer_id, visit_date,
+        user_id, customer_id, visit_date,
       });
     } catch (error) {
+      if (isUniqueViolation(error)) throw new ConflictError("The agent already has this store assigned on the selected date");
+      if (typeof error === "object" && error && "code" in error && error.code === "P2025") {
+        throw new ConflictError("The route has changed");
+      }
+      throw error;
+    }
+  }
+  private async requireAvailableSchedule(
+    user_id: string,
+    visits: { customer_id: string; visit_date: Date }[],
+    excludedId?: string,
+  ) {
+    if (await this.storeVisitRepository.findScheduleConflict(user_id, visits, excludedId)) {
       throw new ConflictError("The agent already has this store assigned on the selected date");
     }
   }

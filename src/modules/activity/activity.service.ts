@@ -1,3 +1,5 @@
+import { visitDateRange } from "../../utils/calendar-date";
+import { requiredText } from "../../utils/input";
 import crypto from "crypto";
 import { BadRequestError } from "../../utils/error/BadRequestError";
 import { ForbiddenError } from "../../utils/error/ForbiddenError";
@@ -40,10 +42,10 @@ export class ActivityService {
     });
   }
 
-  getAgentActivities(filters: { user_id?: string; visit_date?: string }) {
+  getAgentActivities(filters: { user_id?: unknown; visit_date?: unknown; from?: unknown; to?: unknown }) {
     return this.activityRepo.getAgentActivities({
-      user_id: filters.user_id,
-      visit_date: this.date(filters.visit_date),
+      user_id: filters.user_id === undefined ? undefined : requiredText(filters.user_id, "user_id"),
+      visit_date: visitDateRange(filters),
     });
   }
 }
